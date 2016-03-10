@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.activation.UnsupportedDataTypeException;
+
 import org.eclipse.emf.common.util.EList;
 
 import com.microsoft.z3.ArithExpr;
@@ -21,39 +23,101 @@ import com.microsoft.z3.IntExpr;
 import com.microsoft.z3.IntNum;
 import com.microsoft.z3.Model;
 import com.microsoft.z3.Optimize;
+import com.microsoft.z3.Sort;
 import com.microsoft.z3.Status;
 import com.microsoft.z3.enumerations.Z3_lbool;
 
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFactory;
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFormationException;
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleInstance;
+import cz.cuni.mff.d3s.deeco.ensembles.intelligent.UnsupportedVariableTypeException;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainerException;
+import cz.cuni.mff.d3s.jdeeco.edl.BaseDataContract;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.DataContractDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlDocument;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.FieldDeclaration;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
 import cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3.IntelligentEnsemble;
 import cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3.Rescuer;
 
 class KnowledgeFieldVector {
 	private ArrayExpr values; // for individual components
+	private Context ctx;
+	
+	public KnowledgeFieldVector(Context ctx, String dataContractName, String fieldName, String fieldType)
+			throws UnsupportedDataTypeException {
 		
-	public Expr get(Context ctx, Expr componentIndex) {
+		this.ctx = ctx;
+		
+		Sort sort;
+		if ("bool".equals(fieldType)) {
+			sort = ctx.mkBoolSort();
+		} else if ("int".equals(fieldType)) {
+			sort = ctx.mkIntSort();
+		} else {
+			throw new UnsupportedDataTypeException(fieldType);
+		}
+		
+		values = ctx.mkArrayConst(dataContractName + "_" + fieldName + "_vals", ctx.mkIntSort(), sort);
+	}
+	
+	public void set(int componentIndex, Expr value) {
+		ctx.mkStore(values, ctx.mkInt(componentIndex), value);
+	}
+	
+	public Expr get(Expr componentIndex) {
 		return ctx.mkSelect(values, componentIndex);
 	}
+	
 }
 
 class DataContractInstancesContainer {
 	private Object[] instances;
 	private Map<String, KnowledgeFieldVector> knowledgeFields;
 	
-	public DataContractInstancesContainer(DataContractDefinition dataContractDefinition, KnowledgeContainer knowledgeContainer) {
-		// TODO
+	public DataContractInstancesContainer(Context ctx, String packageName, DataContractDefinition dataContractDefinition,
+			KnowledgeContainer knowledgeContainer) throws ClassNotFoundException, KnowledgeContainerException, UnsupportedDataTypeException {
+		
+		@SuppressWarnings("unchecked")
+		Class<? extends BaseDataContract> roleClass = (Class<? extends BaseDataContract>) Class.forName(packageName + "." + dataContractDefinition.getName());
+		Collection<? extends BaseDataContract> instancesUnsorted = knowledgeContainer.getTrackedKnowledgeForRole(roleClass);
+		
+		this.instances = new BaseDataContract[instancesUnsorted.size()];
+		for (BaseDataContract instance : instancesUnsorted) {
+			instances[Integer.parseInt(instance.id)-1] = instance;
+		}
+		
+		for (FieldDeclaration fieldDecl : dataContractDefinition.getFields()) {
+			String fieldName = fieldDecl.getName();
+			String fieldType = fieldDecl.getType().toString();
+			KnowledgeFieldVector field = new KnowledgeFieldVector(ctx, dataContractDefinition.getName(), fieldName, fieldType);
+			knowledgeFields.put(fieldName, field);
+			for (int i = 0; i < instances.length; i++) {
+				Expr expr;
+				if ("bool".equals(fieldType)) {
+					Boolean value = readField(fieldName, Boolean.class);
+					expr = ctx.mkBool(value.booleanValue());
+				} else if ("int".equals(fieldType)) {
+					Integer value = readField(fieldName, Integer.class);
+					expr = ctx.mkInt(value.intValue());
+				} else {
+					throw new UnsupportedDataTypeException(fieldType);
+				}
+				
+				field.set(i, expr);
+			}
+		}
 	}
 	
-	public Expr get(Context ctx, String fieldName, Expr componentIndex) {
-		return knowledgeFields.get(fieldName).get(ctx, componentIndex);
+	private <T> T readField(String fieldName, Class<T> fieldType) {
+		// TODO
+		return null;
+	}
+	
+	public Expr get(String fieldName, Expr componentIndex) {
+		return knowledgeFields.get(fieldName).get(componentIndex);
 	}
 	
 }
@@ -61,12 +125,15 @@ class DataContractInstancesContainer {
 class DataContainer {
 	private Map<String, DataContractInstancesContainer> containers;
 	
-	public DataContainer(Collection<DataContractDefinition> dataContractDefinition, KnowledgeContainer knowledgeContainer) {
-		// TODO
+	public DataContainer(Context ctx, String packageName, Collection<DataContractDefinition> dataContractDefinitions, 
+			KnowledgeContainer knowledgeContainer) throws ClassNotFoundException, KnowledgeContainerException, UnsupportedDataTypeException {
+		for (DataContractDefinition contract : dataContractDefinitions) {
+			containers.put(contract.getName(), new DataContractInstancesContainer(ctx, packageName, contract, knowledgeContainer));
+		}
 	}
 	
-	public Expr get(Context ctx, String dataContractName, String fieldName, Expr componentIndex) {
-		return containers.get(dataContractName).get(ctx, fieldName, componentIndex);
+	public Expr get(String dataContractName, String fieldName, Expr componentIndex) {
+		return containers.get(dataContractName).get(fieldName, componentIndex);
 	}
 }
 
