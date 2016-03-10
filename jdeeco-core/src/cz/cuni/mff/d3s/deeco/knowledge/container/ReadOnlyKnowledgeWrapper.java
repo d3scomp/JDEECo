@@ -123,10 +123,6 @@ public class ReadOnlyKnowledgeWrapper {
 	protected Map<Field, KnowledgePath> getFieldKnowledgePaths(List<Field> knowledgeFields) throws KnowledgeAccessException {
 		Map<Field, KnowledgePath> result = new HashMap<>();
 		for (Field knowledgeField : knowledgeFields) {
-			//if (knowledgeField.getName().equals("id")) {
-			//	continue; // we can't update ID
-			//}
-			
 			try {
 				KnowledgePath knowledgePath;
 				knowledgePath = KnowledgePathHelper.createKnowledgePath(knowledgeField.getName(), PathOrigin.COMPONENT);

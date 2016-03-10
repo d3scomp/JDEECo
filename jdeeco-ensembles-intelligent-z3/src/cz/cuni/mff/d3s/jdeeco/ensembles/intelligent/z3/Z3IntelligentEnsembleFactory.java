@@ -1,7 +1,7 @@
 package cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,17 +10,11 @@ import java.util.Map;
 
 import javax.activation.UnsupportedDataTypeException;
 
-import org.eclipse.emf.common.util.EList;
-
-import com.microsoft.z3.ArithExpr;
 import com.microsoft.z3.ArrayExpr;
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
-import com.microsoft.z3.FuncInterp;
-import com.microsoft.z3.FuncInterp.Entry;
 import com.microsoft.z3.IntExpr;
-import com.microsoft.z3.IntNum;
 import com.microsoft.z3.Model;
 import com.microsoft.z3.Optimize;
 import com.microsoft.z3.Sort;
@@ -30,7 +24,6 @@ import com.microsoft.z3.enumerations.Z3_lbool;
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFactory;
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFormationException;
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleInstance;
-import cz.cuni.mff.d3s.deeco.ensembles.intelligent.UnsupportedVariableTypeException;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainerException;
 import cz.cuni.mff.d3s.jdeeco.edl.BaseDataContract;
@@ -40,8 +33,6 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlDocument;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.FieldDeclaration;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
-import cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3.IntelligentEnsemble;
-import cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3.Rescuer;
 
 class KnowledgeFieldVector {
 	private ArrayExpr values; // for individual components
@@ -75,11 +66,12 @@ class KnowledgeFieldVector {
 }
 
 class DataContractInstancesContainer {
-	private Object[] instances;
+	private BaseDataContract[] instances;
 	private Map<String, KnowledgeFieldVector> knowledgeFields;
 	
 	public DataContractInstancesContainer(Context ctx, String packageName, DataContractDefinition dataContractDefinition,
-			KnowledgeContainer knowledgeContainer) throws ClassNotFoundException, KnowledgeContainerException, UnsupportedDataTypeException {
+			KnowledgeContainer knowledgeContainer)
+			throws ClassNotFoundException, KnowledgeContainerException, UnsupportedDataTypeException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		
 		@SuppressWarnings("unchecked")
 		Class<? extends BaseDataContract> roleClass = (Class<? extends BaseDataContract>) Class.forName(packageName + "." + dataContractDefinition.getName());
@@ -90,19 +82,26 @@ class DataContractInstancesContainer {
 			instances[Integer.parseInt(instance.id)-1] = instance;
 		}
 		
+		knowledgeFields = new HashMap<>();
+		
 		for (FieldDeclaration fieldDecl : dataContractDefinition.getFields()) {
 			String fieldName = fieldDecl.getName();
 			String fieldType = fieldDecl.getType().toString();
 			KnowledgeFieldVector field = new KnowledgeFieldVector(ctx, dataContractDefinition.getName(), fieldName, fieldType);
 			knowledgeFields.put(fieldName, field);
 			for (int i = 0; i < instances.length; i++) {
+				Object value = readField(fieldName, instances[i]);
 				Expr expr;
 				if (PrimitiveTypes.BOOL.equals(fieldType)) {
-					Boolean value = readField(fieldName, Boolean.class);
-					expr = ctx.mkBool(value.booleanValue());
+					if (value != null)
+						expr = ctx.mkBool(((Boolean)value).booleanValue());
+					else
+						expr = ctx.mkBool(false);
 				} else if (PrimitiveTypes.INT.equals(fieldType)) {
-					Integer value = readField(fieldName, Integer.class);
-					expr = ctx.mkInt(value.intValue());
+					if (value != null)
+						expr = ctx.mkInt(((Integer)value).intValue());
+					else
+						expr = ctx.mkInt(0);
 				} else {
 					throw new UnsupportedDataTypeException(fieldType);
 				}
@@ -112,13 +111,22 @@ class DataContractInstancesContainer {
 		}
 	}
 	
-	private <T> T readField(String fieldName, Class<T> fieldType) {
-		// TODO
-		return null;
+	private Object readField(String fieldName, BaseDataContract instance) 
+			throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		Field field = instance.getClass().getField(fieldName);
+		return field.get(instance);
+	}
+	
+	public BaseDataContract getInstance(int componentIndex) {
+		return instances[componentIndex];
 	}
 	
 	public Expr get(String fieldName, Expr componentIndex) {
 		return knowledgeFields.get(fieldName).get(componentIndex);
+	}
+	
+	public int getNumInstances() {
+		return instances.length;
 	}
 	
 }
@@ -127,14 +135,21 @@ class DataContainer {
 	private Map<String, DataContractInstancesContainer> containers;
 	
 	public DataContainer(Context ctx, String packageName, Collection<DataContractDefinition> dataContractDefinitions, 
-			KnowledgeContainer knowledgeContainer) throws ClassNotFoundException, KnowledgeContainerException, UnsupportedDataTypeException {
+			KnowledgeContainer knowledgeContainer) throws ClassNotFoundException, KnowledgeContainerException, UnsupportedDataTypeException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		
+		containers = new HashMap<>();
+		
 		for (DataContractDefinition contract : dataContractDefinitions) {
 			containers.put(contract.getName(), new DataContractInstancesContainer(ctx, packageName, contract, knowledgeContainer));
 		}
 	}
 	
+	public DataContractInstancesContainer get(String dataContractName) {
+		return containers.get(dataContractName);
+	}
+	
 	public Expr get(String dataContractName, String fieldName, Expr componentIndex) {
-		return containers.get(dataContractName).get(fieldName, componentIndex);
+		return get(dataContractName).get(fieldName, componentIndex);
 	}
 }
 
@@ -185,7 +200,7 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 long time_milis = System.currentTimeMillis();
 
 			initConfiguration();
-			
+			/*
 			Collection<Rescuer> rescuersUnsorted = container.getTrackedKnowledgeForRole(Rescuer.class);
 			Rescuer[] rescuers = new Rescuer[rescuersUnsorted.size()];
 			for (Rescuer rescuer : rescuersUnsorted) {
@@ -193,6 +208,9 @@ long time_milis = System.currentTimeMillis();
 			}
 	        
 			int[] positions = new int[rescuers.length];
+			*/
+			DataContainer dataContainer = new DataContainer(ctx, edlDocument.getPackage().toString(), edlDocument.getDataContracts(), container);
+			DataContractInstancesContainer rescuers = dataContainer.get("Rescuer");
 			
 	        EnsembleDefinition ensembleDefinition = edlDocument.getEnsembles().get(0);	        
 	        
@@ -202,7 +220,7 @@ long time_milis = System.currentTimeMillis();
 	        	minCardinalitiesSum += roleDefinition.getCardinalityMin();
 	        }
 	        
-	        int maxEnsembleCount = positions.length / Math.max(1, minCardinalitiesSum);
+	        int maxEnsembleCount = rescuers.getNumInstances() / Math.max(1, minCardinalitiesSum);
 			
 			/*// positions of rescuers: int[#rescuers]
 			IntNum[] positionExprs = new IntNum[positions.length];
@@ -212,7 +230,7 @@ long time_milis = System.currentTimeMillis();
 			
 			// assignments for each rescuer and train: bool[#trains][#rescuers]
 			//ArrayExpr[] assignments = createAssignmentMatrix_("rescuer", maxEnsembleCount);
-			EnsembleAssignmentMatrix assignments = EnsembleAssignmentMatrix.create(ctx, maxEnsembleCount, roles, positions.length);
+			EnsembleAssignmentMatrix assignments = EnsembleAssignmentMatrix.create(ctx, maxEnsembleCount, roles, rescuers.getNumInstances());
 			
 			// existence of individual ensembles
 			BoolExpr[] ensembleExists = new BoolExpr[maxEnsembleCount];
@@ -225,7 +243,7 @@ long time_milis = System.currentTimeMillis();
 			for (int i = 0; i < maxEnsembleCount; i++) {
 				assignmentCounts[i] = new IntExpr[assignments.get(i).getRoleCount()];
 				for (int j = 0; j < assignmentCounts[i].length; j++) {
-					assignmentCounts[i][j] = createCounter(assignments.get(i, j), positions.length, i, j);
+					assignmentCounts[i][j] = createCounter(assignments.get(i, j), rescuers.getNumInstances(), i, j);
 				}
 			}
 			
@@ -248,7 +266,7 @@ long time_milis = System.currentTimeMillis();
 			}
 			
 			// assignment to one <ensemble,role> implies nonassignment to the others
-			for (int c = 0; c < positions.length; c++) {
+			for (int c = 0; c < rescuers.getNumInstances(); c++) {
 				List<BoolExpr> assigned = new ArrayList<BoolExpr>();
 				for (int e = 0; e < maxEnsembleCount; e++) {
 					for (int r = 0; r < assignments.get(e).getRoleCount(); r++) {
@@ -281,7 +299,7 @@ long time_milis = System.currentTimeMillis();
 					System.out.println("train " + e + ":");
 					for (int r = 0; r < assignments.get(e).getRoleCount(); r++) {
 						System.out.print("  - " + roles.get(r).getName() + ": [");
-						for (int c = 0; c < positions.length; c++) {
+						for (int c = 0; c < rescuers.getNumInstances(); c++) {
 							System.out.print(m.getConstInterp(assignments.get(e, r, c)).getBoolValue() + " ");
 						}
 						
@@ -298,14 +316,14 @@ long time_milis = System.currentTimeMillis();
 					
 					IntelligentEnsemble ie = new IntelligentEnsemble(e + 1);
 					ie.rescuers = new ArrayList<>();
-					for (int c = 0; c < positions.length; c++) {
+					for (int c = 0; c < rescuers.getNumInstances(); c++) {
 						Expr v1 = m.getConstInterp(assignments.get(e, 0, c));
 						Expr v2 = m.getConstInterp(assignments.get(e, 1, c));
 						if (v1.getBoolValue() == Z3_lbool.Z3_L_TRUE) {
-							ie.leader = rescuers[c];
+							ie.leader = (Rescuer)rescuers.getInstance(c);
 						}
 						if (v2.getBoolValue() == Z3_lbool.Z3_L_TRUE) {
-							ie.rescuers.add(rescuers[c]);
+							ie.rescuers.add((Rescuer)rescuers.getInstance(c));
 						}
 					}
 					
@@ -321,7 +339,7 @@ long time_milis = System.currentTimeMillis();
 				return Collections.emptyList();
 			}
 			
-		} catch (KnowledgeContainerException e) {
+		} catch (Exception e) {
 			throw new EnsembleFormationException(e);
 		}
 	}
