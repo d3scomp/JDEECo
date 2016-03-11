@@ -26,22 +26,28 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
+import cz.cuni.mff.d3s.deeco.modes.ModeChart;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer.StartupListener;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.runtime.PluginInitFailedException;
+import cz.cuni.mff.d3s.deeco.runtime.PluginStartupFailedException;
+import cz.cuni.mff.d3s.deeco.search.StateSpaceSearch;
 import cz.cuni.mff.d3s.jdeeco.modes.ModeSwitchingPlugin;
 
 /**
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin {
+public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, StartupListener {
 
 	private long startTime = 0;
 	private Class<? extends NonDetModeSwitchFitnessEval> evalClass = null;
 	private long evalPeriod = 100;
 	private long reconfPeriod = 1000;
 	private double startingNondeterminism = 0.0001;
+	private DEECoContainer container = null;
 	
 	private boolean verbose = false;
 	
@@ -92,8 +98,11 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin {
 	 */
 	@Override
 	public void init(DEECoContainer container) throws PluginInitFailedException {
+		this.container = container;
 		AnnotationProcessorExtensionPoint nonDetModeAwareAnnotationProcessor = new NonDetModeSwitchAwareAnnotationProcessorExtension();
 		container.getProcessor().addExtension(nonDetModeAwareAnnotationProcessor);
+		
+		container.addStartupListener(this);
 		
 		try {
 			final NonDeterministicModeSwitchingManager manager =
@@ -108,7 +117,7 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin {
 		
 		for (ComponentInstance c : container.getRuntimeMetadata().getComponentInstances()) {
 			if (c.getName().equals(NonDeterministicModeSwitchingManager.class.getName())) {
-
+				// Adjust non-deterministic mode switching manager periods
 				for (ComponentProcess p: c.getComponentProcesses()) {
 					Long period = null;
 					if(p.getName().equals("evaluate")){
@@ -123,6 +132,35 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin {
 							if (t instanceof TimeTrigger) {
 								((TimeTrigger) t).setPeriod(period);
 							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.runtime.DEECoContainer.StartupListener#onStartup()
+	 */
+	@Override
+	public void onStartup() throws PluginStartupFailedException {
+		if(container == null){
+			throw new PluginStartupFailedException(String.format(
+					"The %s plugin doesn't have a reference to %s.",
+					"NonDeterministicModeSwitching",
+					"DEECo container"));
+		}
+		// Check modes
+		for (ComponentInstance c : container.getRuntimeMetadata().getComponentInstances()) {
+			ModeChart modeChart = c.getModeChart();
+			if (modeChart != null) {
+				StateSpaceSearch sss = modeChart.getStateSpaceSearch();
+				if(sss != null)	{
+					for(Class<? extends DEECoMode> mode : modeChart.getModes()){
+						if(!NonDetModeSwitchMode.class.isAssignableFrom(mode)){
+							throw new PluginStartupFailedException(String.format(
+									"The %s mode doesn't extend %s class.",
+									mode, NonDetModeSwitchMode.class));
 						}
 					}
 				}

@@ -205,9 +205,10 @@ public class NonDeterministicModeSwitchingManager {
 					reconfigureModeChart((ModeChartImpl)modeChart, currentNonDeterminismLevel.value);
 
 					if(verbose) {
+						Object knowledge[] = getValues(c, new String[]{"id"});
 						Log.i(String.format("Non-deterministic mode switching the"
 							+ "non-deterministic level of component %s set to %f at %d",
-							c.getName(), currentNonDeterminismLevel.value, currentTime));
+							knowledge[0], currentNonDeterminismLevel.value, currentTime));
 					}
 				}
 			}
