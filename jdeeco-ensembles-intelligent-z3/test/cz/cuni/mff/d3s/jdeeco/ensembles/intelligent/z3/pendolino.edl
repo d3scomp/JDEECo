@@ -11,7 +11,7 @@ ensemble PendolinoEnsemble
 	membership
 		roles
 			leader : Rescuer
-			rescuers [3..4] : Rescuer
+			rescuers [1..4] : Rescuer
 		
 		constraints
 			constraint !(-(2 + 2) < -(5 * 1 - 4 / 2) && 2 >= 3)

@@ -4,16 +4,19 @@ import java.util.List;
 
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
+import com.microsoft.z3.IntExpr;
+import com.microsoft.z3.Optimize;
 
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
 
 class EnsembleAssignmentMatrix {
 	private EnsembleRoleAssignmentMatrix[] assignmentMatrix;
 	
-	public static EnsembleAssignmentMatrix create(Context ctx, int maxEnsembleCount, List<RoleDefinition> roleList, int componentCount) {
+	public static EnsembleAssignmentMatrix create(Context ctx, Optimize opt, int maxEnsembleCount, List<RoleDefinition> roleList, 
+			DataContainer dataContainer) {
 		EnsembleRoleAssignmentMatrix[] assignments = new EnsembleRoleAssignmentMatrix[maxEnsembleCount];
 		for (int i = 0; i < maxEnsembleCount; i++) {
-			assignments[i] = EnsembleRoleAssignmentMatrix.create(ctx, i, roleList, componentCount);
+			assignments[i] = EnsembleRoleAssignmentMatrix.create(ctx, opt, i, roleList, dataContainer);
 		}
 		
 		return new EnsembleAssignmentMatrix(assignments);
@@ -21,6 +24,16 @@ class EnsembleAssignmentMatrix {
 	
 	public EnsembleAssignmentMatrix(EnsembleRoleAssignmentMatrix[] assignmentMatrix) {
 		this.assignmentMatrix = assignmentMatrix;
+	}
+	
+	public void createCounters() {		
+		for (int i = 0; i < assignmentMatrix.length; i++) {
+			get(i).createCounters(i);
+		}
+	}
+	
+	public int getMaxEnsembleCount() {
+		return assignmentMatrix.length;
 	}
 	
 	public EnsembleRoleAssignmentMatrix get(int ensembleIndex) {
@@ -33,5 +46,13 @@ class EnsembleAssignmentMatrix {
 		
 	public BoolExpr get(int ensembleIndex, int roleIndex, int componentIndex) {
 		return get(ensembleIndex, roleIndex).get(componentIndex);
+	}
+	
+	public IntExpr getAssignedCount(int ensembleIndex, int roleIndex) {
+		return get(ensembleIndex, roleIndex).getAssignedCount();
+	}
+	
+	public BoolExpr ensembleExists(int ensembleIndex) {
+		return get(ensembleIndex).ensembleExists();
 	}
 }
