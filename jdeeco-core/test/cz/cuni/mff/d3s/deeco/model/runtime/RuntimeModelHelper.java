@@ -4,9 +4,9 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgeChangeTrigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ParameterKind;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNode;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
+import cz.cuni.mff.d3s.deeco.model.runtime.custom.KnowledgePathExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 
 /**
@@ -17,24 +17,7 @@ public class RuntimeModelHelper {
 
 	public static KnowledgePath createKnowledgePath(
 			String... knowledgePathNodes) {
-		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
-		KnowledgePath knowledgePath = factory.createKnowledgePath();
-
-		for (String nodeName : knowledgePathNodes) {
-			PathNode pathNode;
-
-			if ("<C>".equals(nodeName)) {
-				pathNode = factory.createPathNodeCoordinator();
-			} else if ("<M>".equals(nodeName)) {
-				pathNode = factory.createPathNodeMember();
-			} else {
-				pathNode = createPathNodeField(nodeName);
-			}
-
-			knowledgePath.getNodes().add(pathNode);
-		}
-
-		return knowledgePath;
+		return KnowledgePathExt.createKnowledgePath(knowledgePathNodes);
 	}
 
 	public static KnowledgeChangeTrigger createKnowledgeChangeTrigger(
@@ -71,9 +54,6 @@ public class RuntimeModelHelper {
 	}
 	
 	public static PathNodeField createPathNodeField(String name) {
-		RuntimeMetadataFactory factory = RuntimeMetadataFactory.eINSTANCE;
-		PathNodeField pn = factory.createPathNodeField();
-		pn.setName(new String(name));
-		return pn;
+		return KnowledgePathExt.createPathNodeField(name);
 	}
 }

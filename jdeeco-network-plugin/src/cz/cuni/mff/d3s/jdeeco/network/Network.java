@@ -9,8 +9,8 @@ import cz.cuni.mff.d3s.jdeeco.network.l1.DefaultDataIDSource;
 import cz.cuni.mff.d3s.jdeeco.network.l1.Layer1;
 import cz.cuni.mff.d3s.jdeeco.network.l2.L2PacketType;
 import cz.cuni.mff.d3s.jdeeco.network.l2.Layer2;
-import cz.cuni.mff.d3s.jdeeco.network.marshaller.FSTMarshaller;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
+import cz.cuni.mff.d3s.jdeeco.network.marshaller.PathCancelingFSTmarshaller;
 
 /**
  * Provides network plug-in for jDEECO
@@ -49,6 +49,6 @@ public class Network implements DEECoPlugin {
 		l2.setL2PacketSender(l1);
 
 		// Add default marshaler for knowledge
-		registery.registerMarshaller(L2PacketType.KNOWLEDGE, new FSTMarshaller());
+		registery.registerMarshaller(L2PacketType.KNOWLEDGE, new PathCancelingFSTmarshaller());
 	}
 }
