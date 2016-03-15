@@ -125,7 +125,7 @@ public class NonDeterministicModeSwitchingManager implements MAPEAdaptation {
 		stateSpace.getState(currentNonDeterminismLevel).setEnergy(energyValue);
 		
 		if(verbose){
-			Log.i(String.format("Non-deterministic mode switching energy for the"
+			Log.i(String.format("Non-deterministic mode switching energy for the "
 				+ "non-deterministic level %f at %d is %f",
 				currentNonDeterminismLevel, currentTime, energyValue));
 		}
@@ -180,7 +180,7 @@ public class NonDeterministicModeSwitchingManager implements MAPEAdaptation {
 		if(verbose) {
 			long currentTime = ProcessContext.getTimeProvider().getCurrentMilliseconds();
 			Object knowledge[] = getValues(managedComponent, new String[]{"id"});
-			Log.i(String.format("Non-deterministic mode switching the"
+			Log.i(String.format("Non-deterministic mode switching the "
 				+ "non-deterministic level of component %s set to %f at %d",
 				knowledge[0], currentNonDeterminismLevel, currentTime));
 		}
