@@ -223,33 +223,47 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 		}
 	}
 	
-	private List<EnsembleInstance> createEnsembles(Model m, EnsembleAssignmentMatrix assignments,
-			DataContainer dataContainer) {
+	private List<EnsembleInstance> createEnsembles(Model m, EnsembleAssignmentMatrix assignments, EnsembleDefinition ensembleDefinition,
+			DataContainer dataContainer, String packageName) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, InstantiationException, ClassNotFoundException {
 		int maxEnsembleCount = assignments.getMaxEnsembleCount();
-		DataContractInstancesContainer rescuers = dataContainer.get("Rescuer");
-		// TODO VYMLÁTIT RESCUERS
 		
 		// create ensembles
 		List<EnsembleInstance> result = new ArrayList<>();
+		List<RoleDefinition> roles = ensembleDefinition.getRoles();
+		Class<?> ensembleClass = Class.forName(packageName + "." + ensembleDefinition.getName());
+		//Class<?> ensembleClass = IntelligentEnsemble.class;
 		for (int e = 0; e < maxEnsembleCount; e++) {
 			Expr exists = m.getConstInterp(assignments.ensembleExists(e));
 			if (exists.getBoolValue() == Z3_lbool.Z3_L_FALSE)
 				continue;
 			
-			IntelligentEnsemble ie = new IntelligentEnsemble(e + 1);
-			ie.rescuers = new ArrayList<>();
-			for (int c = 0; c < rescuers.getNumInstances(); c++) {
-				Expr v1 = m.getConstInterp(assignments.get(e, 0, c));
-				Expr v2 = m.getConstInterp(assignments.get(e, 1, c));
-				if (v1.getBoolValue() == Z3_lbool.Z3_L_TRUE) {
-					ie.leader = (Rescuer)rescuers.getInstance(c);
+			//EnsembleInstance ie = (EnsembleInstance) ensembleClass.getConstructor(int.class).
+			EnsembleInstance ie = new PendolinoEnsemble(e + 1);
+
+			for (int r = 0; r < assignments.get(e).getRoleCount(); r++) {
+				RoleDefinition role = roles.get(r);
+				Field roleField = ensembleClass.getField(role.getName());
+				List<Object> list = new ArrayList<>();
+				if (role.getCardinalityMax() > 1) {
+					roleField.set(ie, list);
 				}
-				if (v2.getBoolValue() == Z3_lbool.Z3_L_TRUE) {
-					ie.rescuers.add((Rescuer)rescuers.getInstance(c));
+				
+				String dataContractName = role.getType().toString();
+				
+				for (int c = 0; c < dataContainer.getNumInstances(dataContractName); c++) {
+					Expr v1 = m.getConstInterp(assignments.get(e, r, c));
+					if (v1.getBoolValue() == Z3_lbool.Z3_L_TRUE) {
+						Object instance = dataContainer.getInstance(dataContractName, c);
+						if (role.getCardinalityMax() == 1) {
+							roleField.set(ie, instance);
+						} else {
+							list.add(instance);
+						}
+					}
 				}
+				
+				result.add(ie);
 			}
-			
-			result.add(ie);
 		}
 		
 		return result;
@@ -322,7 +336,8 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 			if (status == Status.SATISFIABLE) {
 				printModel(opt.getModel(), assignments, roles, dataContainer);
 				
-				List<EnsembleInstance> result = createEnsembles(opt.getModel(), assignments, dataContainer);
+				List<EnsembleInstance> result = createEnsembles(opt.getModel(), assignments, ensembleDefinition, 
+						dataContainer, edlDocument.getPackage().toString());
 				System.out.println("Time taken (ms): " + (System.currentTimeMillis() - time_milis));
 				return result;
 				

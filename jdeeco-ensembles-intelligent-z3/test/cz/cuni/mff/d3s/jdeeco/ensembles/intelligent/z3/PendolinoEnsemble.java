@@ -5,11 +5,11 @@ import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleInstance;
 
-public class IntelligentEnsemble implements EnsembleInstance {
+public class PendolinoEnsemble implements EnsembleInstance {
 
 	public int trainId;
 	
-	public IntelligentEnsemble(int trainId) {
+	public PendolinoEnsemble(int trainId) {
 		this.trainId = trainId;
 		rescuers = new ArrayList<>();
 	}
