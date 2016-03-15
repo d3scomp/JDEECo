@@ -22,26 +22,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import cz.cuni.mff.d3s.deeco.annotations.Component;
-import cz.cuni.mff.d3s.deeco.annotations.In;
-import cz.cuni.mff.d3s.deeco.annotations.InOut;
-import cz.cuni.mff.d3s.deeco.annotations.Local;
-import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
-import cz.cuni.mff.d3s.deeco.annotations.Process;
-import cz.cuni.mff.d3s.deeco.annotations.SystemComponent;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
 import cz.cuni.mff.d3s.deeco.modes.ModeChart;
 import cz.cuni.mff.d3s.deeco.search.StateSpaceSearch;
-import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ProcessContext;
+import cz.cuni.mff.d3s.jdeeco.adaptation.MAPEAdaptation;
 import cz.cuni.mff.d3s.jdeeco.modes.ModeChartImpl;
 import cz.cuni.mff.d3s.jdeeco.modes.ModeSuccessor;
 import cz.cuni.mff.d3s.jdeeco.modes.TrueGuard;
@@ -54,166 +46,147 @@ import cz.cuni.mff.d3s.jdeeco.modes.runtimelog.ModeTransitionLogger;
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-@Component
-@SystemComponent
-public class NonDeterministicModeSwitchingManager {
+public class NonDeterministicModeSwitchingManager implements MAPEAdaptation {
 
+	public static final double DEFAULT_ENERGY = 1;
+
+	public static double startingNondeterminism = NonDetModeSwitchAnnealStateSpace.DEFAULT_STARTING_NONDETERMINISM;
+	
 	static boolean verbose = false;
 	
-	/**
-	 * Mandatory knowledge field - id of the component.
-	 */
-	public String id = "NonDeterministicModeSwitchingManager";
 	
-	@Local
+	private final ComponentInstance managedComponent;
+		
 	public NonDetModeSwitchAnnealStateSpace stateSpace;
-	
-	@Local
-	public static final double DEFAULT_ENERGY = 1;
-	
-	@Local
+		
 	public final long startTime;
-	
-	@Local
-	public Double currentNonDeterminismLevel;
-	
-	@Local
-	public Map<ComponentInstance, NonDetModeSwitchFitnessEval> evaluators;
 
-	@Local
-	public Class<? extends NonDetModeSwitchFitnessEval> evalClass;
+	public Double currentNonDeterminismLevel;
+	public Double nextNonDeterminismLevel;
 	
-	@Local
+	public NonDetModeSwitchFitnessEval evaluator;
+	
 	public Map<Double, NonDetModeSwitchFitness> energies;
 	
 	
 	public NonDeterministicModeSwitchingManager(long startTime,
-			Class<? extends NonDetModeSwitchFitnessEval> evalClass) {
-		this.startTime = startTime;
+			Class<? extends NonDetModeSwitchFitnessEval> evalClass,
+			ComponentInstance component)
+					throws InstantiationException, IllegalAccessException {
+		if(!isValidComponent(component)){
+			throw new IllegalArgumentException(String.format(
+					"Non-deterministic mode switching cannot be applied "
+					+ "to the given component %s, it doesn't specify "
+					+ "either mode chart or state space search.",
+					component.getClass().getName()));
+		}
 		
-		init(NonDetModeSwitchAnnealStateSpace.DEFAULT_STARTING_NONDETERMINISM,
-				evalClass);
-	}
-
-	public NonDeterministicModeSwitchingManager(long startTime,
-			double startingNondeterminism,
-			Class<? extends NonDetModeSwitchFitnessEval> evalClass) {
 		this.startTime = startTime;
-		init(startingNondeterminism, evalClass);
-	}
-	
-	public void init(double startingNondeterminism,
-			Class<? extends NonDetModeSwitchFitnessEval> evalClass) {
-		this.evalClass = evalClass;
-		
 		stateSpace = new NonDetModeSwitchAnnealStateSpace(startingNondeterminism);
+		evaluator = evalClass.newInstance();
+		managedComponent = component;
 		currentNonDeterminismLevel = startingNondeterminism;
-		evaluators = new HashMap<>();
 		energies = new HashMap<>();
 	}
 	
-	@Process
-	@PeriodicScheduling(period = 100)
-	public static void evaluate(
-			@In("currentNonDeterminismLevel") Double currentNonDeterminismLevel,
-			@InOut("energies") ParamHolder<Map<Double, NonDetModeSwitchFitness>> energies,
-			@InOut("evaluators") ParamHolder<Map<ComponentInstance, NonDetModeSwitchFitnessEval>> evaluators,
-			@In("evalClass") Class<? extends NonDetModeSwitchFitnessEval> evalClass,
-			@InOut("stateSpace") ParamHolder<NonDetModeSwitchAnnealStateSpace> stateSpace)
-					throws InstantiationException, IllegalAccessException{
+	private boolean isValidComponent(ComponentInstance component) {
+		ModeChart modeChart = component.getModeChart();
+		if (modeChart == null) {
+			return false;
+		}
 		
-		ComponentInstance component = ProcessContext.getCurrentProcess().getComponentInstance();
-		RuntimeMetadata runtime = (RuntimeMetadata) component.eContainer();
+		StateSpaceSearch sss = modeChart.getStateSpaceSearch();
+		return sss != null;
+	}
+
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.jdeeco.adaptation.MAPEAdaptation#monitor()
+	 */
+	@Override
+	public void monitor() {
 		long currentTime = ProcessContext.getTimeProvider().getCurrentMilliseconds();
 		
-		for (ComponentInstance c : runtime.getComponentInstances()) {
-			ModeChart modeChart = c.getModeChart();
-			if (modeChart != null) {
-				StateSpaceSearch sss = modeChart.getStateSpaceSearch();
-				if(sss != null)	{
-					if(!evaluators.value.containsKey(c)){
-						evaluators.value.put(c, evalClass.newInstance());
-					}
-					
-					NonDetModeSwitchFitnessEval evaluator = evaluators.value.get(c);
-					String[] knowledge = evaluator.getKnowledgeNames();
-					Object[] values = getValues(c, knowledge);
-					NonDetModeSwitchFitness energy = evaluator.getFitness(currentTime, values);
-					
-					if(energies.value.containsKey(currentNonDeterminismLevel)){
-						NonDetModeSwitchFitness p = energy.combineFitness(
-								energies.value.get(currentNonDeterminismLevel));
-						energies.value.put(currentNonDeterminismLevel, p);
-					} else {
-						energies.value.put(currentNonDeterminismLevel, energy);
-					}
-					
-					double energyValue = energies.value.get(currentNonDeterminismLevel).getFitness(); 
-					stateSpace.value.getState(currentNonDeterminismLevel).setEnergy(
-							energyValue);
-					
-					if(verbose){
-						Log.i(String.format("Non-deterministic mode switching energy for the"
-							+ "non-deterministic level %f at %d is %f",
-							currentNonDeterminismLevel, currentTime, energyValue));
-					}
-				}
-			}
+		// Measure the current fitness
+		String[] knowledge = evaluator.getKnowledgeNames();
+		Object[] values = getValues(managedComponent, knowledge);
+		NonDetModeSwitchFitness energy = evaluator.getFitness(currentTime, values);
+		
+		// Combine and store fitness value for the current non-determinism
+		if(energies.containsKey(currentNonDeterminismLevel)){
+			NonDetModeSwitchFitness p = energy.combineFitness(
+					energies.get(currentNonDeterminismLevel));
+			energies.put(currentNonDeterminismLevel, p);
+		} else {
+			energies.put(currentNonDeterminismLevel, energy);
+		}
+		
+		// Assign the fitness to the state
+		double energyValue = energies.get(currentNonDeterminismLevel).getFitness(); 
+		stateSpace.getState(currentNonDeterminismLevel).setEnergy(energyValue);
+		
+		if(verbose){
+			Log.i(String.format("Non-deterministic mode switching energy for the"
+				+ "non-deterministic level %f at %d is %f",
+				currentNonDeterminismLevel, currentTime, energyValue));
 		}
 	}
-	
-	/**
-	 * Configure the probabilities of non-deterministic mode transitions.
-	 * The period of this process can be set via the 
-	 * {@link NonDeterministicModeSwitchingPlugin}.
-	 * @param id
+
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.jdeeco.adaptation.MAPEAdaptation#analyze()
 	 */
-	@Process
-	@PeriodicScheduling(period = 1000)
-	public static void reason(@In("id") String id,
-			@In("startTime") long startTime,
-			@InOut("stateSpace") ParamHolder<NonDetModeSwitchAnnealStateSpace> stateSpace,
-			@InOut("currentNonDeterminismLevel") ParamHolder<Double> currentNonDeterminismLevel) {
+	@Override
+	public double analyze() {
+		long currentTime = ProcessContext.getTimeProvider().getCurrentMilliseconds();
 		
 		// Don't add non-determinism until the start time
-		if(ProcessContext.getTimeProvider().getCurrentMilliseconds() < startTime){
-			return;
+		if(currentTime < startTime){
+			return 0;
 		}
 		
-		ComponentInstance component = ProcessContext.getCurrentProcess().getComponentInstance();
-		RuntimeMetadata runtime = (RuntimeMetadata) component.eContainer();
-		long currentTime = ProcessContext.getTimeProvider().getCurrentMilliseconds();
-
-		for (ComponentInstance c : runtime.getComponentInstances()) {
-			ModeChart modeChart = c.getModeChart();
-			if (modeChart != null) {
-				StateSpaceSearch sss = modeChart.getStateSpaceSearch();
-				if(sss != null)	{
-					if(!((ModeChartImpl) modeChart).isModified()){
-						// Modify the mode chart if not yet modified
-						addNondeterministicTransitions((ModeChartImpl) modeChart);
-					}
-					
-					// Get the next state
-					NonDetModeSwitchAnnealState nextState =
-							(NonDetModeSwitchAnnealState)
-							sss.getNextState(stateSpace.value.getState(
-									currentNonDeterminismLevel.value));
-					
-					currentNonDeterminismLevel.value = nextState.getNondeterminism();
-					
-					reconfigureModeChart((ModeChartImpl)modeChart, currentNonDeterminismLevel.value);
-
-					if(verbose) {
-						Object knowledge[] = getValues(c, new String[]{"id"});
-						Log.i(String.format("Non-deterministic mode switching the"
-							+ "non-deterministic level of component %s set to %f at %d",
-							knowledge[0], currentNonDeterminismLevel.value, currentTime));
-					}
-				}
-			}
-		}
+		// TODO: check whether the search is complete
+		return 1;
 	}
+
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.jdeeco.adaptation.MAPEAdaptation#plan()
+	 */
+	@Override
+	public void plan() {
+		ModeChart modeChart = managedComponent.getModeChart();
+		StateSpaceSearch sss = modeChart.getStateSpaceSearch();			
+		
+		// Get the next state
+		NonDetModeSwitchAnnealState nextState =
+				(NonDetModeSwitchAnnealState) sss.getNextState(
+						stateSpace.getState(currentNonDeterminismLevel));
+		
+		nextNonDeterminismLevel = nextState.getNondeterminism();		
+	}
+
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.jdeeco.adaptation.MAPEAdaptation#execute()
+	 */
+	@Override
+	public void execute() {
+		ModeChart modeChart = managedComponent.getModeChart();
+		if(!((ModeChartImpl) modeChart).isModified()){
+			// Modify the mode chart if not yet modified
+			addNondeterministicTransitions((ModeChartImpl) modeChart);
+		}
+
+		reconfigureModeChart((ModeChartImpl)modeChart, nextNonDeterminismLevel);
+		currentNonDeterminismLevel = nextNonDeterminismLevel;
+
+		if(verbose) {
+			long currentTime = ProcessContext.getTimeProvider().getCurrentMilliseconds();
+			Object knowledge[] = getValues(managedComponent, new String[]{"id"});
+			Log.i(String.format("Non-deterministic mode switching the"
+				+ "non-deterministic level of component %s set to %f at %d",
+				knowledge[0], currentNonDeterminismLevel, currentTime));
+		}
+		
+	}
+	
 	
 	private static void reconfigureModeChart(ModeChartImpl modeChart, double nondeterminism){
 		

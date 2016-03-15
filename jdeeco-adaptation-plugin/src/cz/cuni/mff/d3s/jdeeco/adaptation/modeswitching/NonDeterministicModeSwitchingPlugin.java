@@ -18,14 +18,9 @@ package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
 import java.util.Arrays;
 import java.util.List;
 
-import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorExtensionPoint;
 import cz.cuni.mff.d3s.deeco.annotations.processor.NonDetModeSwitchAwareAnnotationProcessorExtension;
-import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
 import cz.cuni.mff.d3s.deeco.modes.ModeChart;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
@@ -34,27 +29,35 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.runtime.PluginInitFailedException;
 import cz.cuni.mff.d3s.deeco.runtime.PluginStartupFailedException;
 import cz.cuni.mff.d3s.deeco.search.StateSpaceSearch;
+import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationPlugin;
 import cz.cuni.mff.d3s.jdeeco.modes.ModeSwitchingPlugin;
 
 /**
+ * Non-Deterministic Mode Switching plugin deploys a adaptation strategy,
+ * that handles non-deterministic mode switching.
+ * 
+ * <p>The non-deterministic component needs to be deployed at each node
+ * that employs this strategy. Therefor deploy this plugin to all desired
+ * DEECo nodes.</p>
+ * 
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
- *
  */
 public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, StartupListener {
 
 	private long startTime = 0;
 	private Class<? extends NonDetModeSwitchFitnessEval> evalClass = null;
-	private long evalPeriod = 100;
-	private long reconfPeriod = 1000;
 	private double startingNondeterminism = 0.0001;
 	private DEECoContainer container = null;
+	AdaptationPlugin adaptationPlugin= null;
 	
 	private boolean verbose = false;
 	
 	/** Plugin dependencies. */
 	@SuppressWarnings("unchecked")
 	static private final List<Class<? extends DEECoPlugin>> DEPENDENCIES =
-			Arrays.asList(new Class[]{ModeSwitchingPlugin.class});
+			Arrays.asList(new Class[]{
+					AdaptationPlugin.class,
+					ModeSwitchingPlugin.class});
 	
 	public NonDeterministicModeSwitchingPlugin(Class<? extends NonDetModeSwitchFitnessEval> evalClass){
 		this.evalClass = evalClass;
@@ -62,16 +65,6 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 	
 	public NonDeterministicModeSwitchingPlugin startAt(long startTime) {
 		this.startTime = startTime;
-		return this;
-	}
-	
-	public NonDeterministicModeSwitchingPlugin withEvalPeriod(long evalPeriod) {
-		this.evalPeriod = evalPeriod;
-		return this;
-	}
-	
-	public NonDeterministicModeSwitchingPlugin withReconfigPeriod(long reconfPeriod) {
-		this.reconfPeriod = reconfPeriod;
 		return this;
 	}
 	
@@ -99,44 +92,16 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 	@Override
 	public void init(DEECoContainer container) throws PluginInitFailedException {
 		this.container = container;
+				
 		AnnotationProcessorExtensionPoint nonDetModeAwareAnnotationProcessor = new NonDetModeSwitchAwareAnnotationProcessorExtension();
 		container.getProcessor().addExtension(nonDetModeAwareAnnotationProcessor);
 		
 		container.addStartupListener(this);
 		
-		try {
-			final NonDeterministicModeSwitchingManager manager =
-					new NonDeterministicModeSwitchingManager(startTime,
-							startingNondeterminism, evalClass);
-			NonDeterministicModeSwitchingManager.verbose = verbose;
-			
-			container.deployComponent(manager);
-		} catch (AnnotationProcessorException e) {
-			Log.e("Error while trying to deploy AdaptationManager", e);
-		}
+		adaptationPlugin = container.getPluginInstance(AdaptationPlugin.class);
 		
-		for (ComponentInstance c : container.getRuntimeMetadata().getComponentInstances()) {
-			if (c.getName().equals(NonDeterministicModeSwitchingManager.class.getName())) {
-				// Adjust non-deterministic mode switching manager periods
-				for (ComponentProcess p: c.getComponentProcesses()) {
-					Long period = null;
-					if(p.getName().equals("evaluate")){
-						period = evalPeriod;
-					}
-					if(p.getName().equals("reason")){
-						period = reconfPeriod;
-					}
-					
-					if(period != null){
-						for (Trigger t : p.getTriggers()){
-							if (t instanceof TimeTrigger) {
-								((TimeTrigger) t).setPeriod(period);
-							}
-						}
-					}
-				}
-			}
-		}
+		NonDeterministicModeSwitchingManager.startingNondeterminism = startingNondeterminism;
+		NonDeterministicModeSwitchingManager.verbose = verbose;
 	}
 
 	/* (non-Javadoc)
@@ -150,12 +115,21 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 					"NonDeterministicModeSwitching",
 					"DEECo container"));
 		}
-		// Check modes
+		if(adaptationPlugin == null){
+			throw new PluginStartupFailedException(String.format(
+					"The %s plugin doesn't have a reference to %s.",
+					"NonDeterministicModeSwitching",
+					"AdaptationPlugin"));
+		}
+		
+		
+		// Components with non-deterministic mode switching aspiration
 		for (ComponentInstance c : container.getRuntimeMetadata().getComponentInstances()) {
 			ModeChart modeChart = c.getModeChart();
 			if (modeChart != null) {
 				StateSpaceSearch sss = modeChart.getStateSpaceSearch();
 				if(sss != null)	{
+					// Check if modes are of correct type
 					for(Class<? extends DEECoMode> mode : modeChart.getModes()){
 						if(!NonDetModeSwitchMode.class.isAssignableFrom(mode)){
 							throw new PluginStartupFailedException(String.format(
@@ -163,6 +137,16 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 									mode, NonDetModeSwitchMode.class));
 						}
 					}
+
+					// Create non-deterministic mode switching manager or thecomponent
+					NonDeterministicModeSwitchingManager manager;
+					try {
+						manager = new NonDeterministicModeSwitchingManager(startTime,
+								evalClass, c);
+					} catch (InstantiationException | IllegalAccessException e) {
+						throw new PluginStartupFailedException(e);
+					}	
+					adaptationPlugin.registerAdaptation(manager);
 				}
 			}
 		}

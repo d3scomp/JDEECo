@@ -9,32 +9,27 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.emf.common.util.EMap;
-
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.In;
-import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.Local;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.SystemComponent;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
-import cz.cuni.mff.d3s.deeco.task.ParamHolder;
-import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationManager;
+import cz.cuni.mff.d3s.jdeeco.adaptation.MAPEAdaptation;
 import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.BoundaryValueHolder;
 import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.ComponentPair;
 import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationLevel.DistanceClass;
+import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper;
 import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.DistancePair;
 import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.KnowledgeMetadataHolder;
 import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.KnowledgeQuadruple;
 import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.LabelPair;
-import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper;
 
 @Component
 @SystemComponent
-public class CorrelationManager implements AdaptationManager {
+public class CorrelationManager implements MAPEAdaptation {
 
 	/**
 	 * Specify whether to print the values being processed by the correlation computation.
@@ -48,14 +43,6 @@ public class CorrelationManager implements AdaptationManager {
 	@Local
 	static boolean logGeneratedEnsembles = false;
 
-	/** Run flag stored in internal data under this key. */
-	@Local
-	static final String RUN_FLAG = "runFlag";
-
-	/** Done flag stored in internal data under this key. */
-	@Local
-	static final String DONE_FLAG = "doneFlag";
-
 	/**
 	 * Time slot duration in milliseconds. Correlation of values is computed
 	 * within these time slots.
@@ -63,15 +50,15 @@ public class CorrelationManager implements AdaptationManager {
 	@Local
 	private static final long TIME_SLOT_DURATION = 1000;
 
+
+	public String id = "CorrelationManager";
+	
 	/**
 	 * The list of the other DEECo nodes that exists in the system.
 	 * Except the node on which the CorrelaitonManager component is deployed.
 	 */
 	@Local
 	public final List<DEECoNode> otherNodes;
-
-
-	public String id = "CorrelationManager";
 
 	/**
 	 * Holds the history of knowledge of all the other components in the system.
@@ -88,10 +75,8 @@ public class CorrelationManager implements AdaptationManager {
 	 * If the data are not correlated the value stored is Double.NaN.
 	 * The bound applies to the distance of knowledge values identified by the first label in the LabelPair.
 	 */
-	public Map<LabelPair, BoundaryValueHolder> distanceBounds;
-
 	@Local
-	private ComponentInstance deecoComponent;
+	public Map<LabelPair, BoundaryValueHolder> distanceBounds;
 
 	/**
 	 * Create an instance of the {@link CorrelationManager} that will hold
@@ -105,33 +90,6 @@ public class CorrelationManager implements AdaptationManager {
 		this.otherNodes = otherNodes;
 	}
 
-	/**
-	 * Deeco component instance representing this manager.
-	 * @param deecoComponent component instance of this manager
-	 */
-	public void setDeecoComponent(final ComponentInstance deecoComponent) {
-		this.deecoComponent = deecoComponent;
-	}
-
-	@Override
-	public void stop() {
-		final EMap<String, Object> data = deecoComponent.getInternalData();
-		data.put(CorrelationManager.RUN_FLAG, false);
-	}
-
-	@Override
-	public void run() {
-		final EMap<String, Object> data = deecoComponent.getInternalData();
-		data.put(CorrelationManager.RUN_FLAG, true);
-		data.put(CorrelationManager.DONE_FLAG, false);
-	}
-
-	@Override
-	public boolean isDone() {
-		final EMap<String, Object> data = deecoComponent.getInternalData();
-		final Boolean result = (Boolean) data.get(CorrelationManager.DONE_FLAG);
-		return result == null || result;
-	}
 
 	/**
 	 * For quick debugging.
@@ -185,112 +143,118 @@ public class CorrelationManager implements AdaptationManager {
 		Log.i(b.toString());
 	}
 
-	@Process
-	@PeriodicScheduling(period=1000)
-	public static void checkDone(
-			@In("knowledgeHistoryOfAllComponents") Map<String, Map<String, List<CorrelationMetadataWrapper<?>>>> history) {
-		boolean done = true;
-		for (String s1 : history.keySet()) {
-			final Map<String, List<CorrelationMetadataWrapper<?>>> map = history.get(s1);
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.jdeeco.adaptation.MAPEAdaptation#monitor()
+	 */
+	@Override
+	public void monitor() {
+		// This is handled by the CorrelationDataAggregation ensemble
+		// TODO: consider the ensemble exchanging only the last value and here adding the value to a list of all history values
+	}
+
+	/**
+	 * Check whether the new ensemble inferred by correlation is needed.
+	 * 
+	 * @returns 1 if the ensemble is needed. 0 otherwise.
+	 */
+	@Override
+	public double analyze() {
+		boolean irrelevant = true;
+		for (String s1 : knowledgeHistoryOfAllComponents.keySet()) {
+			final Map<String, List<CorrelationMetadataWrapper<?>>> map = 
+					knowledgeHistoryOfAllComponents.get(s1);
 			for (String s2 : map.keySet()) {
 				final List<CorrelationMetadataWrapper<?>> list = map.get(s2);
 				if (!list.isEmpty()) {
-					done &= list.get(list.size() - 1).isOperational();
+					// If any sensor is not operational than the adaptation is relevant
+					irrelevant &= list.get(list.size() - 1).isOperational();
 				}
 			}
 		}
-		if (done) {
-			// TODO: indicate the adaptation is done
-		}
+		
+		return irrelevant
+				? 0
+				: 1;
 	}
 
 	/**
 	 * Method that measures the correlation between the data in the system
-	 *
-	 * @param history The time series of all knowledge of all components.
-	 * @param bounds The distance bounds, that satisfies the correlation confidence level, to be computed.
 	 */
-	@Process
-	@PeriodicScheduling(period=1000)
-	public static void calculateCorrelation(
-			@In("knowledgeHistoryOfAllComponents") Map<String, Map<String, List<CorrelationMetadataWrapper<?>>>> history,
-			@InOut("distanceBounds") ParamHolder<Map<LabelPair, BoundaryValueHolder>> bounds){
-
+	@Override
+	public void plan() {
 		if(verbose){
 			Log.i("Correlation process started...");
 		}
 
-		for(LabelPair labels : getAllLabelPairs(history)){
-			List<DistancePair> distances = computeDistances(history, labels);
+		for(LabelPair labels : getAllLabelPairs(knowledgeHistoryOfAllComponents)){
+			List<DistancePair> distances = computeDistances(knowledgeHistoryOfAllComponents, labels);
 			double boundary = getDistanceBoundary(distances, labels);
 			if(verbose){
 				Log.i(String.format("%s -> %s", labels.getFirstLabel(), labels.getSecondLabel()));
 				Log.i(String.format("Boundary: %f", boundary));
 			}
-			if(bounds.value.containsKey(labels)){
+			if(distanceBounds.containsKey(labels)){
 				// Update existing boundary (automatically handles "hasChanged" flag)
-				bounds.value.get(labels).setBoundary(boundary);
+				distanceBounds.get(labels).setBoundary(boundary);
 			} else {
 				// Create new boundary value (by default "hasChanged" flag is true
-				bounds.value.put(labels, new BoundaryValueHolder(boundary));
+				distanceBounds.put(labels, new BoundaryValueHolder(boundary));
 			}
-		}
+		}		
 	}
 
 	/**
 	 * Deploys, activates and deactivates correlation ensembles based on the current
 	 * correlation of the data in the system.
-	 * @param deecoNodes The {@link DEECoNode}s in the system, where the ensembles are managed on.
-	 * @param bounds The distance bounds that satisfies the correlation confidence level.
-	 * @throws Exception If there is a problem creating the ensemble definition class, or deploying it.
 	 */
-	@Process
-	@PeriodicScheduling(period=1000)
-	public static void manageCorrelationEnsembles(
-			@InOut("distanceBounds") ParamHolder<Map<LabelPair, BoundaryValueHolder>> bounds,
-			@In("otherNodes") List<DEECoNode> deecoNodes) throws Exception {
-
+	@Override
+	public void execute() {
 		final boolean run = true;
 		if(verbose){
 			Log.i("Correlation ensembles management process started...");
 		}
 
-		for(LabelPair labels : bounds.value.keySet()){
+		for(LabelPair labels : distanceBounds.keySet()){
 			String correlationFilter = labels.getFirstLabel();
 			String correlationSubject = labels.getSecondLabel();
-			BoundaryValueHolder distance = bounds.value.get(labels);
+			BoundaryValueHolder distance = distanceBounds.get(labels);
 			String ensembleName = CorrelationEnsembleFactory
 					.composeClassName(correlationFilter, correlationSubject);
-			if (!distance.isValid() || !run) {
-				if(verbose){
-					Log.i(String.format("Undeploying ensemble %s",	ensembleName));
+			try {
+				if (!distance.isValid() || !run) {
+					if(verbose){
+						Log.i(String.format("Undeploying ensemble %s",	ensembleName));
+					}
+					// Undeploy the ensemble if the meta-adaptation is stopped or the correlation between the data is not reliable
+					for (DEECoNode node : otherNodes) {
+						node.undeployEnsemble(ensembleName);
+					}
+				} else if (distance.hasChanged()) {
+					// Re-deploy the ensemble only if the distance has changed since the last time and if it is valid
+					CorrelationEnsembleFactory.setEnsembleMembershipBoundary(correlationFilter, correlationSubject, distance.getBoundary(), logGeneratedEnsembles);
+					Class<?> ensemble = CorrelationEnsembleFactory.getEnsembleDefinition(correlationFilter, correlationSubject, logGeneratedEnsembles);
+					if(verbose){
+						Log.i(String.format("Deploying ensemble %s", ensembleName));
+					}
+					// Deploy the ensemble if the correlation is reliable enough and the meta-adaptation is running
+					for(DEECoNode node : otherNodes){
+						node.undeployEnsemble(ensemble.getName());
+						// TODO: deploy only on broken nodes
+						node.deployEnsemble(ensemble);
+					}
+					// Mark the boundary as !hasChanged since the new value is used
+					distanceBounds.get(labels).boundaryUsed();
+				} else if(verbose){
+					Log.i(String.format(
+							"Omitting deployment of ensemble %s since the bound hasn't changed (much).",
+							ensembleName));
 				}
-				// Undeploy the ensemble if the meta-adaptation is stopped or the correlation between the data is not reliable
-				for (DEECoNode node : deecoNodes) {
-					node.undeployEnsemble(ensembleName);
-				}
-			} else if (distance.hasChanged()) {
-				// Re-deploy the ensemble only if the distance has changed since the last time and if it is valid
-				CorrelationEnsembleFactory.setEnsembleMembershipBoundary(correlationFilter, correlationSubject, distance.getBoundary(), logGeneratedEnsembles);
-				Class<?> ensemble = CorrelationEnsembleFactory.getEnsembleDefinition(correlationFilter, correlationSubject, logGeneratedEnsembles);
-				if(verbose){
-					Log.i(String.format("Deploying ensemble %s", ensembleName));
-				}
-				// Deploy the ensemble if the correlation is reliable enough and the meta-adaptation is running
-				for(DEECoNode node : deecoNodes){
-					node.undeployEnsemble(ensemble.getName());
-					// TODO: deploy only on broken nodes
-					node.deployEnsemble(ensemble);
-				}
-				// Mark the boundary as !hasChanged since the new value is used
-				bounds.value.get(labels).boundaryUsed();
-			} else if(verbose){
-				Log.i(String.format(
-						"Omitting deployment of ensemble %s since the bound hasn't changed (much).",
-						ensembleName));
+			} catch(Exception e) {
+				Log.e(e.getMessage());
+				e.printStackTrace();
 			}
 		}
-
+		
 	}
 
 	/**
@@ -621,4 +585,5 @@ public class CorrelationManager implements AdaptationManager {
 		}
 		values.removeAll(toRemove);
 	}
+
 }

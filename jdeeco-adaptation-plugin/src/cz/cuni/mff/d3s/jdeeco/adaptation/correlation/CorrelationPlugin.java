@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.jdeeco.adaptation.correlation;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
@@ -11,7 +11,20 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException;
+import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationPlugin;
 
+/**
+ * Correlation plugin deploys a component that monitors and correlates data
+ * of other components in the system and deploys new ensembles based on the
+ * results of the correlation.
+ * 
+ * <p>It is desirable to have only one instance of the correlation component
+ * since its processes are resource demanding and there is no benefit of having
+ * more than one instance.</p>
+ * 
+ * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
+ *
+ */
 public class CorrelationPlugin implements DEECoPlugin {
 
 	private boolean verbose;
@@ -19,8 +32,9 @@ public class CorrelationPlugin implements DEECoPlugin {
 	private boolean logGeneratedEnsembles;
 	
 	/** Plugin dependencies. */
+	@SuppressWarnings("unchecked")
 	static private final List<Class<? extends DEECoPlugin>> DEPENDENCIES =
-			Collections.emptyList();
+			Arrays.asList(new Class[]{AdaptationPlugin.class});;
 
 	private final List<DEECoNode> deecoNodes;
 
@@ -75,6 +89,9 @@ public class CorrelationPlugin implements DEECoPlugin {
 			
 			container.deployComponent(manager);
 			container.deployEnsemble(CorrelationDataAggregation.class);
+			
+			AdaptationPlugin adaptationPlugin = container.getPluginInstance(AdaptationPlugin.class);
+			adaptationPlugin.registerAdaptation(manager);
 		} catch (AnnotationProcessorException | DuplicateEnsembleDefinitionException e) {
 			Log.e("Error while trying to deploy AdaptationManager", e);
 		}
