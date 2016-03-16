@@ -4,6 +4,7 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.*
 import java.util.List
 import java.util.Collections
 import cz.cuni.mff.d3s.jdeeco.edl.PrimitiveTypes
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.QualifiedNameImpl
 
 class EDLUtils {
 	def static String stripSet(String setType) {
@@ -256,10 +257,22 @@ class EDLUtils {
 			
 		var remainder = parts.drop(1)	
 		
-		if (remainder.length > 0)
-			result + "." +String.join(".", remainder)
-		else
+		if (remainder.length > 0) {
+			var firstName = new QualifiedNameImpl() {};
+			firstName.name = first;			
+			
+			if (getKnowledgeType(ctx, firstName, ensemble).startsWith("set")
+			) {
+				result + ".stream().map(x -> x." + String.join(".", remainder) + ").collect(Collectors.toList())";
+			}
+			else {
+				result + "." +String.join(".", remainder)
+			}
+		}
+		else {
 			result
+		}
+			
 	}
 	
 	def static String getJavaTypeName(String type) {

@@ -64,6 +64,7 @@ import java.util.ArrayList;
 import java.util.List;
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleInstance;
 import cz.cuni.mff.d3s.jdeeco.edl.functions.*;
+import java.util.stream.*;
 
 public class «e.name» implements EnsembleInstance {
 	// Ensemble ID
@@ -120,7 +121,7 @@ public class «e.name» implements EnsembleInstance {
 '''package «packageString»;
 
 import cz.cuni.mff.d3s.deeco.annotations.Role;
-import cz.cuni.mff.d3s.jdeeco.edl;
+import cz.cuni.mff.d3s.jdeeco.edl.BaseDataContract;
 
 @Role
 public class «d.name» extends BaseDataContract {
