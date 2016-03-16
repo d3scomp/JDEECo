@@ -68,6 +68,7 @@ class KnowledgeFieldVector {
 class DataContractInstancesContainer {
 	private BaseDataContract[] instances;
 	private Map<String, KnowledgeFieldVector> knowledgeFields;
+	private String dataContractName;
 	
 	public DataContractInstancesContainer(Context ctx, String packageName, DataContractDefinition dataContractDefinition,
 			KnowledgeContainer knowledgeContainer)
@@ -76,10 +77,19 @@ class DataContractInstancesContainer {
 		@SuppressWarnings("unchecked")
 		Class<? extends BaseDataContract> roleClass = (Class<? extends BaseDataContract>) Class.forName(packageName + "." + dataContractDefinition.getName());
 		Collection<? extends BaseDataContract> instancesUnsorted = knowledgeContainer.getTrackedKnowledgeForRole(roleClass);
-		
+				
 		this.instances = new BaseDataContract[instancesUnsorted.size()];
-		for (BaseDataContract instance : instancesUnsorted) {
-			instances[Integer.parseInt(instance.id)-1] = instance;
+		this.dataContractName = dataContractDefinition.getName();
+		for (int i = 0; !instancesUnsorted.isEmpty(); i++) {
+			BaseDataContract minInstance = instancesUnsorted.iterator().next();
+			for (BaseDataContract instance : instancesUnsorted) {
+				if (Integer.parseInt(instance.id) < Integer.parseInt(minInstance.id)) {
+					minInstance = instance;
+				}
+			}
+			
+			instances[i] = minInstance;
+			instancesUnsorted.remove(minInstance);
 		}
 		
 		knowledgeFields = new HashMap<>();
@@ -121,10 +131,20 @@ class DataContractInstancesContainer {
         List<RoleDefinition> roles = ensembleDefinition.getRoles();
         int minCardinalitiesSum = 0;
         for (RoleDefinition roleDefinition : roles) {
-        	minCardinalitiesSum += roleDefinition.getCardinalityMin();
+        	if (roleDefinition.getType().toString().equals(getName())) {
+        		minCardinalitiesSum += roleDefinition.getCardinalityMin();
+        	}
+        }
+        
+        if (minCardinalitiesSum == 0) {
+        	return Integer.MAX_VALUE;
         }
         
         return getNumInstances() / Math.max(1, minCardinalitiesSum);
+	}
+	
+	public String getName() {
+		return dataContractName;
 	}
 	
 	public BaseDataContract getInstance(int componentIndex) {
@@ -206,8 +226,6 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 
 	private void printModel(Model m, EnsembleAssignmentMatrix assignments, List<RoleDefinition> roles,
 			DataContainer dataContainer) {
-		//System.out.println("Solver: " + opt);
-		//System.out.println("Model = " + m);
 		for (int e = 0; e < assignments.getMaxEnsembleCount(); e++) {
 			System.out.println("train " + e + ":");
 			for (int r = 0; r < assignments.get(e).getRoleCount(); r++) {
@@ -231,12 +249,12 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 		List<EnsembleInstance> result = new ArrayList<>();
 		List<RoleDefinition> roles = ensembleDefinition.getRoles();
 		Class<?> ensembleClass = Class.forName(packageName + "." + ensembleDefinition.getName());
-		//Class<?> ensembleClass = IntelligentEnsemble.class;
 		for (int e = 0; e < maxEnsembleCount; e++) {
 			Expr exists = m.getConstInterp(assignments.ensembleExists(e));
 			if (exists.getBoolValue() == Z3_lbool.Z3_L_FALSE)
 				continue;
 			
+			// TODO
 			//EnsembleInstance ie = (EnsembleInstance) ensembleClass.getConstructor(int.class).
 			EnsembleInstance ie = new PendolinoEnsemble(e + 1);
 
@@ -311,7 +329,8 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 					List<BoolExpr> assigned = new ArrayList<BoolExpr>();
 					for (int e = 0; e < maxEnsembleCount; e++) {
 						for (int r = 0; r < assignments.get(e).getRoleCount(); r++) {
-							assigned.add(assignments.get(e, r, c));
+							if (roles.get(r).getType().toString().equals(dataContract.getName()))
+								assigned.add(assignments.get(e, r, c));
 						}
 					}
 								
@@ -333,7 +352,9 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 			new ConstraintParser(ctx, opt).parseConstraints(ensembleDefinition);
 								
 			Status status = opt.Check();
+			//System.out.println("Solver: " + opt);
 			if (status == Status.SATISFIABLE) {
+				//System.out.println("Model = " + opt.getModel());
 				printModel(opt.getModel(), assignments, roles, dataContainer);
 				
 				List<EnsembleInstance> result = createEnsembles(opt.getModel(), assignments, ensembleDefinition, 

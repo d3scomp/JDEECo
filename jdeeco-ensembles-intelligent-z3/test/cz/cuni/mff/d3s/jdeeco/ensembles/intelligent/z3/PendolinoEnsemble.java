@@ -17,6 +17,8 @@ public class PendolinoEnsemble implements EnsembleInstance {
 	public Rescuer leader;
 	
 	public List<Rescuer> rescuers;
+	
+	public FireFighter firefighter;
 
 	@Override
 	public void performKnowledgeExchange() {
@@ -29,6 +31,10 @@ public class PendolinoEnsemble implements EnsembleInstance {
 		
 		for (Rescuer member : rescuers) {
 			member.trainId = trainId;
+		}
+		
+		if (firefighter != null) {
+			firefighter.trainId = trainId;
 		}
 	}
 

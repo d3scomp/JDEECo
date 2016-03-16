@@ -6,16 +6,18 @@ data contract Rescuer
 	trainId : int
 end
 
+data contract FireFighter
+	trainId : int
+end
+
 ensemble PendolinoEnsemble
 	id trainId : int
 	membership
 		roles
 			leader : Rescuer
-			rescuers [1..4] : Rescuer
+			rescuers [1..2] : Rescuer
+			firefighter [0..1] : FireFighter		
 		
-		constraints
-			constraint !(-(2 + 2) < -(5 * 1 - 4 / 2) && 2 >= 3)
-			
 		fitness 0
 		
 	knowledge exchange
