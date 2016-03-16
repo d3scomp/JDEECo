@@ -63,12 +63,13 @@ class EDLGenerator implements IGenerator, ITypeResolutionContext {
 import java.util.ArrayList;
 import java.util.List;
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleInstance;
+import cz.cuni.mff.d3s.jdeeco.edl.functions.*;
 
 public class «e.name» implements EnsembleInstance {
 	// Ensemble ID
-	public final «getJavaTypeName(e.id.type.name)» «e.id.fieldName»;
+	public final «EDLUtils.getJavaTypeName(e.id.type.name)» «e.id.fieldName»;
 	
-	public «e.name»(«getJavaTypeName(e.id.type.name)» «e.id.fieldName») {
+	public «e.name»(«EDLUtils.getJavaTypeName(e.id.type.name)» «e.id.fieldName») {
 		this.«e.id.fieldName» = «e.id.fieldName»;
 		«FOR r : e.roles»
 		«IF r.cardinalityMax != 1»		
@@ -79,7 +80,7 @@ public class «e.name» implements EnsembleInstance {
 	
 	// Aliases
 	«FOR a : e.aliases»	
-	public «getJavaTypeName(EDLUtils.getType(this, a.aliasValue, e))» «a.aliasId»() {
+	public «EDLUtils.getJavaTypeName(EDLUtils.getType(this, a.aliasValue, e))» «a.aliasId»() {
 		return «a.aliasValue.accept(generatorVisitor)»;
 	}
 		
@@ -124,7 +125,7 @@ import cz.cuni.mff.d3s.jdeeco.edl;
 @Role
 public class «d.name» extends BaseDataContract {
 	«FOR f : d.fields»					
-	public «getJavaTypeName(f.type.name)» «f.name»;
+	public «EDLUtils.getJavaTypeName(f.type.name)» «f.name»;
 	«ENDFOR»				
 }'''
 			);
@@ -137,21 +138,10 @@ public class «d.name» extends BaseDataContract {
 
 public class «d.name» {	
 	«FOR f : d.fields»				
-	public «getJavaTypeName(f.type.name)» «f.name»;
+	public «EDLUtils.getJavaTypeName(f.type.name)» «f.name»;
 	«ENDFOR»				
 }'''
 			);
-	}
-	
-	def String getJavaTypeName(String type) {
-		switch type {
-			case PrimitiveTypes.STRING:
-				"String"
-			case PrimitiveTypes.BOOL:
-				"boolean"
-			default:
-				type
-		}			
 	}	
 	
 	override getDataType(QualifiedName name) {

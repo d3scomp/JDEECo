@@ -23,9 +23,9 @@ public class DefaultFunctionRegistry implements IFunctionRegistry {
 	}
 
 	private void initialize() {		
-		registerFunction("setsEqual", new SetsEqual());
-		registerFunction("oneOf", new OneOf());
-		registerFunction("count", new Count());
+		registerFunction("SetsEqual", new SetsEqual());
+		registerFunction("OneOf", new OneOf());
+		registerFunction("Count", new Count());
 	}
 	
 	private void registerFunction(String name, IConstraintFunction f) {

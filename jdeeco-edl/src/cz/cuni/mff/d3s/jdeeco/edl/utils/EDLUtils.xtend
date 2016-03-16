@@ -36,7 +36,7 @@ class EDLUtils {
 		if (position >= name.prefix.length) {			
 			var FieldDeclaration f = type.fields.findFirst[it.name.equals(name.name)]
 			if (f != null) {
-				return f.type.name.toLowerCase();
+				return f.type.name;
 			}
 			else {
 				ctx.reportError("The specified data type does not contain a field of this name.", name, EdlPackage.Literals.QUALIFIED_NAME__NAME)
@@ -261,4 +261,15 @@ class EDLUtils {
 		else
 			result
 	}
+	
+	def static String getJavaTypeName(String type) {
+		switch type {
+			case PrimitiveTypes.STRING:
+				"String"
+			case PrimitiveTypes.BOOL:
+				"boolean"
+			default:
+				type
+		}			
+	}	
 }

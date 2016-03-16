@@ -23,8 +23,7 @@ public class Count implements IFunction {
 	}
 
 	@Override
-	public Object evaluate(Object... params) {
-		// TODO Auto-generated method stub
+	public Object evaluate(Object... params) {		
 		return ((List) params[0]).size();
 	}
 

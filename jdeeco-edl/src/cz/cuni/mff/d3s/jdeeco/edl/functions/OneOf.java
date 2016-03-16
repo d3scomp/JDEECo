@@ -17,7 +17,6 @@ public class OneOf implements IFunction {
 		params.add("set");
 	}
 
-
 	@Override
 	public List<String> getParameterTypes() {
 		return params;
