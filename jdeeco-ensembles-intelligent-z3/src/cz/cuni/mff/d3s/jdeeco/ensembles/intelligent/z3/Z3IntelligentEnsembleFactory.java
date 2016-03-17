@@ -349,7 +349,7 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 				}
 			}
 			
-			new ConstraintParser(ctx, opt).parseConstraints(ensembleDefinition);
+			new ConstraintParser(ctx, opt, dataContainer).parseConstraints(ensembleDefinition);
 								
 			Status status = opt.Check();
 			//System.out.println("Solver: " + opt);

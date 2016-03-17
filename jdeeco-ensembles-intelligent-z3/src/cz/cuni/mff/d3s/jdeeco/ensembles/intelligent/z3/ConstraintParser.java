@@ -32,11 +32,13 @@ import cz.cuni.mff.d3s.jdeeco.edl.utils.ITypeResolutionContext;
 class ConstraintParser extends QueryVisitorImpl<Expr> {
 	private Context ctx;
 	private Optimize opt;
+	private DataContainer dataContainer;
 	
-	public ConstraintParser(Context ctx, Optimize opt) {
+	public ConstraintParser(Context ctx, Optimize opt, DataContainer dataContainer) {
 		super();
 		this.ctx = ctx;
 		this.opt = opt;
+		this.dataContainer = dataContainer;
 	}
 	
 	public void parseConstraints(EnsembleDefinition ensembleDefinition) {
@@ -93,9 +95,10 @@ class ConstraintParser extends QueryVisitorImpl<Expr> {
 	public Expr visit(KnowledgeVariable query) {
 		String roleName = query.getPath().toParts().get(0);
 		String fieldName = query.getPath().toParts().get(1);
+		
+		//dataContainer.get(dataContractName, fieldName, componentIndex);
+		
 		return null;
-
-
 	}
 
 	@Override
