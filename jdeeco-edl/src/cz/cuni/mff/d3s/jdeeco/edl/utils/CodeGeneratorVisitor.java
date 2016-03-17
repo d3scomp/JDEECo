@@ -25,7 +25,7 @@ public class CodeGeneratorVisitor extends ToStringVisitor {
 		StringBuilder builder = new StringBuilder();		
 		
 		builder.append("(" + 
-		EDLUtils.getJavaTypeName(typeContext.functionRegistry().getFunctionReturnType(typeContext, parentEnsemble, query.getName(), query.getParameters().toArray(new Query[]{}))) 
+		EDLUtils.getJavaTypeName(typeContext.getFunctionRegistry().getFunctionReturnType(typeContext, parentEnsemble, query.getName(), query.getParameters().toArray(new Query[]{}))) 
 		+") new " + query.getName() + "().evaluate(");
 		
 		for (Query p : query.getParameters()) {

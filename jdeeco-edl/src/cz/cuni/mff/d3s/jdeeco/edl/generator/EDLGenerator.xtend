@@ -157,7 +157,7 @@ public class «d.name» {
 		// Left intentionally empty - no need to report type errors during generation, document should be valid at this point
 	}
 	
-	override functionRegistry() {
+	override getFunctionRegistry() {
 		return registry;
 	}
 	

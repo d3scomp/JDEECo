@@ -11,5 +11,5 @@ public interface ITypeResolutionContext {
 	void reportError(String message, EObject source, EStructuralFeature feature);
 	boolean isKnownType(QualifiedName name);
 	TypeDefinition getDataType(QualifiedName name);
-	IFunctionRegistry functionRegistry();
+	IFunctionRegistry getFunctionRegistry();
 }

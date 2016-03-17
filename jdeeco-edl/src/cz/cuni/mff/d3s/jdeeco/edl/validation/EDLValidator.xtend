@@ -151,7 +151,7 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 		error(message, source, feature)
 	}
 	
-	override functionRegistry() {
+	override getFunctionRegistry() {
 		return registry
 	}
 	

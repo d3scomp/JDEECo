@@ -8,7 +8,10 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.QualifiedNameImpl
 
 class EDLUtils {
 	def static String stripSet(String setType) {
-		setType.subSequence(4, setType.length-1).toString();
+		if (setType.startsWith("set"))
+			setType.subSequence(4, setType.length-1).toString()
+		else
+			PrimitiveTypes.UNKNOWN;
 	}
 	
 		
@@ -59,7 +62,7 @@ class EDLUtils {
 			}
 		}
 		
-		"unknown"
+		PrimitiveTypes.UNKNOWN;
 	}
 	
 	def static String getKnowledgeType(ITypeResolutionContext ctx, QualifiedName name, EnsembleDefinition ensemble) {		
@@ -103,7 +106,7 @@ class EDLUtils {
 			}
 		}
 		
-		"unknown"	
+		PrimitiveTypes.UNKNOWN;
 	}
 	
 	def static String getType(ITypeResolutionContext ctx, Query query, EnsembleDefinition ensemble) {		
@@ -202,7 +205,7 @@ class EDLUtils {
 						ctx.reportError("The function reports null as its parameters. Until this is fixed in the function definition, the function cannot be used.", 
 							query, EdlPackage.Literals.FUNCTION_CALL__NAME);
 							
-						return "unknown"  
+						return PrimitiveTypes.UNKNOWN;
 					}
 					
 					if (formalParams.length != query.parameters.length)
@@ -224,17 +227,17 @@ class EDLUtils {
 					}
 					else {
 						ctx.reportError("Return type of a function must not be null. Until this is fixed, the function cannot be used.", query, EdlPackage.Literals.FUNCTION_CALL__NAME);
-						"unknown"
+						PrimitiveTypes.UNKNOWN;
 					}	
 				} 
 				else {
 					ctx.reportError("Unknown function name: " + query.name, query, EdlPackage.Literals.FUNCTION_CALL__NAME);
-					"unknown"
+					PrimitiveTypes.UNKNOWN;
 				}
 			}
 					
 		default:
-			"unknown"			
+			PrimitiveTypes.UNKNOWN	
 		}
 	}
 	
