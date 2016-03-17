@@ -9,7 +9,7 @@ import com.microsoft.z3.Optimize;
 class ComponentAssignmentSet {
 	// for each component a boolean expression determining whether the component is
 	// in the ensemble (in the particular role)
-	private BoolExpr[] assignmentSet;
+	private BoolExpr[] assignments;
 	
 	private Context ctx;
 	private Optimize opt;
@@ -21,14 +21,14 @@ class ComponentAssignmentSet {
 		for (int j = 0; j < componentCount; j++) {
 			assignments[j] = ctx.mkBoolConst("assignment_e" + ensembleIndex + "_" + roleName + "_c" + j);
 		}
-		
+				
 		return new ComponentAssignmentSet(ctx, opt, assignments);
 	}
 	
 	public ComponentAssignmentSet(Context ctx, Optimize opt, BoolExpr[] assignment) {
 		this.ctx = ctx;
 		this.opt = opt;
-		this.assignmentSet = assignment;
+		this.assignments = assignment;
 	}
 	
 	// assignment counters for each rescuer and train: int[#trains][#rescuers]
@@ -55,11 +55,11 @@ class ComponentAssignmentSet {
 	}
 	
 	public int getLength() {
-		return assignmentSet.length;
+		return assignments.length;
 	}
 	
 	public BoolExpr get(int componentIndex) {
-		return assignmentSet[componentIndex];
+		return assignments[componentIndex];
 	}
 	
 	public IntExpr getAssignedCount() {
