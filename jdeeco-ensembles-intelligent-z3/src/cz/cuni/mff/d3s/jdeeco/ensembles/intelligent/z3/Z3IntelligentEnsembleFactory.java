@@ -14,6 +14,7 @@ import com.microsoft.z3.ArrayExpr;
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
+import com.microsoft.z3.FuncInterp.Entry;
 import com.microsoft.z3.IntExpr;
 import com.microsoft.z3.Model;
 import com.microsoft.z3.Optimize;
@@ -236,8 +237,14 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 				RoleDefinition role = roles.get(r);
 				System.out.print("  - " + role.getName() + ": [");
 				String dataContractName = role.getType().toString();
-				for (int c = 0; c < dataContainer.getNumInstances(dataContractName); c++) {
-					System.out.print(m.getConstInterp(assignments.get(e, r, c)).getBoolValue() + " ");
+				//for (int c = 0; c < dataContainer.getNumInstances(dataContractName); c++) {
+				//	System.out.print(m.getConstInterp(assignments.get(e, r, c)).getBoolValue() + " ");
+				//}
+				Entry[] entries = m.getFuncInterp(assignments.get(e, r).getAssignedSet().getFuncDecl()).getEntries();
+				for (Entry entry : entries) {
+					if (entry.getValue().getBoolValue() == Z3_lbool.Z3_L_TRUE) {
+						System.out.print(entry.getArgs()[0] + " ");
+					}
 				}
 				
 				System.out.println("]");
@@ -272,8 +279,16 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 				
 				String dataContractName = role.getType().toString();
 				
+				Entry[] entries = m.getFuncInterp(assignments.get(e, r).getAssignedSet().getFuncDecl()).getEntries();
 				for (int c = 0; c < dataContainer.getNumInstances(dataContractName); c++) {
-					Expr v1 = m.getConstInterp(assignments.get(e, r, c));
+					//Expr v1 = m.getConstInterp(assignments.get(e, r, c));
+					Expr v1 = ctx.mkBool(false);
+					for (Entry entry : entries) {
+						if (entry.getArgs()[0].toString().equals(Integer.toString(c))) {
+							v1 = entry.getValue();
+						}
+					}
+					
 					if (v1.getBoolValue() == Z3_lbool.Z3_L_TRUE) {
 						Object instance = dataContainer.getInstance(dataContractName, c);
 						if (role.getCardinalityMax() == 1) {

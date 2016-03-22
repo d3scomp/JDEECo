@@ -9,7 +9,9 @@ import com.microsoft.z3.Optimize;
 class ComponentAssignmentSet {
 	// for each component a boolean expression determining whether the component is
 	// in the ensemble (in the particular role)
-	private BoolExpr[] assignments;
+	//private BoolExpr[] assignments;
+	private ArrayExpr assignments;
+	private int length;
 	
 	private Context ctx;
 	private Optimize opt;
@@ -17,18 +19,15 @@ class ComponentAssignmentSet {
 	private IntExpr assignedCount;
 	
 	public static ComponentAssignmentSet create(Context ctx, Optimize opt, int ensembleIndex, String roleName, int componentCount) {		
-		BoolExpr[] assignments = new BoolExpr[componentCount];
-		for (int j = 0; j < componentCount; j++) {
-			assignments[j] = ctx.mkBoolConst("assignment_e" + ensembleIndex + "_" + roleName + "_c" + j);
-		}
-				
-		return new ComponentAssignmentSet(ctx, opt, assignments);
+		ArrayExpr assignments = ctx.mkArrayConst("assignment_e" + ensembleIndex + "_" + roleName, ctx.mkIntSort(), ctx.mkBoolSort());		
+		return new ComponentAssignmentSet(ctx, opt, assignments, componentCount);
 	}
 	
-	public ComponentAssignmentSet(Context ctx, Optimize opt, BoolExpr[] assignment) {
+	public ComponentAssignmentSet(Context ctx, Optimize opt, ArrayExpr assignment, int length) {
 		this.ctx = ctx;
 		this.opt = opt;
 		this.assignments = assignment;
+		this.length = length;
 	}
 	
 	// assignment counters for each rescuer and train: int[#trains][#rescuers]
@@ -55,11 +54,15 @@ class ComponentAssignmentSet {
 	}
 	
 	public int getLength() {
-		return assignments.length;
+		return length;
 	}
 	
 	public BoolExpr get(int componentIndex) {
-		return assignments[componentIndex];
+		return (BoolExpr) ctx.mkSelect(assignments, ctx.mkInt(componentIndex));
+	}
+	
+	public ArrayExpr getAssignedSet() {
+		return assignments;
 	}
 	
 	public IntExpr getAssignedCount() {

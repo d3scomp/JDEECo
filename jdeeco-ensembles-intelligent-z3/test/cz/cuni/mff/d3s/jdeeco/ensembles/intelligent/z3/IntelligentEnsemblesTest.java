@@ -67,8 +67,8 @@ public class IntelligentEnsemblesTest {
 		deeco.deployComponent(new RescuerComponent("7", 80));
 		deeco.deployComponent(new RescuerComponent("8", 80));
 		deeco.deployComponent(new RescuerComponent("9", 80));
-		deeco.deployComponent(new RescuerComponent("10", 80));
-		deeco.deployComponent(new RescuerComponent("11", 80));/*
+		deeco.deployComponent(new RescuerComponent("10", 80));/*
+		deeco.deployComponent(new RescuerComponent("11", 80));
 		deeco.deployComponent(new RescuerComponent("12", 80));
 		deeco.deployComponent(new RescuerComponent("13", 80));
 		deeco.deployComponent(new RescuerComponent("14", 80));
