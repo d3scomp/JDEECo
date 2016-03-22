@@ -4,12 +4,12 @@ import com.microsoft.z3.ArrayExpr;
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.IntExpr;
+import com.microsoft.z3.Model;
 import com.microsoft.z3.Optimize;
 
 class ComponentAssignmentSet {
 	// for each component a boolean expression determining whether the component is
 	// in the ensemble (in the particular role)
-	//private BoolExpr[] assignments;
 	private ArrayExpr assignments;
 	private int length;
 	
@@ -67,5 +67,9 @@ class ComponentAssignmentSet {
 	
 	public IntExpr getAssignedCount() {
 		return assignedCount;
+	}
+	
+	public ComponentAssignmentResults getResults(Model m) {
+		return new ComponentAssignmentResults(m, this);
 	}
 }
