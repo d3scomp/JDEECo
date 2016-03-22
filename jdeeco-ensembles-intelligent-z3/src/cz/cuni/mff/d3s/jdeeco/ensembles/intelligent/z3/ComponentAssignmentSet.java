@@ -12,21 +12,23 @@ class ComponentAssignmentSet {
 	// in the ensemble (in the particular role)
 	private ArrayExpr assignments;
 	private int length;
+	private int roleIndex;
 	
 	private Context ctx;
 	private Optimize opt;
 	
 	private IntExpr assignedCount;
 	
-	public static ComponentAssignmentSet create(Context ctx, Optimize opt, int ensembleIndex, String roleName, int componentCount) {		
+	public static ComponentAssignmentSet create(Context ctx, Optimize opt, int ensembleIndex, int roleIndex, String roleName, int componentCount) {		
 		ArrayExpr assignments = ctx.mkArrayConst("assignment_e" + ensembleIndex + "_" + roleName, ctx.mkIntSort(), ctx.mkBoolSort());		
-		return new ComponentAssignmentSet(ctx, opt, assignments, componentCount);
+		return new ComponentAssignmentSet(ctx, opt, assignments, roleIndex, componentCount);
 	}
 	
-	public ComponentAssignmentSet(Context ctx, Optimize opt, ArrayExpr assignment, int length) {
+	public ComponentAssignmentSet(Context ctx, Optimize opt, ArrayExpr assignment, int roleIndex, int length) {
 		this.ctx = ctx;
 		this.opt = opt;
 		this.assignments = assignment;
+		this.roleIndex = roleIndex;
 		this.length = length;
 	}
 	
@@ -34,7 +36,7 @@ class ComponentAssignmentSet {
 	//  assignmentTempCounters[T][0] = 0 if not assignments[T][0], otherwise 1
 	//  assignmentTempCounters[T][R] = assignmentTempCounters[T][R-1], if not assignments[T][R], otherwise it's +1
 	// therefore assignmentTempCounters[T][#rescuers-1] = number of rescuers for train T
-	public void createCounter(int ensembleIndex, int roleIndex) {
+	public void createCounter(int ensembleIndex) {
 		ArrayExpr tempCounts = ctx.mkArrayConst("_tmp_ensemble_assignment_count_e" + ensembleIndex + "_r" + roleIndex, ctx.getIntSort(), ctx.getIntSort());
 		
 		BoolExpr firstInSet = get(0);

@@ -13,6 +13,7 @@ import cz.cuni.mff.d3s.jdeeco.edl.IFunctionRegistry;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.AdditiveInverse;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.BinaryOperator;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.BoolLiteral;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.DataContractDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EquitableQuery;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.FloatLiteral;
@@ -23,6 +24,7 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Negation;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.NumericLiteral;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.QualifiedName;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RelationOperator;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.StringLiteral;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.TypeDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.QueryVisitorImpl;
@@ -33,17 +35,19 @@ class ConstraintParser extends QueryVisitorImpl<Expr> {
 	private Context ctx;
 	private Optimize opt;
 	private DataContainer dataContainer;
+	private EnsembleRoleAssignmentMatrix assignmentMatrix;
 	
-	public ConstraintParser(Context ctx, Optimize opt, DataContainer dataContainer) {
+	public ConstraintParser(Context ctx, Optimize opt, DataContainer dataContainer, EnsembleRoleAssignmentMatrix assignmentMatrix) {
 		super();
 		this.ctx = ctx;
 		this.opt = opt;
 		this.dataContainer = dataContainer;
+		this.assignmentMatrix = assignmentMatrix;
 	}
 	
-	public void parseConstraints(EnsembleDefinition ensembleDefinition) {
-		for(EquitableQuery q : ensembleDefinition.getConstraints()) {
-			opt.Add((BoolExpr) q.accept(this));
+	public void parseConstraints() {
+		for(EquitableQuery q : assignmentMatrix.getEnsembleDefinition().getConstraints()) {
+			opt.Add(ctx.mkImplies(assignmentMatrix.ensembleExists(), (BoolExpr) q.accept(this)));
 		}
 	}
 
@@ -94,9 +98,38 @@ class ConstraintParser extends QueryVisitorImpl<Expr> {
 	@Override
 	public Expr visit(KnowledgeVariable query) {
 		String roleName = query.getPath().toParts().get(0);
-		String fieldName = query.getPath().toParts().get(1);
+		String fieldName = query.getPath().toParts().size() > 0 ? query.getPath().toParts().get(1) : null;
+		
+		RoleDefinition roleDefinition = getRoleDefinition(roleName);
+		DataContractInstancesContainer dataContractContainer = dataContainer.get(roleDefinition.getType().toString());
+		
+		if (roleDefinition.getCardinalityMax() <= 1) {
+			int roleIndex = assignmentMatrix.getEnsembleDefinition().getRoles().indexOf(roleDefinition);
+			ComponentAssignmentSet componentAssignmentSet = assignmentMatrix.get(roleIndex);
+			Expr theComponentIndex = ctx.mkIntConst(RandomNameGenerator.getNext());
+			for (int c = 0; c < componentAssignmentSet.getLength(); c++) {
+				opt.Add(ctx.mkImplies(componentAssignmentSet.get(c), ctx.mkEq(theComponentIndex, ctx.mkInt(3))));
+			}
+			
+			if (fieldName == null) {				
+				return theComponentIndex;
+			} else {
+				return dataContractContainer.get(fieldName, theComponentIndex);
+			}
+		} else {
+			// TODO
+			return null;
+		}
 		
 		//dataContainer.get(dataContractName, fieldName, componentIndex);
+	}
+	
+	private RoleDefinition getRoleDefinition(String roleName) {
+		for (RoleDefinition roleDef : assignmentMatrix.getEnsembleDefinition().getRoles()) {
+			if (roleDef.getName().equals(roleName)) {
+				return roleDef;
+			}
+		}
 		
 		return null;
 	}

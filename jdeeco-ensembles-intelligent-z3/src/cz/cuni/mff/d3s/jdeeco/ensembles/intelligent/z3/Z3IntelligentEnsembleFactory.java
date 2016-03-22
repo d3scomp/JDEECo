@@ -10,8 +10,6 @@ import java.util.List;
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
-import com.microsoft.z3.FuncInterp.Entry;
-import com.microsoft.z3.IntExpr;
 import com.microsoft.z3.Model;
 import com.microsoft.z3.Optimize;
 import com.microsoft.z3.Status;
@@ -120,14 +118,14 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 
 			initConfiguration();
 
-			DataContainer dataContainer = new DataContainer(ctx, edlDocument.getPackage().toString(), edlDocument.getDataContracts(), container);
+			DataContainer dataContainer = new DataContainer(ctx, edlDocument.getPackage().toString(), edlDocument, container);
 			
 	        EnsembleDefinition ensembleDefinition = edlDocument.getEnsembles().get(0);	        
 	        List<RoleDefinition> roles = ensembleDefinition.getRoles();
 	        int maxEnsembleCount = dataContainer.getMaxEnsembleCount(ensembleDefinition);
 						
 			EnsembleAssignmentMatrix assignments = EnsembleAssignmentMatrix.create(
-					ctx, opt, maxEnsembleCount, roles, dataContainer);
+					ctx, opt, maxEnsembleCount, ensembleDefinition, dataContainer);
 	
 			assignments.createCounters();
 			
@@ -175,7 +173,9 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 				}
 			}
 			
-			new ConstraintParser(ctx, opt, dataContainer).parseConstraints(ensembleDefinition);
+			for (int e = 0; e < assignments.getMaxEnsembleCount(); e++) {
+				new ConstraintParser(ctx, opt, dataContainer, assignments.get(e)).parseConstraints();
+			}
 								
 			Status status = opt.Check();
 			//System.out.println("Solver: " + opt);

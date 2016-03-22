@@ -12,17 +12,20 @@ import com.microsoft.z3.Expr;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainerException;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.DataContractDefinition;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlDocument;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
 
 class DataContainer {
+	private EdlDocument edlDocument;
 	private Map<String, DataContractInstancesContainer> containers;
 	
-	public DataContainer(Context ctx, String packageName, Collection<DataContractDefinition> dataContractDefinitions, 
-			KnowledgeContainer knowledgeContainer) throws ClassNotFoundException, KnowledgeContainerException, UnsupportedDataTypeException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+	public DataContainer(Context ctx, String packageName, EdlDocument edlDocument, KnowledgeContainer knowledgeContainer)
+			throws ClassNotFoundException, KnowledgeContainerException, UnsupportedDataTypeException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		
+		this.edlDocument = edlDocument;
 		containers = new HashMap<>();
 		
-		for (DataContractDefinition contract : dataContractDefinitions) {
+		for (DataContractDefinition contract : edlDocument.getDataContracts()) {
 			containers.put(contract.getName(), new DataContractInstancesContainer(ctx, packageName, contract, knowledgeContainer));
 		}
 	}
@@ -37,6 +40,10 @@ class DataContainer {
 		}
 		
 		return result;
+	}
+	
+	public EdlDocument getEdlDocument() {
+		return edlDocument;
 	}
 	
 	public Collection<DataContractInstancesContainer> getAllDataContracts() {

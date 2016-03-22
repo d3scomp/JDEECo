@@ -21,6 +21,7 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.FieldDeclaration;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
 
 class DataContractInstancesContainer {
+	private DataContractDefinition dataContractDefinition;
 	private BaseDataContract[] instances;
 	private Map<String, KnowledgeFieldVector> knowledgeFields;
 	private String dataContractName;
@@ -28,6 +29,8 @@ class DataContractInstancesContainer {
 	public DataContractInstancesContainer(Context ctx, String packageName, DataContractDefinition dataContractDefinition,
 			KnowledgeContainer knowledgeContainer)
 			throws ClassNotFoundException, KnowledgeContainerException, UnsupportedDataTypeException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		
+		this.dataContractDefinition = dataContractDefinition;
 		
 		@SuppressWarnings("unchecked")
 		Class<? extends BaseDataContract> roleClass = (Class<? extends BaseDataContract>) Class.forName(packageName + "." + dataContractDefinition.getName());
@@ -74,6 +77,10 @@ class DataContractInstancesContainer {
 				field.set(i, expr);
 			}
 		}
+	}
+	
+	public DataContractDefinition getDataContractDefinition() {
+		return dataContractDefinition;
 	}
 	
 	private Object readField(String fieldName, BaseDataContract instance) 
