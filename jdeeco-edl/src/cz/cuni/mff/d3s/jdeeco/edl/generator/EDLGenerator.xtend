@@ -163,6 +163,9 @@ struct «d.name» {
 	}
 	
 	def String getThriftTypeName(String type) {
+		if (type.startsWith("set"))
+			return "set<" + getThriftTypeName(EDLUtils.stripSet(type)) + ">"
+		
 		switch type {
 			case PrimitiveTypes.INT:
 				"i32"

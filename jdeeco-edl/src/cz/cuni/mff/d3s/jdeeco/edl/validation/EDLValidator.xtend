@@ -125,6 +125,10 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 			if (!EDLUtils.convertible(queryType, fieldType)) {
 				error("Invalid assignment - field and query types do not correspond. Field type: " + fieldType + " Query type: " + queryType, rule, EdlPackage.Literals.EXCHANGE_RULE__FIELD)
 			}
+			
+			if (queryType.equals(fieldType) && !EDLUtils.stripSet(fieldType).startsWith("set") && ensemble.roles.exists[it.cardinalityMax != 1 && rule.field.toParts().get(0).equals(it.name)]) {
+				error("Invalid assignment - it is not allowed to change the members of a role in knowledge exchange rules." , rule, EdlPackage.Literals.EXCHANGE_RULE__FIELD)
+			}
 		}
 		
 		for (RoleDefinition roleDefinition : ensemble.roles) {
