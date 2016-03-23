@@ -40,11 +40,13 @@ class EDLGenerator implements IGenerator, ITypeResolutionContext {
 		
 		for(TypeDefinition d : document.knowledgeTypes) {
 			generateType(d, fsa, path, packageString)
+			generateThriftType(d, fsa, path, packageString)
 			dataTypes.put(d.name, d);
 		}
 		
 		for(DataContractDefinition d : document.dataContracts) {
 			generateDataContract(d, fsa, path, packageString)
+			generateThriftType(d, fsa, path, packageString)
 			dataTypes.put(d.name, d);
 		}
 		
@@ -139,11 +141,41 @@ public class «d.name» extends BaseDataContract {
 
 public class «d.name» {	
 	«FOR f : d.fields»				
-	public «EDLUtils.getJavaTypeName(f.type.name)» «f.name»;
+	public «EDLUtils.getJavaTypeName(f.type.name)» «f.name»
 	«ENDFOR»				
 }'''
 			);
 	}	
+	
+	def void generateThriftType(TypeDefinition d, IFileSystemAccess fsa, String path, String packageString) {
+		var int offset = 1; 
+		var int fieldCount = 1;
+		fsa.generateFile(path+d.name + ".thrift",
+'''namespace java «packageString»
+
+struct «d.name» {	
+	«FOR f : d.fields»
+	«offset»: «getThriftTypeName(f.type.name)» «f.name»«IF (fieldCount != d.fields.length)»,«ENDIF»
+	«{fieldCount++; offset++; ""}»
+	«ENDFOR»				
+}'''		
+		);
+	}
+	
+	def String getThriftTypeName(String type) {
+		switch type {
+			case PrimitiveTypes.INT:
+				"i32"
+			case PrimitiveTypes.FLOAT:
+				"double"
+			case PrimitiveTypes.STRING:
+				"string"
+			case PrimitiveTypes.BOOL:
+				"bool"
+			default:
+				type
+		}			
+	}
 	
 	override getDataType(QualifiedName name) {
 		return dataTypes.get(name.name);
