@@ -24,8 +24,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentEnsemble" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="childEnsembles" upperBound="-1"
         eType="#//ChildDefinition" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="exchangeRules" lowerBound="1"
-        upperBound="-1" eType="#//ExchangeRule" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="exchangeRules" upperBound="-1"
+        eType="#//ExchangeRule" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="fitness" eType="#//Query"
         containment="true"/>
   </eClassifiers>
