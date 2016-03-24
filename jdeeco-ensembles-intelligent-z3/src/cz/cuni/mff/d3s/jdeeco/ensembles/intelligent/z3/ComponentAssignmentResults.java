@@ -44,8 +44,11 @@ public class ComponentAssignmentResults {
 		int numTrue = 0;
 		for (Entry entry : entries) {
 			if (entry.getValue().getBoolValue() == Z3_lbool.Z3_L_TRUE) {
-				result[numTrue] = Integer.parseInt(entry.getArgs()[0].toString());
-				numTrue++;
+				int index = Integer.parseInt(entry.getArgs()[0].toString());
+				if (index < result.length) {
+					result[numTrue] = Integer.parseInt(entry.getArgs()[0].toString());
+					numTrue++;
+				}
 			}
 		}
 		

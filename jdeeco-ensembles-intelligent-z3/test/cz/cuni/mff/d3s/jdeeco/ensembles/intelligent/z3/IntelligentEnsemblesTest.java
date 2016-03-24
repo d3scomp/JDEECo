@@ -58,24 +58,24 @@ public class IntelligentEnsemblesTest {
 		DEECoNode deeco = realm.createNode(0);
 		/* deploy components and ensemble factories */
 		
-		deeco.deployComponent(new RescuerComponent("1", 30));
-		deeco.deployComponent(new RescuerComponent("2", 0));
-		deeco.deployComponent(new RescuerComponent("3", 100));
-		deeco.deployComponent(new RescuerComponent("4", 60));
-		deeco.deployComponent(new RescuerComponent("5", 70));
-		deeco.deployComponent(new RescuerComponent("6", 80));
-		deeco.deployComponent(new RescuerComponent("7", 80));
-		deeco.deployComponent(new RescuerComponent("8", 80));
-		deeco.deployComponent(new RescuerComponent("9", 80));
-		deeco.deployComponent(new RescuerComponent("10", 80));/*
-		deeco.deployComponent(new RescuerComponent("11", 80));
+		deeco.deployComponent(new RescuerComponent("1", 100));/*
+		deeco.deployComponent(new RescuerComponent("2", 80));
+		deeco.deployComponent(new RescuerComponent("3", 60));
+		deeco.deployComponent(new RescuerComponent("4", 40));
+		deeco.deployComponent(new RescuerComponent("5", 20));
+		deeco.deployComponent(new RescuerComponent("6", 0));
+		deeco.deployComponent(new RescuerComponent("7", 10));
+		deeco.deployComponent(new RescuerComponent("8", 30));
+		deeco.deployComponent(new RescuerComponent("9", 50));
+		deeco.deployComponent(new RescuerComponent("10", 70));
+		deeco.deployComponent(new RescuerComponent("11", 90));
 		deeco.deployComponent(new RescuerComponent("12", 80));
 		deeco.deployComponent(new RescuerComponent("13", 80));
 		deeco.deployComponent(new RescuerComponent("14", 80));
-		deeco.deployComponent(new RescuerComponent("15", 80));*/
-		deeco.deployComponent(new FireFighterComponent("101"));
-		deeco.deployComponent(new FireFighterComponent("102"));
-		deeco.deployComponent(new FireFighterComponent("103"));
+		deeco.deployComponent(new RescuerComponent("15", 80));
+		deeco.deployComponent(new FireFighterComponent("101", 10));
+		deeco.deployComponent(new FireFighterComponent("102", 20));
+		deeco.deployComponent(new FireFighterComponent("103", 30));*/
 
 		cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlPackage.eINSTANCE.eClass();		
 		

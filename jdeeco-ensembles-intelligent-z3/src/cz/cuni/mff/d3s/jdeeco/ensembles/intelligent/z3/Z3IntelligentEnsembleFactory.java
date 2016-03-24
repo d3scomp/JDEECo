@@ -47,20 +47,24 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 	private void printModel(Model m, EnsembleAssignmentMatrix assignments, List<RoleDefinition> roles,
 			DataContainer dataContainer) {
 		for (int e = 0; e < assignments.getMaxEnsembleCount(); e++) {
-			System.out.println("train " + e + ":");
-			for (int r = 0; r < assignments.get(e).getRoleCount(); r++) {
-				RoleDefinition role = roles.get(r);
-				System.out.print("  - " + role.getName() + ": [");
-				String dataContractName = role.getType().toString();
-				//for (int c = 0; c < dataContainer.getNumInstances(dataContractName); c++) {
-				//	System.out.print(m.getConstInterp(assignments.get(e, r, c)).getBoolValue() + " ");
-				//}
-				ComponentAssignmentResults assignmentResults = assignments.get(e, r).getResults(m);
-				for (int componentIndex : assignmentResults.getAssignedIndices()) {
-					System.out.print(componentIndex + " ");
-				}
+			if (m.getConstInterp(assignments.get(e).ensembleExists()).getBoolValue() == Z3_lbool.Z3_L_TRUE) {			
+				System.out.println("ensemble " + e + ":");
+				for (int r = 0; r < assignments.get(e).getRoleCount(); r++) {
+					RoleDefinition role = roles.get(r);
+					System.out.print("  - " + role.getName() + ": [");
+					String dataContractName = role.getType().toString();
+					//for (int c = 0; c < dataContainer.getNumInstances(dataContractName); c++) {
+					//	System.out.print(m.getConstInterp(assignments.get(e, r, c)).getBoolValue() + " ");
+					//}
+					ComponentAssignmentResults assignmentResults = assignments.get(e, r).getResults(m);
+					for (int componentIndex : assignmentResults.getAssignedIndices()) {
+						System.out.print(componentIndex + " ");
+					}
 				
-				System.out.println("]");
+					System.out.println("]");
+				}
+			} else {
+				System.out.println("ensemble " + e + " not instantiated.");
 			}
 		}
 	}
@@ -118,7 +122,7 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 
 			initConfiguration();
 
-			DataContainer dataContainer = new DataContainer(ctx, edlDocument.getPackage().toString(), edlDocument, container);
+			DataContainer dataContainer = new DataContainer(ctx, opt, edlDocument.getPackage().toString(), edlDocument, container);
 			
 	        EnsembleDefinition ensembleDefinition = edlDocument.getEnsembles().get(0);	        
 	        List<RoleDefinition> roles = ensembleDefinition.getRoles();
@@ -178,7 +182,7 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 			}
 								
 			Status status = opt.Check();
-			//System.out.println("Solver: " + opt);
+			System.out.println("Solver: " + opt);
 			if (status == Status.SATISFIABLE) {
 				//System.out.println("Model = " + opt.getModel());
 				printModel(opt.getModel(), assignments, roles, dataContainer);

@@ -18,8 +18,11 @@ public class FireFighterComponent {
 	
 	public Integer trainId;
 	
-	public FireFighterComponent(String id) {
+	public Integer pos;
+	
+	public FireFighterComponent(String id, Integer pos) {
 		this.id = id;
+		this.pos = pos;
 	}
 	
 	@Process

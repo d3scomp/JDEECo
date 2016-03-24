@@ -1,13 +1,17 @@
 package cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3;
 
+import javax.activation.UnsupportedDataTypeException;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 import com.microsoft.z3.ArithExpr;
+import com.microsoft.z3.ArrayExpr;
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Optimize;
+import com.microsoft.z3.Sort;
 
 import cz.cuni.mff.d3s.jdeeco.edl.IFunctionRegistry;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.AdditiveInverse;
@@ -98,17 +102,17 @@ class ConstraintParser extends QueryVisitorImpl<Expr> {
 	@Override
 	public Expr visit(KnowledgeVariable query) {
 		String roleName = query.getPath().toParts().get(0);
-		String fieldName = query.getPath().toParts().size() > 0 ? query.getPath().toParts().get(1) : null;
+		String fieldName = query.getPath().toParts().size() > 1 ? query.getPath().toParts().get(1) : null;
 		
 		RoleDefinition roleDefinition = getRoleDefinition(roleName);
 		DataContractInstancesContainer dataContractContainer = dataContainer.get(roleDefinition.getType().toString());
+		int roleIndex = assignmentMatrix.getEnsembleDefinition().getRoles().indexOf(roleDefinition);
+		ComponentAssignmentSet componentAssignmentSet = assignmentMatrix.get(roleIndex);
 		
-		if (roleDefinition.getCardinalityMax() <= 1) {
-			int roleIndex = assignmentMatrix.getEnsembleDefinition().getRoles().indexOf(roleDefinition);
-			ComponentAssignmentSet componentAssignmentSet = assignmentMatrix.get(roleIndex);
+		if (roleDefinition.getCardinalityMin() == 1 && roleDefinition.getCardinalityMax() == 1) {
 			Expr theComponentIndex = ctx.mkIntConst(RandomNameGenerator.getNext());
 			for (int c = 0; c < componentAssignmentSet.getLength(); c++) {
-				opt.Add(ctx.mkImplies(componentAssignmentSet.get(c), ctx.mkEq(theComponentIndex, ctx.mkInt(3))));
+				opt.Add(ctx.mkImplies(componentAssignmentSet.get(c), ctx.mkEq(theComponentIndex, ctx.mkInt(c))));
 			}
 			
 			if (fieldName == null) {				
@@ -116,9 +120,29 @@ class ConstraintParser extends QueryVisitorImpl<Expr> {
 			} else {
 				return dataContractContainer.get(fieldName, theComponentIndex);
 			}
+			
 		} else {
-			// TODO
-			return null;
+			if (fieldName == null) {
+				return componentAssignmentSet.getAssignedSet();
+			} else {
+				try {
+					Sort sort = KnowledgeFieldVector.getSort(ctx, "int");
+					ArrayExpr resultSet = ctx.mkArrayConst(RandomNameGenerator.getNext(), sort, ctx.mkBoolSort());
+					
+					for (int c = 0; c < componentAssignmentSet.getLength(); c++) {
+						Expr knowledgeValue = dataContractContainer.get(fieldName, ctx.mkInt(c));
+						opt.Add(ctx.mkEq(componentAssignmentSet.get(c), (BoolExpr) ctx.mkSelect(resultSet, knowledgeValue)));
+					}
+					
+					return resultSet;
+				
+				} catch (UnsupportedDataTypeException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return null;
+				}
+			
+			}
 		}
 		
 		//dataContainer.get(dataContractName, fieldName, componentIndex);

@@ -8,6 +8,7 @@ import javax.activation.UnsupportedDataTypeException;
 
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
+import com.microsoft.z3.Optimize;
 
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainerException;
@@ -19,14 +20,14 @@ class DataContainer {
 	private EdlDocument edlDocument;
 	private Map<String, DataContractInstancesContainer> containers;
 	
-	public DataContainer(Context ctx, String packageName, EdlDocument edlDocument, KnowledgeContainer knowledgeContainer)
+	public DataContainer(Context ctx, Optimize opt, String packageName, EdlDocument edlDocument, KnowledgeContainer knowledgeContainer)
 			throws ClassNotFoundException, KnowledgeContainerException, UnsupportedDataTypeException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		
 		this.edlDocument = edlDocument;
 		containers = new HashMap<>();
 		
 		for (DataContractDefinition contract : edlDocument.getDataContracts()) {
-			containers.put(contract.getName(), new DataContractInstancesContainer(ctx, packageName, contract, knowledgeContainer));
+			containers.put(contract.getName(), new DataContractInstancesContainer(ctx, opt, packageName, contract, knowledgeContainer));
 		}
 	}
 	

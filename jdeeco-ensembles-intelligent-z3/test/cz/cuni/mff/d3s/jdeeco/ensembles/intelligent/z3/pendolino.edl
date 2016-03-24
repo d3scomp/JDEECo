@@ -14,12 +14,10 @@ ensemble PendolinoEnsemble
 	id trainId : int
 	membership
 		roles
-			leader : Rescuer
-			rescuers [2..4] : Rescuer
-			firefighter [0..1] : FireFighter		
+			rescuers [1..2] : Rescuer	
 		
 		constraints
-		constraint leader.pos < 0
+		constraint rescuers.pos != rescuers.pos
 		
 		fitness 0
 		

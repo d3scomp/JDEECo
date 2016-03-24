@@ -9,5 +9,7 @@ public class FireFighter extends BaseDataContract {
 	public String id;
 	
 	public Integer trainId;
+	
+	public Integer pos;
 
 }

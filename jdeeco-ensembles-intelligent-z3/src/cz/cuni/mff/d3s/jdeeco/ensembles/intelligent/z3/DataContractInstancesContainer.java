@@ -10,6 +10,7 @@ import javax.activation.UnsupportedDataTypeException;
 
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
+import com.microsoft.z3.Optimize;
 
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainerException;
@@ -26,7 +27,7 @@ class DataContractInstancesContainer {
 	private Map<String, KnowledgeFieldVector> knowledgeFields;
 	private String dataContractName;
 	
-	public DataContractInstancesContainer(Context ctx, String packageName, DataContractDefinition dataContractDefinition,
+	public DataContractInstancesContainer(Context ctx, Optimize opt, String packageName, DataContractDefinition dataContractDefinition,
 			KnowledgeContainer knowledgeContainer)
 			throws ClassNotFoundException, KnowledgeContainerException, UnsupportedDataTypeException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		
@@ -55,7 +56,7 @@ class DataContractInstancesContainer {
 		for (FieldDeclaration fieldDecl : dataContractDefinition.getFields()) {
 			String fieldName = fieldDecl.getName();
 			String fieldType = fieldDecl.getType().toString();
-			KnowledgeFieldVector field = new KnowledgeFieldVector(ctx, dataContractDefinition.getName(), fieldName, fieldType);
+			KnowledgeFieldVector field = new KnowledgeFieldVector(ctx, opt, dataContractDefinition.getName(), fieldName, fieldType);
 			knowledgeFields.put(fieldName, field);
 			for (int i = 0; i < instances.length; i++) {
 				Object value = readField(fieldName, instances[i]);
@@ -76,6 +77,8 @@ class DataContractInstancesContainer {
 				
 				field.set(i, expr);
 			}
+			
+			field.close();
 		}
 	}
 	
