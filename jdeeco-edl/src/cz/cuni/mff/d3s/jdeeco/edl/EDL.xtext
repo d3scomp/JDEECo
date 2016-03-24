@@ -21,7 +21,7 @@ EnsembleDefinition returns EnsembleDefinition:
 		  'roles' roles+=RoleDefinition (roles+=RoleDefinition)*		
 		  ('constraints' constraints+=ConstraintDeclaration (constraints+=ConstraintDeclaration)*)?
 		  ('fitness' fitness=OrdinalQuery)?
-		'knowledge exchange' exchangeRules+=ExchangeRule (exchangeRules+=ExchangeRule)*
+		('knowledge exchange' exchangeRules+=ExchangeRule (exchangeRules+=ExchangeRule)*)?
 	 'end'	
 ;
 
