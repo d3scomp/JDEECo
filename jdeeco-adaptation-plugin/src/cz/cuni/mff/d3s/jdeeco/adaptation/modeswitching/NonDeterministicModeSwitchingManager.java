@@ -16,10 +16,8 @@
 package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
@@ -64,13 +62,11 @@ public class NonDeterministicModeSwitchingManager implements MAPEAdaptation {
 	public Double currentNonDeterminismLevel;
 	public Double nextNonDeterminismLevel;
 	
-	public NonDetModeSwitchFitnessEval evaluator;
-	
-	public Map<Double, NonDetModeSwitchFitness> energies;
+	public NonDetModeSwitchFitness evaluator;
 	
 	
 	public NonDeterministicModeSwitchingManager(long startTime,
-			Class<? extends NonDetModeSwitchFitnessEval> evalClass,
+			Class<? extends NonDetModeSwitchFitness> evalClass,
 			ComponentInstance component)
 					throws InstantiationException, IllegalAccessException {
 		if(!isValidComponent(component)){
@@ -86,7 +82,6 @@ public class NonDeterministicModeSwitchingManager implements MAPEAdaptation {
 		evaluator = evalClass.newInstance();
 		managedComponent = component;
 		currentNonDeterminismLevel = startingNondeterminism;
-		energies = new HashMap<>();
 	}
 	
 	private boolean isValidComponent(ComponentInstance component) {
@@ -106,28 +101,37 @@ public class NonDeterministicModeSwitchingManager implements MAPEAdaptation {
 	public void monitor() {
 		long currentTime = ProcessContext.getTimeProvider().getCurrentMilliseconds();
 		
+		try {
+			// Check whether to measure
+			NonDetModeSwitchMode mode = (NonDetModeSwitchMode)
+					managedComponent.getModeChart().getCurrentMode().newInstance();
+			if(!mode.isFitnessComputed()){
+				evaluator.restart();
+				if(verbose){
+					Log.i(String.format("Non-deterministic mode switching "
+						+ "skipping fitness monitor in state: %s",
+						mode.getClass().getName()));
+				}
+				
+				return;
+			}
+		} catch(InstantiationException | IllegalAccessException e) {
+			Log.e(e.getMessage());
+			return;
+		}
+				
 		// Measure the current fitness
 		String[] knowledge = evaluator.getKnowledgeNames();
 		Object[] values = getValues(managedComponent, knowledge);
-		NonDetModeSwitchFitness energy = evaluator.getFitness(currentTime, values);
+		double energy = evaluator.getFitness(currentTime, values);
 		
-		// Combine and store fitness value for the current non-determinism
-		if(energies.containsKey(currentNonDeterminismLevel)){
-			NonDetModeSwitchFitness p = energy.combineFitness(
-					energies.get(currentNonDeterminismLevel));
-			energies.put(currentNonDeterminismLevel, p);
-		} else {
-			energies.put(currentNonDeterminismLevel, energy);
-		}
-		
-		// Assign the fitness to the state
-		double energyValue = energies.get(currentNonDeterminismLevel).getFitness(); 
-		stateSpace.getState(currentNonDeterminismLevel).setEnergy(energyValue);
+		// Store fitness value for the current non-determinism
+		stateSpace.getState(currentNonDeterminismLevel).setEnergy(energy);
 		
 		if(verbose){
 			Log.i(String.format("Non-deterministic mode switching energy for the "
 				+ "non-deterministic level %f at %d is %f",
-				currentNonDeterminismLevel, currentTime, energyValue));
+				currentNonDeterminismLevel, currentTime, energy));
 		}
 	}
 
@@ -176,6 +180,8 @@ public class NonDeterministicModeSwitchingManager implements MAPEAdaptation {
 
 		reconfigureModeChart((ModeChartImpl)modeChart, nextNonDeterminismLevel);
 		currentNonDeterminismLevel = nextNonDeterminismLevel;
+		// Restart the evaluator for next measurements with new probabilities
+		evaluator.restart();
 
 		if(verbose) {
 			long currentTime = ProcessContext.getTimeProvider().getCurrentMilliseconds();

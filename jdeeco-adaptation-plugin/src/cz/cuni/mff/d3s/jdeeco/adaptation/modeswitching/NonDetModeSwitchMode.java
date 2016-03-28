@@ -38,4 +38,13 @@ public interface NonDetModeSwitchMode extends DEECoMode {
 	 * 	False otherwise.
 	 */
 	boolean nonDeterministicOut();
+	
+	/**
+	 * Indicates whether is the fitness computed while the component
+	 * is in this mode.
+	 * 
+	 * @return True if the fitness is computed while the component
+	 * is in this mode. False otherwise.
+	 */
+	boolean isFitnessComputed();
 }

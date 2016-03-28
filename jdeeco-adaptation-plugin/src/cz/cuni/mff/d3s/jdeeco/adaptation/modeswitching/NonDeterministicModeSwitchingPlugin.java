@@ -45,7 +45,7 @@ import cz.cuni.mff.d3s.jdeeco.modes.ModeSwitchingPlugin;
 public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, StartupListener {
 
 	private long startTime = 0;
-	private Class<? extends NonDetModeSwitchFitnessEval> evalClass = null;
+	private Class<? extends NonDetModeSwitchFitness> evalClass = null;
 	private double startingNondeterminism = 0.0001;
 	private DEECoContainer container = null;
 	AdaptationPlugin adaptationPlugin= null;
@@ -59,7 +59,7 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 					AdaptationPlugin.class,
 					ModeSwitchingPlugin.class});
 	
-	public NonDeterministicModeSwitchingPlugin(Class<? extends NonDetModeSwitchFitnessEval> evalClass){
+	public NonDeterministicModeSwitchingPlugin(Class<? extends NonDetModeSwitchFitness> evalClass){
 		this.evalClass = evalClass;
 	}
 	

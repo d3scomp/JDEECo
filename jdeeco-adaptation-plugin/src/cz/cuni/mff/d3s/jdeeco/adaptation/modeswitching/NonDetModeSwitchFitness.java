@@ -16,11 +16,33 @@
 package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
 
 /**
+ * A function that computes the fitness of the system to guide
+ * the system in the non-deterministic mode switching search.
+ * 
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
 public interface NonDetModeSwitchFitness {
-
-	NonDetModeSwitchFitness combineFitness(NonDetModeSwitchFitness other);
-	double getFitness();
+	
+	/**
+	 * The names of knowledge fields this function uses to compute the fitness.
+	 * @return The names of knowledge fields this function uses to compute the fitness.
+	 */
+	String[] getKnowledgeNames();
+	
+	/**
+	 * The measured fitness of the system.
+	 * @param currentTime The current simulation time.
+	 * @param knowledgeValues Values of the required knowledge fields,
+	 * 		specified by {@link #getKnowledgeNames()}.
+	 * @return The measured fitness of the system.
+	 */
+	double getFitness(long currentTime, Object [] knowledgeValues);
+	
+	/**
+	 * Forget so far measured values and start new measurement.
+	 * Called when the system starts to operate with new parameters
+	 * of non-deterministic mode switching.
+	 */
+	void restart();
 }
