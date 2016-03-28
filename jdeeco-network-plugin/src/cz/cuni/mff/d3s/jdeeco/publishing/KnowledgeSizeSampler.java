@@ -1,7 +1,5 @@
 package cz.cuni.mff.d3s.jdeeco.publishing;
 
-import java.util.concurrent.SynchronousQueue;
-
 import org.nustaq.serialization.FSTConfiguration;
 
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
