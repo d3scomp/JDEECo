@@ -40,6 +40,8 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 	private final Map<CollectorKey, Collector> collectors; // collectors that store incoming L1 packets. Grouped by data
 															// ID and Node ID
 	private L1DataProcessor l1DataProcessor; // reference to the upper layer
+	private long l1PacketCounter;
+	private long l2PacketCounter;
 
 	public Layer1(byte nodeId, DataIDSource dataIdSource, Scheduler scheduler) {
 		this.outputQueues = new HashMap<Address, DeviceOutputQueue>();
@@ -49,6 +51,8 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 		this.nodeId = nodeId;
 		this.dataIdSource = dataIdSource;
 		this.scheduler = scheduler;
+		this.l1PacketCounter = 0;
+		this.l2PacketCounter = 0;
 
 		// Start collector removal task
 		new TimerTask(scheduler, new CollectorCleaner(), "CollectorCleaner_l1", 0, COLLECTOR_LIFETIME_MS).schedule();
@@ -122,6 +126,7 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 	 * cz.cuni.mff.d3s.jdeeco.network.Address)
 	 */
 	public boolean sendL2Packet(L2Packet l2Packet, Address address) {
+		l2PacketCounter++;
 		if (l2Packet != null && l2Packet.getData().length > 0) {
 			DeviceOutputQueue outputQueue = getDeviceOutputQueue(address);
 			if (outputQueue == null) {
@@ -168,6 +173,7 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 	 * @return true whenever packet was sent. False otherwise.
 	 */
 	public boolean sendL1Packet(L1Packet l1Packet, Address address) {
+		l1PacketCounter++;
 		if (l1Packet != null) {
 			DeviceOutputQueue outputQueue = getDeviceOutputQueue(address);
 			if (outputQueue == null) {
@@ -217,6 +223,24 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 			}
 			position += l1Packet.payloadSize + L1Packet.HEADER_SIZE;
 		}
+	}
+	
+	/**
+	 * Gets total number of send layer 1 packets
+	 * 
+	 * @return packet counter value
+	 */
+	public long getTotalL1Packets() {
+		return l1PacketCounter;
+	}
+	
+	/**
+	 * Gets total number of send layer 2 packets
+	 * 
+	 * @return packet counter value
+	 */
+	public long getTotalL2Packets() {
+		return l2PacketCounter;
 	}
 
 	private void processL1PacketByStrategies(L1Packet packet) {
