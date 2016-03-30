@@ -26,6 +26,8 @@ import cz.cuni.mff.d3s.jdeeco.adaptation.search.annealing.AnnealingState;
  */
 public class NonDetModeSwitchAnnealState implements AnnealingState {
 
+	public static double NON_DETERMINISTIC_STEP = 0.00005;
+	
 	private double nondeterminism;
 	private double energy;
 	private NonDetModeSwitchAnnealStateSpace stateSpace;
@@ -67,11 +69,15 @@ public class NonDetModeSwitchAnnealState implements AnnealingState {
 			return new NonDetModeSwitchAnnealState[]{};
 		}
 
+		double lower = nondeterminism - NON_DETERMINISTIC_STEP;
+		double upper = nondeterminism + NON_DETERMINISTIC_STEP;
 		List<NonDetModeSwitchAnnealState> neighbors = 
 			new ArrayList<>();
-		neighbors.add(stateSpace.getState(nondeterminism/2));
-		if(nondeterminism <= 0.5){
-			neighbors.add(stateSpace.getState(nondeterminism*2));
+		if(lower > 0){
+			neighbors.add(stateSpace.getState(lower));
+		}
+		if(upper < 1){
+			neighbors.add(stateSpace.getState(upper));
 		}
 		
 		return neighbors.toArray(new NonDetModeSwitchAnnealState[]{});
