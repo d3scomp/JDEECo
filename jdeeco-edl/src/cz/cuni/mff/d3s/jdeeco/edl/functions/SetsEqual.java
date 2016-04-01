@@ -3,6 +3,9 @@ package cz.cuni.mff.d3s.jdeeco.edl.functions;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.microsoft.z3.Context;
+import com.microsoft.z3.Expr;
+
 import cz.cuni.mff.d3s.jdeeco.edl.PrimitiveTypes;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Query;
@@ -24,11 +27,6 @@ public class SetsEqual implements IConstraintFunction {
 		return params;
 	}
 
-	@Override
-	public void generateFormula(Object... params) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public Object evaluate(Object... params) {
@@ -39,5 +37,11 @@ public class SetsEqual implements IConstraintFunction {
 	@Override
 	public String getReturnType(ITypeResolutionContext ctx, EnsembleDefinition ensemble, Query... params) {
 		return PrimitiveTypes.BOOL;		
+	}
+
+	@Override
+	public Expr generateFormula(Context ctx, Expr... params) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -2,7 +2,9 @@ package cz.cuni.mff.d3s.jdeeco.edl.functions;
 
 import java.util.List;
 
-public interface IConstraintFunction extends IFunction {	
-	// TODO: Signature of this method will probably depend on Z3
-	void generateFormula(Object... params);	
+import com.microsoft.z3.Context;
+import com.microsoft.z3.Expr;
+
+public interface IConstraintFunction extends IFunction {
+	Expr generateFormula(Context ctx, Expr... params);	
 }
