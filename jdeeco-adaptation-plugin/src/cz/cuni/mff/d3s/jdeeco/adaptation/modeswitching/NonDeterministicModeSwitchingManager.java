@@ -139,16 +139,28 @@ public class NonDeterministicModeSwitchingManager implements MAPEAdaptation {
 	 * @see cz.cuni.mff.d3s.jdeeco.adaptation.MAPEAdaptation#analyze()
 	 */
 	@Override
-	public double analyze() {
+	public boolean analyze() {
 		long currentTime = ProcessContext.getTimeProvider().getCurrentMilliseconds();
 		
 		// Don't add non-determinism until the start time
 		if(currentTime < startTime){
-			return 0;
+			return false;
+		}
+		
+		try {
+			// Don't plan and execute while in mode that excludes fitness computation
+			NonDetModeSwitchMode mode = (NonDetModeSwitchMode)
+					managedComponent.getModeChart().getCurrentMode().newInstance();
+			if(!mode.isFitnessComputed()){
+				return false;
+			}
+		} catch(InstantiationException | IllegalAccessException e) {
+			Log.e(e.getMessage());
+			return false;
 		}
 		
 		// TODO: check whether the search is complete
-		return 1;
+		return true;
 	}
 
 	/* (non-Javadoc)

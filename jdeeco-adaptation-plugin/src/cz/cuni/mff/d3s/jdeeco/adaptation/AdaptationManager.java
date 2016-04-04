@@ -38,9 +38,6 @@ public class AdaptationManager {
 
 	@Local
 	static boolean verbose = false;
-
-	@Local
-	static double applicabilityThreshold = 0.5; // FIXME: Make this either parameter or provided by each adaptation
 	
 	/**
 	 * Mandatory knowledge field - id of the component.
@@ -70,8 +67,8 @@ public class AdaptationManager {
 			@In("adaptations") List<MAPEAdaptation> adaptations) {
 		for(MAPEAdaptation adaptation : adaptations){
 			adaptation.monitor();
-			double applicability = adaptation.analyze();
-			if(applicability >= applicabilityThreshold){
+			boolean isApplicable = adaptation.analyze();
+			if(isApplicable){
 				adaptation.plan();
 				adaptation.execute();
 			}

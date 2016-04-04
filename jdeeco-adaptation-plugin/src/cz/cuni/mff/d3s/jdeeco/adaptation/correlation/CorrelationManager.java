@@ -158,7 +158,7 @@ public class CorrelationManager implements MAPEAdaptation {
 	 * @returns 1 if the ensemble is needed. 0 otherwise.
 	 */
 	@Override
-	public double analyze() {
+	public boolean analyze() {
 		boolean irrelevant = true;
 		for (String s1 : knowledgeHistoryOfAllComponents.keySet()) {
 			final Map<String, List<CorrelationMetadataWrapper<?>>> map = 
@@ -172,9 +172,7 @@ public class CorrelationManager implements MAPEAdaptation {
 			}
 		}
 		
-		return irrelevant
-				? 0
-				: 1;
+		return !irrelevant;
 	}
 
 	/**

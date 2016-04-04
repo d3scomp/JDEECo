@@ -12,14 +12,13 @@ public interface MAPEAdaptation {
 	
 	/**
 	 * Analyze the monitored data.
-	 * The provided value indicates the applicability of the adaptation,
-	 * and is supposed to be within the interval of [0, 1]. 0 means
-	 * no applicability of the adaptation, 1 expresses the adaptation
-	 * being the most suitable in the current situation.
+	 * The provided value indicates the applicability of the adaptation.
+	 * False means no applicability of the adaptation, True expresses
+	 * the adaptation being suitable in the current situation.
 	 * 
-	 * @return A suitability of the adaptation in the range of [0, 1].
+	 * @return A suitability of the adaptation.
 	 */
-	double analyze();
+	boolean analyze();
 	
 	/**
 	 * Plan and prepare the adaptation changes.
