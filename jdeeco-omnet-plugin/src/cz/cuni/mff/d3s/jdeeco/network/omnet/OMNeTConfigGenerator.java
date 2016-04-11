@@ -6,9 +6,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNeTNative;
 import cz.cuni.mff.d3s.jdeeco.position.Position;
@@ -34,7 +34,7 @@ public class OMNeTConfigGenerator {
 	
 	private double txPower802154 = DEFAULT_802_15_4_TX_POWER_MW;
 
-	private Set<Node> nodes = new HashSet<>();
+	private List<Node> nodes = new LinkedList<>();
 
 	public OMNeTConfigGenerator(long limit) {
 		this.limit = limit;
