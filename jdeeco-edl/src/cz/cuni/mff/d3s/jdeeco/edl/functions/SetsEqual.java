@@ -41,7 +41,6 @@ public class SetsEqual implements IConstraintFunction {
 
 	@Override
 	public Expr generateFormula(Context ctx, Expr... params) {
-		// TODO Auto-generated method stub
-		return null;
+		return ctx.mkEq(params[0], params[1]);
 	}
 }

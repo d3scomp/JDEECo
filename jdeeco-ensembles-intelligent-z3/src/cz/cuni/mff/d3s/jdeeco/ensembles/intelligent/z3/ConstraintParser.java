@@ -10,10 +10,15 @@ import com.microsoft.z3.ArrayExpr;
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
+import com.microsoft.z3.IntExpr;
 import com.microsoft.z3.Optimize;
+import com.microsoft.z3.Pattern;
+import com.microsoft.z3.Quantifier;
 import com.microsoft.z3.Sort;
+import com.microsoft.z3.Symbol;
 
 import cz.cuni.mff.d3s.jdeeco.edl.IFunctionRegistry;
+import cz.cuni.mff.d3s.jdeeco.edl.functions.IConstraintFunction;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.AdditiveInverse;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.BinaryOperator;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.BoolLiteral;
@@ -40,13 +45,16 @@ class ConstraintParser extends QueryVisitorImpl<Expr> {
 	private Optimize opt;
 	private DataContainer dataContainer;
 	private EnsembleRoleAssignmentMatrix assignmentMatrix;
+	private ITypeResolutionContext typeResolution;
 	
-	public ConstraintParser(Context ctx, Optimize opt, DataContainer dataContainer, EnsembleRoleAssignmentMatrix assignmentMatrix) {
+	public ConstraintParser(Context ctx, Optimize opt, DataContainer dataContainer, EnsembleRoleAssignmentMatrix assignmentMatrix,
+			ITypeResolutionContext typeResolution) {
 		super();
 		this.ctx = ctx;
 		this.opt = opt;
 		this.dataContainer = dataContainer;
 		this.assignmentMatrix = assignmentMatrix;
+		this.typeResolution = typeResolution;
 	}
 	
 	public void parseConstraints() {
@@ -95,8 +103,13 @@ class ConstraintParser extends QueryVisitorImpl<Expr> {
 
 	@Override
 	public Expr visit(FunctionCall query) {
-		// TODO Auto-generated method stub
-		return null;
+		IConstraintFunction func = typeResolution.getFunctionRegistry().getConstraintFunction(query.getName());
+		Expr[] paramExprs = new Expr[query.getParameters().size()];
+		for (int i = 0; i < paramExprs.length; i++) {
+			paramExprs[i] = query.getParameters().get(i).accept(this);
+		}
+		
+		return func.generateFormula(ctx, paramExprs);
 	}
 
 	@Override
@@ -126,8 +139,9 @@ class ConstraintParser extends QueryVisitorImpl<Expr> {
 				return componentAssignmentSet.getAssignedSet();
 			} else {
 				try {
-					Sort sort = KnowledgeFieldVector.getSort(ctx, "int");
-					ArrayExpr resultSet = ctx.mkArrayConst(RandomNameGenerator.getNext(), sort, ctx.mkBoolSort());
+					Sort sort = KnowledgeFieldVector.getSort(ctx, "int"); // TODO infer type
+					String resultSetName = RandomNameGenerator.getNext();
+					ArrayExpr resultSet = ctx.mkArrayConst(resultSetName, sort, ctx.mkBoolSort());
 					
 					for (int c = 0; c < componentAssignmentSet.getLength(); c++) {
 						Expr knowledgeValue = dataContractContainer.get(fieldName, ctx.mkInt(c));

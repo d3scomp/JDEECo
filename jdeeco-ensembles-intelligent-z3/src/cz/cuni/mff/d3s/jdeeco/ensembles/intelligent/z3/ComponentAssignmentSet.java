@@ -37,7 +37,7 @@ class ComponentAssignmentSet {
 	//  assignmentTempCounters[T][R] = assignmentTempCounters[T][R-1], if not assignments[T][R], otherwise it's +1
 	// therefore assignmentTempCounters[T][#rescuers-1] = number of rescuers for train T
 	public void createCounter(int ensembleIndex) {
-		ArrayExpr tempCounts = ctx.mkArrayConst("_tmp_ensemble_assignment_count_e" + ensembleIndex + "_r" + roleIndex, ctx.getIntSort(), ctx.getIntSort());
+/*		ArrayExpr tempCounts = ctx.mkArrayConst("_tmp_ensemble_assignment_count_e" + ensembleIndex + "_r" + roleIndex, ctx.getIntSort(), ctx.getIntSort());
 		
 		BoolExpr firstInSet = get(0);
 		opt.Add(ctx.mkImplies(firstInSet, ctx.mkEq(ctx.mkSelect(tempCounts, ctx.mkInt(0)), ctx.mkInt(1))));
@@ -52,11 +52,17 @@ class ComponentAssignmentSet {
 					ctx.mkEq(current, prev)));
 		}
 		
-		assignedCount = (IntExpr) ctx.mkSelect(tempCounts, ctx.mkInt(getLength()-1));
+		assignedCount = (IntExpr) ctx.mkSelect(tempCounts, ctx.mkInt(getLength()-1));*/
+		
+		assignedCount = new Z3Helper(ctx, opt).getSetSize(assignments, "assignment_e" + ensembleIndex + "_r" + roleIndex, getLength());
 	}
 	
 	public int getLength() {
 		return length;
+	}
+	
+	public BoolExpr get(IntExpr componentIndex) {
+		return (BoolExpr) ctx.mkSelect(assignments, componentIndex);
 	}
 	
 	public BoolExpr get(int componentIndex) {

@@ -17,6 +17,7 @@ public class PendolinoEnsemble implements EnsembleInstance {
 	public Rescuer leader;
 	
 	public List<Rescuer> rescuers;
+	public List<Rescuer> rescuers2;
 	
 	public FireFighter firefighter;
 

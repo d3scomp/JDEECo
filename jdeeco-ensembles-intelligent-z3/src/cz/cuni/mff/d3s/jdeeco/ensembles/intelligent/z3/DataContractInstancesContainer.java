@@ -116,8 +116,12 @@ class DataContractInstancesContainer {
 		return instances[componentIndex];
 	}
 	
+	public KnowledgeFieldVector get(String fieldName) {
+		return knowledgeFields.get(fieldName);
+	}
+	
 	public Expr get(String fieldName, Expr componentIndex) {
-		return knowledgeFields.get(fieldName).get(componentIndex);
+		return get(fieldName).get(componentIndex);
 	}
 	
 	public int getNumInstances() {

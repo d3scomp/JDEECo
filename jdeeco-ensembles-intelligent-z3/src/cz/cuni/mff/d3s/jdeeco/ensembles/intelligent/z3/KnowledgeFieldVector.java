@@ -42,6 +42,10 @@ class KnowledgeFieldVector {
 		closed = true;
 	}
 	
+	public ArrayExpr getArray() {
+		return values;
+	}
+	
 	public Expr get(Expr componentIndex) {
 		return ctx.mkSelect(values, componentIndex);
 	}

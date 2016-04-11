@@ -178,11 +178,11 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 			}
 			
 			for (int e = 0; e < assignments.getMaxEnsembleCount(); e++) {
-				new ConstraintParser(ctx, opt, dataContainer, assignments.get(e)).parseConstraints();
+				new ConstraintParser(ctx, opt, dataContainer, assignments.get(e), typeResolution).parseConstraints();
 			}
 								
+			//System.out.println("Solver: " + opt);
 			Status status = opt.Check();
-			System.out.println("Solver: " + opt);
 			if (status == Status.SATISFIABLE) {
 				//System.out.println("Model = " + opt.getModel());
 				printModel(opt.getModel(), assignments, roles, dataContainer);
