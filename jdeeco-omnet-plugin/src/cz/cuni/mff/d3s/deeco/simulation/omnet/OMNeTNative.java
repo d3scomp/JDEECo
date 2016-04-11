@@ -17,6 +17,8 @@ public class OMNeTNative {
 			System.loadLibrary("libwinpthread-1");
 			System.loadLibrary("libgcc_s_seh-1");
 			System.loadLibrary("libstdc++-6");
+		} else if(System.getProperty("os.name").contains("Linux")) {
+			// Assuming Linux has its base libraries in place 
 		} else {
 			throw new UnsupportedOperationException("Unsupported OS " + System.getProperty("os.name"));
 		}
