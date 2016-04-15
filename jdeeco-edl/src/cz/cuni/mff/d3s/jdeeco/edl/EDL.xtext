@@ -76,6 +76,12 @@ QualifiedName returns QualifiedName:
 	name=ID
 ;
 
+FieldName returns QualifiedName:
+	QualifiedName
+	| name = 'it'
+	| prefix+='it' '.' (prefix+=ID '.')* name=ID
+;
+
 TypeName returns QualifiedName:
 	name = ("int" | "float" | "string" | "bool") | QualifiedName
 ;
@@ -104,7 +110,7 @@ FunctionCall returns FunctionCall:
 ;
 
 KnowledgeVariable returns KnowledgeVariable:
-	path=QualifiedName
+	path=FieldName
 ;	
 
 NumericLiteral returns NumericLiteral:

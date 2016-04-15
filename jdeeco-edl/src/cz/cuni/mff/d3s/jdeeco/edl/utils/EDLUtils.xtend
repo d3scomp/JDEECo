@@ -108,8 +108,12 @@ class EDLUtils {
 		
 		PrimitiveTypes.UNKNOWN;
 	}
+
+	def static String getType(ITypeResolutionContext ctx, Query query, EnsembleDefinition ensemble) {
+		getType(ctx, query, ensemble, null)
+	}
 	
-	def static String getType(ITypeResolutionContext ctx, Query query, EnsembleDefinition ensemble) {		
+	def static String getType(ITypeResolutionContext ctx, Query query, EnsembleDefinition ensemble, RoleDefinition role) {		
 		switch(query) {
 		BoolLiteral:
 			PrimitiveTypes.BOOL			
@@ -121,13 +125,30 @@ class EDLUtils {
 			PrimitiveTypes.FLOAT
 		KnowledgeVariable: 
 			{
-				var QualifiedName name = query.path				 
-				getKnowledgeType(ctx, name, ensemble)
+				var QualifiedName name = query.path
+				if(role == null) {									 
+					getKnowledgeType(ctx, name, ensemble)				
+				}
+				else {
+					var parts = name.toParts();
+					
+					if (parts.findFirst[true].equals("it")) {
+						getKnowledgeType(ctx, name, ctx.getDataType(role.type), 1)
+					} 
+					else if (parts.findFirst[true].equals(ensemble.id.fieldName)) {
+						getKnowledgeType(ctx, name, ensemble)	
+					}
+					else {
+						ctx.reportError("Only the ensemble id field and the it operator can be used in the where filter.", query, EdlPackage.Literals.KNOWLEDGE_VARIABLE__PATH)
+					}
+							
+					""				
+				}
 			}
 		LogicalOperator:
 			{
-				var String l = cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils.getType(ctx, query.left, ensemble)
- 				var String r = cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils.getType(ctx, query.right, ensemble)
+				var String l = cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils.getType(ctx, query.left, ensemble, role)
+ 				var String r = cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils.getType(ctx, query.right, ensemble, role)
  				
  				if(!l.equals(PrimitiveTypes.BOOL))
  					ctx.reportError("A parameter of a logical operator must be a logical value.", query, EdlPackage.Literals.LOGICAL_OPERATOR__LEFT)
@@ -139,8 +160,8 @@ class EDLUtils {
  			} 			
 		RelationOperator:
 			{
-				var String l = cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils.getType(ctx, query.left, ensemble);
- 				var String r = cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils.getType(ctx, query.right, ensemble); 				
+				var String l = cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils.getType(ctx, query.left, ensemble, role);
+ 				var String r = cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils.getType(ctx, query.right, ensemble, role); 				
  				
  				if(!l.equals(r))
  				{
@@ -160,8 +181,8 @@ class EDLUtils {
 			}
 		BinaryOperator:	
 			{
-				var String l = cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils.getType(ctx, query.left, ensemble);
- 				var String r = cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils.getType(ctx, query.right, ensemble);
+				var String l = cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils.getType(ctx, query.left, ensemble, role);
+ 				var String r = cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils.getType(ctx, query.right, ensemble, role);
  				
  				if(!(l.equals(PrimitiveTypes.INT) || l.equals(PrimitiveTypes.FLOAT)))
  					ctx.reportError("A parameter of a binary operator must be numeric.", query, EdlPackage.Literals.BINARY_OPERATOR__LEFT)
@@ -180,7 +201,7 @@ class EDLUtils {
 			}
 		AdditiveInverse:
 			{
-				var String inner = cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils.getType(ctx, query.nested, ensemble);
+				var String inner = cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils.getType(ctx, query.nested, ensemble, role);
 				
 				if(!inner.equals(PrimitiveTypes.INT) && !inner.equals(PrimitiveTypes.FLOAT))
 					ctx.reportError("The nested expression of a additive inverse must be a numeric expression.", query, EdlPackage.Literals.ADDITIVE_INVERSE__NESTED)								
@@ -188,7 +209,7 @@ class EDLUtils {
 			}
 		Negation:
 			{
-				var String inner = cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils.getType(ctx, query.nested, ensemble);
+				var String inner = cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils.getType(ctx, query.nested, ensemble, role);
 				
 				if(!inner.equals(PrimitiveTypes.BOOL))
 					ctx.reportError("The nested expression of a negation must be logical expression. Actual type: " + inner, query, EdlPackage.Literals.NEGATION__NESTED)								
@@ -213,7 +234,7 @@ class EDLUtils {
 							query, EdlPackage.Literals.FUNCTION_CALL__PARAMETERS)
 					else {					
 						for (var int i = 0; i < formalParams.length; i++) {
-							if(!convertible(getType(ctx, query.parameters.get(i), ensemble), formalParams.get(i))) {
+							if(!convertible(getType(ctx, query.parameters.get(i), ensemble, role), formalParams.get(i))) {
 							ctx.reportError("The parameter types do not correspond to the expected formal parameters.", query, EdlPackage.Literals.FUNCTION_CALL__PARAMETERS)
 							}							
 						}					

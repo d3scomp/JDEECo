@@ -134,7 +134,15 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 		for (RoleDefinition roleDefinition : ensemble.roles) {
 			if (dataTypes.containsKey(roleDefinition.type.name)) {
 				if (!(dataTypes.get(roleDefinition.type.name) instanceof DataContractDefinition))
-					error("The type is present, but is not a data contract.", roleDefinition, EdlPackage.Literals.CHILD_DEFINITION__TYPE)				
+					error("The type is present, but is not a data contract.", roleDefinition, EdlPackage.Literals.CHILD_DEFINITION__TYPE)
+					
+				if (roleDefinition.whereFilter != null) {
+					if (EDLUtils.getType(this, roleDefinition.whereFilter, ensemble, roleDefinition) != PrimitiveTypes.BOOL) {						
+						error("A query used in the where filter must return logical value.", roleDefinition, EdlPackage.Literals.ROLE_DEFINITION__WHERE_FILTER)					
+					}
+					
+					
+				}				
 			}			
 			else
 				error("This data contract is not present in the package.", roleDefinition, EdlPackage.Literals.CHILD_DEFINITION__TYPE)
