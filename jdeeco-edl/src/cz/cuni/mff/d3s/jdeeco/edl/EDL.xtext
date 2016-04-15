@@ -50,7 +50,8 @@ ChildDefinition returns ChildDefinition:
 
 RoleDefinition returns RoleDefinition:
 	(exclusive?='exclusive')?
-	name = ID ('[' cardinalityMin=EInt '..' cardinalityMax=Cardinality ']')? ':' type = QualifiedName	
+	name = ID ('[' cardinalityMin=EInt '..' cardinalityMax=Cardinality ']')? ':' type = QualifiedName
+	('where' whereFilter = Constraint)?	
 ;
 
 Cardinality returns ecore::EInt:

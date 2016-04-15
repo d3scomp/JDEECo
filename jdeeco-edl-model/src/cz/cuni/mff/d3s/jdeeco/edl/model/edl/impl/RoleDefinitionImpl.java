@@ -3,12 +3,15 @@
 package cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl;
 
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlPackage;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EquitableQuery;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
 
 import org.eclipse.emf.common.notify.Notification;
 
+import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.ecore.EClass;
 
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
@@ -19,6 +22,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.RoleDefinitionImpl#isExclusive <em>Exclusive</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.RoleDefinitionImpl#getWhereFilter <em>Where Filter</em>}</li>
  * </ul>
  * </p>
  *
@@ -44,6 +48,16 @@ public class RoleDefinitionImpl extends ChildDefinitionImpl implements RoleDefin
 	 * @ordered
 	 */
 	protected boolean exclusive = EXCLUSIVE_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getWhereFilter() <em>Where Filter</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getWhereFilter()
+	 * @generated
+	 * @ordered
+	 */
+	protected EquitableQuery whereFilter;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -90,11 +104,70 @@ public class RoleDefinitionImpl extends ChildDefinitionImpl implements RoleDefin
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EquitableQuery getWhereFilter() {
+		return whereFilter;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetWhereFilter(EquitableQuery newWhereFilter, NotificationChain msgs) {
+		EquitableQuery oldWhereFilter = whereFilter;
+		whereFilter = newWhereFilter;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, EdlPackage.ROLE_DEFINITION__WHERE_FILTER, oldWhereFilter, newWhereFilter);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setWhereFilter(EquitableQuery newWhereFilter) {
+		if (newWhereFilter != whereFilter) {
+			NotificationChain msgs = null;
+			if (whereFilter != null)
+				msgs = ((InternalEObject)whereFilter).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - EdlPackage.ROLE_DEFINITION__WHERE_FILTER, null, msgs);
+			if (newWhereFilter != null)
+				msgs = ((InternalEObject)newWhereFilter).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - EdlPackage.ROLE_DEFINITION__WHERE_FILTER, null, msgs);
+			msgs = basicSetWhereFilter(newWhereFilter, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, EdlPackage.ROLE_DEFINITION__WHERE_FILTER, newWhereFilter, newWhereFilter));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case EdlPackage.ROLE_DEFINITION__WHERE_FILTER:
+				return basicSetWhereFilter(null, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case EdlPackage.ROLE_DEFINITION__EXCLUSIVE:
 				return isExclusive();
+			case EdlPackage.ROLE_DEFINITION__WHERE_FILTER:
+				return getWhereFilter();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -109,6 +182,9 @@ public class RoleDefinitionImpl extends ChildDefinitionImpl implements RoleDefin
 		switch (featureID) {
 			case EdlPackage.ROLE_DEFINITION__EXCLUSIVE:
 				setExclusive((Boolean)newValue);
+				return;
+			case EdlPackage.ROLE_DEFINITION__WHERE_FILTER:
+				setWhereFilter((EquitableQuery)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -125,6 +201,9 @@ public class RoleDefinitionImpl extends ChildDefinitionImpl implements RoleDefin
 			case EdlPackage.ROLE_DEFINITION__EXCLUSIVE:
 				setExclusive(EXCLUSIVE_EDEFAULT);
 				return;
+			case EdlPackage.ROLE_DEFINITION__WHERE_FILTER:
+				setWhereFilter((EquitableQuery)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -139,6 +218,8 @@ public class RoleDefinitionImpl extends ChildDefinitionImpl implements RoleDefin
 		switch (featureID) {
 			case EdlPackage.ROLE_DEFINITION__EXCLUSIVE:
 				return exclusive != EXCLUSIVE_EDEFAULT;
+			case EdlPackage.ROLE_DEFINITION__WHERE_FILTER:
+				return whereFilter != null;
 		}
 		return super.eIsSet(featureID);
 	}

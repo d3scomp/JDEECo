@@ -32,6 +32,8 @@
   <eClassifiers xsi:type="ecore:EClass" name="RoleDefinition" eSuperTypes="#//ChildDefinition">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="exclusive" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean" defaultValueLiteral="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="whereFilter" eType="#//EquitableQuery"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="AliasDefinition">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="aliasId" lowerBound="1"

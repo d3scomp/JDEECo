@@ -488,6 +488,15 @@ public class EdlPackageImpl extends EPackageImpl implements EdlPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getRoleDefinition_WhereFilter() {
+		return (EReference)roleDefinitionEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getAliasDefinition() {
 		return aliasDefinitionEClass;
 	}
@@ -1232,6 +1241,7 @@ public class EdlPackageImpl extends EPackageImpl implements EdlPackage {
 
 		roleDefinitionEClass = createEClass(ROLE_DEFINITION);
 		createEAttribute(roleDefinitionEClass, ROLE_DEFINITION__EXCLUSIVE);
+		createEReference(roleDefinitionEClass, ROLE_DEFINITION__WHERE_FILTER);
 
 		aliasDefinitionEClass = createEClass(ALIAS_DEFINITION);
 		createEAttribute(aliasDefinitionEClass, ALIAS_DEFINITION__ALIAS_ID);
@@ -1406,6 +1416,7 @@ public class EdlPackageImpl extends EPackageImpl implements EdlPackage {
 
 		initEClass(roleDefinitionEClass, RoleDefinition.class, "RoleDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getRoleDefinition_Exclusive(), ecorePackage.getEBoolean(), "exclusive", "false", 1, 1, RoleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getRoleDefinition_WhereFilter(), this.getEquitableQuery(), null, "whereFilter", null, 0, 1, RoleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(aliasDefinitionEClass, AliasDefinition.class, "AliasDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getAliasDefinition_AliasId(), ecorePackage.getEString(), "aliasId", null, 1, 1, AliasDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
