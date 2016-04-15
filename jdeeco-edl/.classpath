@@ -5,6 +5,6 @@
 	<classpathentry kind="src" path="xtend-gen"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="lib" path="/cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3/com.microsoft.z3.jar"/>
+	<classpathentry kind="lib" path="com.microsoft.z3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

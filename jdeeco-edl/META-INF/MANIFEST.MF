@@ -39,3 +39,5 @@ Export-Package: cz.cuni.mff.d3s.jdeeco.edl,
  cz.cuni.mff.d3s.jdeeco.edl.services,
  cz.cuni.mff.d3s.jdeeco.edl.utils,
  cz.cuni.mff.d3s.jdeeco.edl.validation
+Bundle-ClassPath: com.microsoft.z3.jar,
+ .
