@@ -123,9 +123,13 @@ public class TrackingKnowledgeWrapper extends ReadOnlyKnowledgeWrapper {
 	private ChangeSet createChangeSet(Map<Field, KnowledgePath> fieldKnowledgePaths, Object trackedInstance) throws RoleClassException {
 		ChangeSet result = new ChangeSet();
 		
-		for (Entry<Field, KnowledgePath> fieldAndValue : fieldKnowledgePaths.entrySet()) {
+		for (Entry<Field, KnowledgePath> fieldAndValue : fieldKnowledgePaths.entrySet()) {			
 			Field field = fieldAndValue.getKey();
 			KnowledgePath knowledgePath = fieldAndValue.getValue();
+			if (field.getName().equals("id")) {
+				continue;
+			}
+			
 			try {
 				result.setValue(knowledgePath, field.get(trackedInstance));
 			} catch (IllegalArgumentException | IllegalAccessException e) {
