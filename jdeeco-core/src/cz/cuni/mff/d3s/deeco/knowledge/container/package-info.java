@@ -10,7 +10,8 @@
  * {@link cz.cuni.mff.d3s.deeco.knowledge.container.ReadOnlyKnowledgeWrapper}.
  * 
  * When dealing with multiple components at once, knowledge container comes useful. A knowledge
- * container is an instance of the {@link cz.cuni.mff.d3s.deeco.knowledge.container.TrackingKnowledgeContainer}
+ * container is a subclass of the {@link cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer}
+ * interface, namely the {@link cz.cuni.mff.d3s.deeco.knowledge.container.TrackingKnowledgeContainer}
  * class.
  * 
  * Knowledge wrappers and knowledge container use roles for accessing the knowledge. If a DEECo
