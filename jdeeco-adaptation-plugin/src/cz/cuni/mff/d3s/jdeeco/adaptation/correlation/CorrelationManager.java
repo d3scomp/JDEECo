@@ -49,8 +49,7 @@ public class CorrelationManager implements MAPEAdaptation {
 	 */
 	@Local
 	private static final long TIME_SLOT_DURATION = 1000;
-
-
+	
 	public String id = "CorrelationManager";
 	
 	/**
@@ -60,6 +59,15 @@ public class CorrelationManager implements MAPEAdaptation {
 	@Local
 	public final List<DEECoNode> otherNodes;
 
+	/**
+	 * Caches the failures that has been already analyzed, to save time.
+	 *
+	 * String - ID of a component
+	 * String - Label of a knowledge field of the component that has failed
+	 */
+	@Local
+	private Map<String, List<String>> analyzedFailureCache;
+	
 	/**
 	 * Holds the history of knowledge of all the other components in the system.
 	 *
@@ -85,6 +93,7 @@ public class CorrelationManager implements MAPEAdaptation {
 	 */
 	public CorrelationManager(List<DEECoNode> otherNodes) {
 		knowledgeHistoryOfAllComponents = new HashMap<>();
+		analyzedFailureCache = new HashMap<>();
 		distanceBounds = new HashMap<>();
 
 		this.otherNodes = otherNodes;
@@ -155,24 +164,29 @@ public class CorrelationManager implements MAPEAdaptation {
 	/**
 	 * Check whether the new ensemble inferred by correlation is needed.
 	 * 
-	 * @returns 1 if the ensemble is needed. 0 otherwise.
+	 * @returns true if the ensemble is needed. false otherwise.
 	 */
 	@Override
 	public boolean analyze() {
-		boolean irrelevant = true;
-		for (String s1 : knowledgeHistoryOfAllComponents.keySet()) {
-			final Map<String, List<CorrelationMetadataWrapper<?>>> map = 
-					knowledgeHistoryOfAllComponents.get(s1);
-			for (String s2 : map.keySet()) {
-				final List<CorrelationMetadataWrapper<?>> list = map.get(s2);
-				if (!list.isEmpty()) {
-					// If any sensor is not operational than the adaptation is relevant
-					irrelevant &= list.get(list.size() - 1).isOperational();
+		Map<String, List<String>> failedFields = getFailedFields();
+		if(failedFields.isEmpty()){
+			// If no failure found, don't run the correlation mechanism
+			return false;
+		}
+		
+		for (String componentId : failedFields.keySet()) {
+			for (String fieldName : failedFields.get(componentId)) {
+				boolean cached = analyzedFailureCache.containsKey(componentId)
+						&& analyzedFailureCache.get(componentId).contains(fieldName);
+				if(!cached){
+					// If the failure is not yet cached, run the correlation mechanism
+					return true;
 				}
 			}
 		}
 		
-		return !irrelevant;
+		// Don't run the correlation mechanism if all failures are cached
+		return false;
 	}
 
 	/**
@@ -207,7 +221,6 @@ public class CorrelationManager implements MAPEAdaptation {
 	 */
 	@Override
 	public void execute() {
-		final boolean run = true;
 		if(verbose){
 			Log.i("Correlation ensembles management process started...");
 		}
@@ -219,7 +232,7 @@ public class CorrelationManager implements MAPEAdaptation {
 			String ensembleName = CorrelationEnsembleFactory
 					.composeClassName(correlationFilter, correlationSubject);
 			try {
-				if (!distance.isValid() || !run) {
+				if (!distance.isValid()) {
 					if(verbose){
 						Log.i(String.format("Undeploying ensemble %s",	ensembleName));
 					}
@@ -253,6 +266,46 @@ public class CorrelationManager implements MAPEAdaptation {
 			}
 		}
 		
+		// Cache the failures that has been taken care of
+		Map<String, List<String>> failedFields = getFailedFields();
+		if(!failedFields.isEmpty()){
+			// Cache if any failure found
+			for (String componentId : failedFields.keySet()) {
+				analyzedFailureCache.put(componentId, failedFields.get(componentId));
+			}
+		}
+	}
+	
+	/**
+	 * Returns all the fields that are not operational,
+	 * together with components that contains the failed fields.
+	 * @return Mapping of components to failed fields.
+	 */
+	private Map<String, List<String>> getFailedFields(){
+		Map<String, List<String>> result = new HashMap<>();
+		for (String componentId : knowledgeHistoryOfAllComponents.keySet()) {
+			List<String> failedFields = new ArrayList<>();
+			
+			final Map<String, List<CorrelationMetadataWrapper<?>>> componentFields = 
+					knowledgeHistoryOfAllComponents.get(componentId);
+			for (String fieldName : componentFields.keySet()) {
+				final List<CorrelationMetadataWrapper<?>> fieldHistory =
+						componentFields.get(fieldName);
+				if (!fieldHistory.isEmpty()) {
+					// If any sensor is not operational than the adaptation is relevant
+					boolean fieldOperational = fieldHistory.get(fieldHistory.size() - 1).isOperational();
+					if(!fieldOperational){
+						failedFields.add(fieldName);
+					}
+				}
+			}
+			
+			if(!failedFields.isEmpty()){
+				result.put(componentId, failedFields);
+			}
+		}
+		
+		return result;
 	}
 
 	/**
