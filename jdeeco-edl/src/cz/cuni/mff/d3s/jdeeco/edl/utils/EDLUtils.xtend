@@ -5,6 +5,8 @@ import java.util.List
 import java.util.Collections
 import cz.cuni.mff.d3s.jdeeco.edl.PrimitiveTypes
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.QualifiedNameImpl
+import cz.cuni.mff.d3s.jdeeco.edl.ContextSymbols
+import javax.lang.model.type.PrimitiveType
 
 class EDLUtils {
 	def static String stripSet(String setType) {
@@ -132,7 +134,7 @@ class EDLUtils {
 				else {
 					var parts = name.toParts();
 					
-					if (parts.findFirst[true].equals("it")) {
+					if (parts.findFirst[true].equals(ContextSymbols.WHERE_IT_SYMBOL)) {
 						getKnowledgeType(ctx, name, ctx.getDataType(role.type), 1)
 					} 
 					else if (parts.findFirst[true].equals(ensemble.id.fieldName)) {
@@ -140,9 +142,8 @@ class EDLUtils {
 					}
 					else {
 						ctx.reportError("Only the ensemble id field and the it operator can be used in the where filter.", query, EdlPackage.Literals.KNOWLEDGE_VARIABLE__PATH)
-					}
-							
-					""				
+						PrimitiveTypes.UNKNOWN
+					}				
 				}
 			}
 		LogicalOperator:

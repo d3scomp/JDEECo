@@ -14,8 +14,8 @@ EnsembleDefinition returns EnsembleDefinition:
 	'ensemble'
 	    name=ID
 	    'id' id=IdDefinition
-		('child of' parentEnsemble=EString)?
-		('parent of' childEnsembles+=ChildDefinition (childEnsembles+=ChildDefinition)*)?
+		//('child of' parentEnsemble=EString)?
+		//('parent of' childEnsembles+=ChildDefinition (childEnsembles+=ChildDefinition)*)?
 		('alias' aliases+=AliasDefinition (aliases+=AliasDefinition)*)?
 		'membership'
 		  'roles' roles+=RoleDefinition (roles+=RoleDefinition)*		
