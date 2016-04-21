@@ -2,6 +2,9 @@ package cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainerException;
@@ -11,6 +14,9 @@ import cz.cuni.mff.d3s.jdeeco.edl.functions.IFunction;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.AdditiveInverse;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.BinaryOperator;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.BoolLiteral;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.DataContractDefinition;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlDocument;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EquitableQuery;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.FloatLiteral;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.FunctionCall;
@@ -19,38 +25,98 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.LogicalOperator;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Negation;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.NumericLiteral;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RelationOperator;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.StringLiteral;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.QueryVisitorImpl;
 import cz.cuni.mff.d3s.jdeeco.edl.utils.ITypeResolutionContext;
 
 public class FilteredKnowledgeContainer {
 
-	private int ensembleId;
+	private Map<String, BaseDataContract[]> components;
+	
 	private KnowledgeContainer knowledgeContainer;
 	private ITypeResolutionContext typeResolution;
 	
-	public FilteredKnowledgeContainer(KnowledgeContainer knowledgeContainer, ITypeResolutionContext typeResolution,
-			int ensembleId) {
+	public FilteredKnowledgeContainer(KnowledgeContainer knowledgeContainer, ITypeResolutionContext typeResolution) {
 		this.knowledgeContainer = knowledgeContainer;
 		this.typeResolution = typeResolution;
-		this.ensembleId = ensembleId;
 	}
 	
-	public <TDataContract extends BaseDataContract> Collection<TDataContract> getFilteredTrackedKnowledge(
-			Class<TDataContract> dataContractClass, EquitableQuery whereClause) throws KnowledgeContainerException {
+	public void load(EdlDocument edlDocument, String packageName) throws ClassNotFoundException, KnowledgeContainerException {
+		components = new HashMap<String, BaseDataContract[]>();
 		
-		Collection<TDataContract> dataContractSet = knowledgeContainer.getTrackedKnowledgeForRole(dataContractClass);
-		Collection<TDataContract> resultSet = new ArrayList<>();
+		for (DataContractDefinition contract : edlDocument.getDataContracts()) {
+			@SuppressWarnings("unchecked")
+			Class<? extends BaseDataContract> roleClass = (Class<? extends BaseDataContract>) Class.forName(
+					packageName + "." + contract.getName());
+			Collection<? extends BaseDataContract> instancesUnsorted = knowledgeContainer.getTrackedKnowledgeForRole(roleClass);
+			
+			BaseDataContract[] instances = new BaseDataContract[instancesUnsorted.size()];
+			String dataContractName = contract.getName();
+			for (int i = 0; !instancesUnsorted.isEmpty(); i++) {
+				BaseDataContract minInstance = instancesUnsorted.iterator().next();
+				for (BaseDataContract instance : instancesUnsorted) {
+					if (Integer.parseInt(instance.id) < Integer.parseInt(minInstance.id)) {
+						minInstance = instance;
+					}
+				}
+				
+				instances[i] = minInstance;
+				instancesUnsorted.remove(minInstance);
+			}
+			
+			components.put(dataContractName, instances);
+		}
+	}
+	
+	public <TDataContract extends BaseDataContract> List<TDataContract> getFilteredTrackedKnowledge(
+			String dataContractName, EquitableQuery whereClause, int ensembleId) {
 		
-		for (TDataContract instance : dataContractSet) {
+		BaseDataContract[] dataContractSet = components.get(dataContractName);
+		List<TDataContract> resultSet = new ArrayList<>();
+		
+		for (BaseDataContract instance : dataContractSet) {
 			DataContractFilterVisitor visitor = new DataContractFilterVisitor(typeResolution, instance, ensembleId);
-			if ((Boolean) whereClause.accept(visitor)) {
-				resultSet.add(instance);
+			if (whereClause == null || (Boolean) whereClause.accept(visitor)) {
+				resultSet.add((TDataContract) instance);
 			}
 		}
 		
 		return resultSet;
 		
+	}
+	
+	public <TDataContract> int getMaxEnsembleCount(EdlDocument edlDocument,
+			EnsembleDefinition ensembleDefinition) {
+		int result = Integer.MAX_VALUE;
+		for (DataContractDefinition contract : edlDocument.getDataContracts()) {
+			int maxEnsembleCount = getMaxEnsembleCount(contract.getName(), ensembleDefinition);
+			if (maxEnsembleCount < result) {
+				result = maxEnsembleCount;
+			}
+		}
+		
+		return result;
+	}
+	
+	private <TDataContract> int getMaxEnsembleCount(String dataContractName, EnsembleDefinition ensembleDefinition) {
+        List<RoleDefinition> roles = ensembleDefinition.getRoles();
+        int minCardinalitiesSum = 0;
+        for (RoleDefinition roleDefinition : roles) {
+        	if (roleDefinition.getType().toString().equals(dataContractName)) {
+        		minCardinalitiesSum += roleDefinition.getCardinalityMin();
+        	}
+        }
+        
+        if (minCardinalitiesSum == 0) {
+        	return Integer.MAX_VALUE;
+        }
+        
+        return getNumInstances(dataContractName) / Math.max(1, minCardinalitiesSum);
+	}
+	
+	public int getNumInstances(String dataContractName) {
+		return components.get(dataContractName).length;
 	}
 
 }

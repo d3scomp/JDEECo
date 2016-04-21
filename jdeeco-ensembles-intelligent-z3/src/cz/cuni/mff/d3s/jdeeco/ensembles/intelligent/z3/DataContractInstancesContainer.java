@@ -18,38 +18,18 @@ import cz.cuni.mff.d3s.jdeeco.edl.BaseDataContract;
 import cz.cuni.mff.d3s.jdeeco.edl.PrimitiveTypes;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.DataContractDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EquitableQuery;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.FieldDeclaration;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
 
-class DataContractInstancesContainer {
-	private DataContractDefinition dataContractDefinition;
-	private BaseDataContract[] instances;
+class DataContractInstancesPerEnsembleContainer {
+	private List<? extends BaseDataContract> instances;
 	private Map<String, KnowledgeFieldVector> knowledgeFields;
-	private String dataContractName;
 	
-	public DataContractInstancesContainer(Context ctx, Optimize opt, String packageName, DataContractDefinition dataContractDefinition,
-			KnowledgeContainer knowledgeContainer)
-			throws ClassNotFoundException, KnowledgeContainerException, UnsupportedDataTypeException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-		
-		this.dataContractDefinition = dataContractDefinition;
-		
-		@SuppressWarnings("unchecked")
-		Class<? extends BaseDataContract> roleClass = (Class<? extends BaseDataContract>) Class.forName(packageName + "." + dataContractDefinition.getName());
-		Collection<? extends BaseDataContract> instancesUnsorted = knowledgeContainer.getTrackedKnowledgeForRole(roleClass);
-				
-		this.instances = new BaseDataContract[instancesUnsorted.size()];
-		this.dataContractName = dataContractDefinition.getName();
-		for (int i = 0; !instancesUnsorted.isEmpty(); i++) {
-			BaseDataContract minInstance = instancesUnsorted.iterator().next();
-			for (BaseDataContract instance : instancesUnsorted) {
-				if (Integer.parseInt(instance.id) < Integer.parseInt(minInstance.id)) {
-					minInstance = instance;
-				}
-			}
-			
-			instances[i] = minInstance;
-			instancesUnsorted.remove(minInstance);
-		}
+	public DataContractInstancesPerEnsembleContainer(Context ctx, Optimize opt, DataContractDefinition dataContractDefinition,
+			FilteredKnowledgeContainer filteredKnowledgeContainer, EquitableQuery whereClause)
+			throws UnsupportedDataTypeException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		this.instances = filteredKnowledgeContainer.getFilteredTrackedKnowledge(dataContractDefinition.getName(), whereClause, 0);
 		
 		knowledgeFields = new HashMap<>();
 		
@@ -58,8 +38,8 @@ class DataContractInstancesContainer {
 			String fieldType = fieldDecl.getType().toString();
 			KnowledgeFieldVector field = new KnowledgeFieldVector(ctx, opt, dataContractDefinition.getName(), fieldName, fieldType);
 			knowledgeFields.put(fieldName, field);
-			for (int i = 0; i < instances.length; i++) {
-				Object value = readField(fieldName, instances[i]);
+			for (int i = 0; i < instances.size(); i++) {
+				Object value = readField(fieldName, instances.get(i));
 				Expr expr;
 				if (PrimitiveTypes.BOOL.equals(fieldType)) {
 					if (value != null)
@@ -82,30 +62,40 @@ class DataContractInstancesContainer {
 		}
 	}
 	
-	public DataContractDefinition getDataContractDefinition() {
-		return dataContractDefinition;
-	}
-	
 	private Object readField(String fieldName, BaseDataContract instance) 
 			throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		Field field = instance.getClass().getField(fieldName);
 		return field.get(instance);
 	}
 	
-	public int getMaxEnsembleCount(EnsembleDefinition ensembleDefinition) {
-        List<RoleDefinition> roles = ensembleDefinition.getRoles();
-        int minCardinalitiesSum = 0;
-        for (RoleDefinition roleDefinition : roles) {
-        	if (roleDefinition.getType().toString().equals(getName())) {
-        		minCardinalitiesSum += roleDefinition.getCardinalityMin();
-        	}
-        }
-        
-        if (minCardinalitiesSum == 0) {
-        	return Integer.MAX_VALUE;
-        }
-        
-        return getNumInstances() / Math.max(1, minCardinalitiesSum);
+	public List<? extends BaseDataContract> getInstances() {
+		return instances;
+	}
+	
+	public Map<String, KnowledgeFieldVector> getKnowledgeFields() {
+		return knowledgeFields;
+	}
+}
+
+class DataContractInstancesContainer {
+	private DataContractDefinition dataContractDefinition;
+	private DataContractInstancesPerEnsembleContainer instances;
+	private String dataContractName;
+	private EquitableQuery whereClause;
+	
+	public DataContractInstancesContainer(Context ctx, Optimize opt, DataContractDefinition dataContractDefinition,
+			FilteredKnowledgeContainer filteredKnowledgeContainer, EquitableQuery whereClause)
+			throws ClassNotFoundException, KnowledgeContainerException, UnsupportedDataTypeException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		
+		this.dataContractDefinition = dataContractDefinition;	
+		this.dataContractName = dataContractDefinition.getName();
+		this.whereClause = whereClause;
+		this.instances = new DataContractInstancesPerEnsembleContainer(ctx, opt, dataContractDefinition, filteredKnowledgeContainer, 
+				whereClause);
+	}
+	
+	public DataContractDefinition getDataContractDefinition() {
+		return dataContractDefinition;
 	}
 	
 	public String getName() {
@@ -113,11 +103,11 @@ class DataContractInstancesContainer {
 	}
 	
 	public BaseDataContract getInstance(int componentIndex) {
-		return instances[componentIndex];
+		return instances.getInstances().get(componentIndex);
 	}
 	
 	public KnowledgeFieldVector get(String fieldName) {
-		return knowledgeFields.get(fieldName);
+		return instances.getKnowledgeFields().get(fieldName);
 	}
 	
 	public Expr get(String fieldName, Expr componentIndex) {
@@ -125,7 +115,7 @@ class DataContractInstancesContainer {
 	}
 	
 	public int getNumInstances() {
-		return instances.length;
+		return instances.getInstances().size();
 	}
 	
 }

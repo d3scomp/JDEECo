@@ -122,11 +122,11 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 
 			initConfiguration();
 
-			DataContainer dataContainer = new DataContainer(ctx, opt, edlDocument.getPackage().toString(), edlDocument, container);
-			
 	        EnsembleDefinition ensembleDefinition = edlDocument.getEnsembles().get(0);	        
 	        List<RoleDefinition> roles = ensembleDefinition.getRoles();
-	        int maxEnsembleCount = dataContainer.getMaxEnsembleCount(ensembleDefinition);
+			DataContainer dataContainer = new DataContainer(ctx, opt, edlDocument.getPackage().toString(), edlDocument, container, 
+					typeResolution, ensembleDefinition);			
+	        int maxEnsembleCount = dataContainer.getMaxEnsembleCount();
 						
 			EnsembleAssignmentMatrix assignments = EnsembleAssignmentMatrix.create(
 					ctx, opt, maxEnsembleCount, ensembleDefinition, dataContainer);

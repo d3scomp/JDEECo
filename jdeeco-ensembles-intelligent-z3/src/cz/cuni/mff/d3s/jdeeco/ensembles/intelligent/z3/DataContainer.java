@@ -15,32 +15,30 @@ import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainerException;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.DataContractDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlDocument;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
+import cz.cuni.mff.d3s.jdeeco.edl.utils.ITypeResolutionContext;
 
 class DataContainer {
 	private EdlDocument edlDocument;
 	private Map<String, DataContractInstancesContainer> containers;
+	private int maxEnsembleCount;
 	
-	public DataContainer(Context ctx, Optimize opt, String packageName, EdlDocument edlDocument, KnowledgeContainer knowledgeContainer)
+	public DataContainer(Context ctx, Optimize opt, String packageName, EdlDocument edlDocument, KnowledgeContainer knowledgeContainer,
+			ITypeResolutionContext typeResolution, EnsembleDefinition ensembleDefinition)
 			throws ClassNotFoundException, KnowledgeContainerException, UnsupportedDataTypeException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		
 		this.edlDocument = edlDocument;
 		containers = new HashMap<>();
 		
+		FilteredKnowledgeContainer filteredKnowledgeContainer = new FilteredKnowledgeContainer(knowledgeContainer, typeResolution);
+		filteredKnowledgeContainer.load(edlDocument, packageName);
+		maxEnsembleCount = filteredKnowledgeContainer.getMaxEnsembleCount(edlDocument, ensembleDefinition);
 		for (DataContractDefinition contract : edlDocument.getDataContracts()) {
-			containers.put(contract.getName(), new DataContractInstancesContainer(ctx, opt, packageName, contract, knowledgeContainer));
+			containers.put(contract.getName(), new DataContractInstancesContainer(ctx, opt, contract, filteredKnowledgeContainer, null));
 		}
 	}
 	
-	public int getMaxEnsembleCount(EnsembleDefinition ensembleDefinition) {
-		int result = Integer.MAX_VALUE;
-		for(DataContractInstancesContainer dataContractInstance : containers.values()) {
-			int maxEnsembleCount = dataContractInstance.getMaxEnsembleCount(ensembleDefinition);
-			if (maxEnsembleCount < result) {
-				result = maxEnsembleCount;
-			}
-		}
-		
-		return result;
+	public int getMaxEnsembleCount() {
+		return maxEnsembleCount;
 	}
 	
 	public EdlDocument getEdlDocument() {
