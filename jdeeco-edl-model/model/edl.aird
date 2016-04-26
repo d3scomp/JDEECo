@@ -2912,7 +2912,7 @@
           <foregroundColor xmi:type="viewpoint:RGBValues" xmi:id="_O-NsxMXeEeW22JAQo2ijNA" red="255" green="252" blue="216"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']"/>
-        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_NU1UIMXeEeW22JAQo2ijNA" name="value : EFloat = 0.0" tooltipText="">
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_NU1UIMXeEeW22JAQo2ijNA" name="value : EDouble = 0.0" tooltipText="">
           <target xmi:type="ecore:EAttribute" href="edl.ecore#//FloatLiteral/value"/>
           <semanticElements xmi:type="ecore:EAttribute" href="edl.ecore#//FloatLiteral/value"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_3toTZNygEeWbnqCWZUWqaA" labelFormat="bold" labelAlignment="LEFT" description="_3toTYtygEeWbnqCWZUWqaA">

@@ -83,7 +83,7 @@ FieldName returns QualifiedName:
 ;
 
 TypeName returns QualifiedName:
-	name = ("int" | "float" | "string" | "bool") | QualifiedName
+	name = ("int" | "double" | "string" | "bool") | QualifiedName
 ;
 
 
@@ -98,7 +98,7 @@ EBoolean returns ecore::EBoolean:
 EString returns ecore::EString:
 	STRING | ID;
 
-EFloat returns ecore::EFloat:
+EDouble returns ecore::EDouble:
 	INT? '.' INT (('E'|'e') '-'? INT)?;
 
 
@@ -133,7 +133,7 @@ StringLiteral returns StringLiteral:
 ;
 
 FloatLiteral returns FloatLiteral:
-	value=EFloat
+	value=EDouble
 ;
 
 // ===== Constraints =====
