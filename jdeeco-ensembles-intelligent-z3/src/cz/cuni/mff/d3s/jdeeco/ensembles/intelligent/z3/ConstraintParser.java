@@ -45,15 +45,17 @@ class ConstraintParser extends QueryVisitorImpl<Expr> {
 	private Optimize opt;
 	private DataContainer dataContainer;
 	private EnsembleRoleAssignmentMatrix assignmentMatrix;
+	private int ensembleIndex;
 	private ITypeResolutionContext typeResolution;
 	
 	public ConstraintParser(Context ctx, Optimize opt, DataContainer dataContainer, EnsembleRoleAssignmentMatrix assignmentMatrix,
-			ITypeResolutionContext typeResolution) {
+			int ensembleIndex, ITypeResolutionContext typeResolution) {
 		super();
 		this.ctx = ctx;
 		this.opt = opt;
 		this.dataContainer = dataContainer;
 		this.assignmentMatrix = assignmentMatrix;
+		this.ensembleIndex = ensembleIndex;
 		this.typeResolution = typeResolution;
 	}
 	
@@ -118,7 +120,7 @@ class ConstraintParser extends QueryVisitorImpl<Expr> {
 		String fieldName = query.getPath().toParts().size() > 1 ? query.getPath().toParts().get(1) : null;
 		
 		RoleDefinition roleDefinition = getRoleDefinition(roleName);
-		DataContractInstancesContainer dataContractContainer = dataContainer.get(roleDefinition.getType().toString());
+		DataContractInstancesContainer dataContractContainer = dataContainer.get(roleDefinition.getName().toString());
 		int roleIndex = assignmentMatrix.getEnsembleDefinition().getRoles().indexOf(roleDefinition);
 		ComponentAssignmentSet componentAssignmentSet = assignmentMatrix.get(roleIndex);
 		
@@ -131,7 +133,7 @@ class ConstraintParser extends QueryVisitorImpl<Expr> {
 			if (fieldName == null) {				
 				return theComponentIndex;
 			} else {
-				return dataContractContainer.get(fieldName, theComponentIndex);
+				return dataContractContainer.get(fieldName, theComponentIndex, ensembleIndex);
 			}
 			
 		} else {
@@ -144,7 +146,7 @@ class ConstraintParser extends QueryVisitorImpl<Expr> {
 					ArrayExpr resultSet = ctx.mkArrayConst(resultSetName, sort, ctx.mkBoolSort());
 					
 					for (int c = 0; c < componentAssignmentSet.getLength(); c++) {
-						Expr knowledgeValue = dataContractContainer.get(fieldName, ctx.mkInt(c));
+						Expr knowledgeValue = dataContractContainer.get(fieldName, ctx.mkInt(c), ensembleIndex);
 						opt.Add(ctx.mkEq(componentAssignmentSet.get(c), (BoolExpr) ctx.mkSelect(resultSet, knowledgeValue)));
 					}
 					

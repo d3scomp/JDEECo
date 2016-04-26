@@ -12,9 +12,11 @@ import com.microsoft.z3.Optimize;
 
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainerException;
+import cz.cuni.mff.d3s.jdeeco.edl.BaseDataContract;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.DataContractDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlDocument;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.utils.ITypeResolutionContext;
 
 class DataContainer {
@@ -32,8 +34,9 @@ class DataContainer {
 		FilteredKnowledgeContainer filteredKnowledgeContainer = new FilteredKnowledgeContainer(knowledgeContainer, typeResolution);
 		filteredKnowledgeContainer.load(edlDocument, packageName);
 		maxEnsembleCount = filteredKnowledgeContainer.getMaxEnsembleCount(edlDocument, ensembleDefinition);
-		for (DataContractDefinition contract : edlDocument.getDataContracts()) {
-			containers.put(contract.getName(), new DataContractInstancesContainer(ctx, opt, contract, filteredKnowledgeContainer, null));
+		for (RoleDefinition roleDef : ensembleDefinition.getRoles()) {
+			containers.put(roleDef.getName(), new DataContractInstancesContainer(ctx, opt, roleDef, typeResolution, 
+					filteredKnowledgeContainer, roleDef.getWhereFilter(), maxEnsembleCount));
 		}
 	}
 	
@@ -49,19 +52,23 @@ class DataContainer {
 		return containers.values();
 	}
 	
-	public DataContractInstancesContainer get(String dataContractName) {
-		return containers.get(dataContractName);
+	public DataContractInstancesContainer get(String roleName) {
+		return containers.get(roleName);
+	}
+	/*
+	public Expr get(String roleName, String fieldName, Expr componentIndex) {
+		return get(roleName).get(fieldName, componentIndex);
+	}*/
+	
+	public int getNumInstances(String roleName, int ensembleIndex) {
+		return get(roleName).getNumInstances(ensembleIndex);
 	}
 	
-	public Expr get(String dataContractName, String fieldName, Expr componentIndex) {
-		return get(dataContractName).get(fieldName, componentIndex);
+	public BaseDataContract getInstance(String roleName, int componentIndex, int ensembleIndex) {
+		return get(roleName).getInstance(componentIndex, ensembleIndex);
 	}
-	
-	public int getNumInstances(String dataContractName) {
-		return get(dataContractName).getNumInstances();
-	}
-	
-	public Object getInstance(String dataContractName, int componentIndex) {
-		return get(dataContractName).getInstance(componentIndex);
-	}
+	/*
+	public int getInstanceGlobalIndex(String roleName, int componentIndex, int ensembleIndex) {
+		return get(roleName).getInstanceGlobalIndex(componentIndex, ensembleIndex);
+	}*/
 }

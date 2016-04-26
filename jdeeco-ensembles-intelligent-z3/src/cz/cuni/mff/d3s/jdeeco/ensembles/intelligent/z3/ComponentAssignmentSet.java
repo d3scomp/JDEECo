@@ -13,6 +13,7 @@ class ComponentAssignmentSet {
 	private ArrayExpr assignments;
 	private int length;
 	private int roleIndex;
+	private String roleName;
 	
 	private Context ctx;
 	private Optimize opt;
@@ -20,15 +21,16 @@ class ComponentAssignmentSet {
 	private IntExpr assignedCount;
 	
 	public static ComponentAssignmentSet create(Context ctx, Optimize opt, int ensembleIndex, int roleIndex, String roleName, int componentCount) {		
-		ArrayExpr assignments = ctx.mkArrayConst("assignment_e" + ensembleIndex + "_" + roleName, ctx.mkIntSort(), ctx.mkBoolSort());		
-		return new ComponentAssignmentSet(ctx, opt, assignments, roleIndex, componentCount);
+		ArrayExpr assignments = ctx.mkArrayConst("assignment_e" + ensembleIndex + "_" + roleName, ctx.mkIntSort(), ctx.mkBoolSort());
+		return new ComponentAssignmentSet(ctx, opt, assignments, roleIndex, roleName, componentCount);
 	}
 	
-	public ComponentAssignmentSet(Context ctx, Optimize opt, ArrayExpr assignment, int roleIndex, int length) {
+	public ComponentAssignmentSet(Context ctx, Optimize opt, ArrayExpr assignment, int roleIndex, String roleName, int length) {
 		this.ctx = ctx;
 		this.opt = opt;
 		this.assignments = assignment;
 		this.roleIndex = roleIndex;
+		this.roleName = roleName;
 		this.length = length;
 	}
 	
@@ -75,6 +77,10 @@ class ComponentAssignmentSet {
 	
 	public IntExpr getAssignedCount() {
 		return assignedCount;
+	}
+	
+	public String getRoleName() {
+		return roleName;
 	}
 	
 	public ComponentAssignmentResults getResults(Model m) {

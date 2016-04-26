@@ -15,7 +15,7 @@ ensemble PendolinoEnsemble
 	membership
 		roles
 			leader [1..1] : Rescuer
-			rescuers [1..2] : Rescuer
+			rescuers [3..4] : Rescuer
 			firefighter [0..1] : FireFighter
 		
 		constraints

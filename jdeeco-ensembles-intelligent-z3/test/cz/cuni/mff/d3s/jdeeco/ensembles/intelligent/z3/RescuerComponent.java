@@ -26,6 +26,7 @@ public class RescuerComponent {
 		this.id = id;
 		this.pos = pos;
 		this.isLeader = false;
+		this.trainId = 0;
 	}
 	
 	@Process
@@ -37,6 +38,8 @@ public class RescuerComponent {
 				outputStream.print(" (leader)");
 			}
 			outputStream.println();
+		} else {
+			outputStream.printf("Rescuer %s: unassigned\n", id);
 		}
 	}
 

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainerException;
@@ -33,6 +34,8 @@ import cz.cuni.mff.d3s.jdeeco.edl.utils.ITypeResolutionContext;
 public class FilteredKnowledgeContainer {
 
 	private Map<String, BaseDataContract[]> components;
+	
+	//private Set<Integer> usedComponentIds;
 	
 	private KnowledgeContainer knowledgeContainer;
 	private ITypeResolutionContext typeResolution;
@@ -85,7 +88,22 @@ public class FilteredKnowledgeContainer {
 		return resultSet;
 		
 	}
+	/*
+	public int[] getGlobalIndices(List<? extends BaseDataContract> instances) {
+		int[] result = new int[instances.size()];
+		
+		for (int i = 0; i < instances.size(); i++) {
+			result[i] = Integer.parseInt(instances.get(i).id);
+			usedComponentIds.add(result[i]);
+		}
+		
+		return result;
+	}
 	
+	public Set<Integer> getUsedComponentIds() {
+		return usedComponentIds;
+	}
+	*/	
 	public <TDataContract> int getMaxEnsembleCount(EdlDocument edlDocument,
 			EnsembleDefinition ensembleDefinition) {
 		int result = Integer.MAX_VALUE;

@@ -17,7 +17,7 @@ class KnowledgeFieldVector {
 	private Optimize opt;
 	private boolean closed;
 	
-	public KnowledgeFieldVector(Context ctx, Optimize opt, String dataContractName, String fieldName, String fieldType)
+	public KnowledgeFieldVector(Context ctx, Optimize opt, String roleName, int ensembleIndex, String fieldName, String fieldType)
 			throws UnsupportedDataTypeException {
 		
 		this.ctx = ctx;
@@ -25,8 +25,8 @@ class KnowledgeFieldVector {
 		
 		Sort sort = getSort(ctx, fieldType);
 				
-		values_tmp = ctx.mkArrayConst(dataContractName + "_" + fieldName + "_vals_tmp", ctx.mkIntSort(), sort);
-		values = ctx.mkArrayConst(dataContractName + "_" + fieldName + "_vals", ctx.mkIntSort(), sort);
+		values_tmp = ctx.mkArrayConst(roleName + "_" + fieldName + "_e" + ensembleIndex + "_vals_tmp", ctx.mkIntSort(), sort);
+		values = ctx.mkArrayConst(roleName + "_" + fieldName + "_e" + ensembleIndex + "_vals", ctx.mkIntSort(), sort);
 	}
 	
 	public void set(int componentIndex, Expr value) throws UnsupportedOperationException {
@@ -49,7 +49,7 @@ class KnowledgeFieldVector {
 	public Expr get(Expr componentIndex) {
 		return ctx.mkSelect(values, componentIndex);
 	}
-	
+		
 	public static Sort getSort(Context ctx, String primitiveType) throws UnsupportedDataTypeException {
 		if (PrimitiveTypes.BOOL.equals(primitiveType)) {
 			return ctx.mkBoolSort();

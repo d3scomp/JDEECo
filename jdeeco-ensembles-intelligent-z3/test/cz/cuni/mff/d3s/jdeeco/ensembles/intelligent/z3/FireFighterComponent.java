@@ -23,6 +23,7 @@ public class FireFighterComponent {
 	public FireFighterComponent(String id, Integer pos) {
 		this.id = id;
 		this.pos = pos;
+		this.trainId = 0;
 	}
 	
 	@Process
@@ -30,6 +31,8 @@ public class FireFighterComponent {
 	public static void printTrainId(@In("id") String id, @In("trainId") Integer trainId) {
 		if (trainId > 0) {
 			outputStream.printf("FireFighter %s: train %d\n", id, trainId);
+		} else {
+			outputStream.printf("FireFighter %s: unassigned\n", id);
 		}
 	}
 }

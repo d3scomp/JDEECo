@@ -6,10 +6,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.microsoft.z3.ArrayExpr;
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
+import com.microsoft.z3.IntExpr;
 import com.microsoft.z3.Model;
 import com.microsoft.z3.Optimize;
 import com.microsoft.z3.Status;
@@ -19,11 +22,32 @@ import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFactory;
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFormationException;
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleInstance;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer;
+import cz.cuni.mff.d3s.jdeeco.edl.BaseDataContract;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlDocument;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.utils.ITypeResolutionContext;
 import cz.cuni.mff.d3s.jdeeco.edl.utils.SimpleTypeResolutionContext;
+
+class GlobalComponentAssignment {
+	private Context ctx;
+	public IntExpr ensembleIndexExpr;
+	public IntExpr roleIndexExpr;
+	
+	public GlobalComponentAssignment(Context ctx, String componentId) {
+		this.ctx = ctx;
+		ensembleIndexExpr = ctx.mkIntConst("all_component_ensembles_" + componentId);
+		roleIndexExpr = ctx.mkIntConst("all_component_roleIndex_" + componentId);
+	}
+	
+	public BoolExpr createCondition(EnsembleAssignmentMatrix assignments, int ensembleIndex, int roleIndex, int componentIndex) {
+		return ctx.mkEq(ctx.mkAnd(assignments.ensembleExists(ensembleIndex), assignments.get(ensembleIndex, roleIndex, componentIndex)),
+				ctx.mkAnd(
+						ctx.mkEq(ensembleIndexExpr, ctx.mkInt(ensembleIndex)),
+						ctx.mkEq(roleIndexExpr, ctx.mkInt(roleIndex))
+						));
+	}
+}
 
 public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 
@@ -94,12 +118,11 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 					roleField.set(ie, list);
 				}
 				
-				String dataContractName = role.getType().toString();
 				ComponentAssignmentResults assignmentResults = assignments.get(e, r).getResults(m);
 				boolean[] indicators = assignmentResults.getAssignedIndicators();
-				for (int c = 0; c < dataContainer.getNumInstances(dataContractName); c++) {
+				for (int c = 0; c < dataContainer.getNumInstances(role.getName(), e); c++) {
 					if (indicators[c]) {
-						Object instance = dataContainer.getInstance(dataContractName, c);
+						Object instance = dataContainer.getInstance(role.getName(), c, e);
 						if (role.getCardinalityMax() == 1) {
 							roleField.set(ie, instance);
 						} else {
@@ -151,6 +174,29 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 				opt.Add(ctx.mkImplies(ctx.mkNot(assignments.ensembleExists(i-1)), ctx.mkNot(assignments.ensembleExists(i))));
 			}
 			
+			
+			Map<String, GlobalComponentAssignment> allComponentEnsembles = new HashMap<>();
+			for (int e = 0; e < maxEnsembleCount; e++) {
+				for (int r = 0; r < assignments.get(e).getRoleCount(); r++) {
+					String roleName = assignments.get(e, r).getRoleName();
+					DataContractInstancesContainer dataContract = dataContainer.get(roleName);
+					for (int c = 0; c < dataContract.getNumInstances(e); c++) {
+						BaseDataContract instance = dataContainer.getInstance(roleName, c, e);
+						String id = instance.id;
+						GlobalComponentAssignment globalAssignment;
+						if (allComponentEnsembles.containsKey(id)) {
+							globalAssignment = allComponentEnsembles.get(id);
+						} else {
+							globalAssignment = new GlobalComponentAssignment(ctx, id);
+							allComponentEnsembles.put(id, globalAssignment);
+						}
+						
+						opt.Add(globalAssignment.createCondition(assignments, e, r, c));
+					}
+				}
+			}
+			
+			/*
 			// assignment to one <ensemble,role> implies nonassignment to the others
 			for (DataContractInstancesContainer dataContract : dataContainer.getAllDataContracts()) {
 				for (int c = 0; c < dataContract.getNumInstances(); c++) {
@@ -175,11 +221,13 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 						opt.Add(ctx.mkImplies(assigned.get(j), ctx.mkNot(ctx.mkOr(assignedOthers))));
 					}
 				}
-			}
+			}*/
 			
 			for (int e = 0; e < assignments.getMaxEnsembleCount(); e++) {
-				new ConstraintParser(ctx, opt, dataContainer, assignments.get(e), typeResolution).parseConstraints();
+				new ConstraintParser(ctx, opt, dataContainer, assignments.get(e), e, typeResolution).parseConstraints();
 			}
+			
+			opt.Add(assignments.ensembleExists(0));
 								
 			//System.out.println("Solver: " + opt);
 			Status status = opt.Check();

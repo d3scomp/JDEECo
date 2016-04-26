@@ -21,7 +21,7 @@ class EnsembleRoleAssignmentMatrix {
 		ComponentAssignmentSet[] assignments = new ComponentAssignmentSet[roleList.size()];
 		for (int i = 0; i < roleList.size(); i++) {
 			RoleDefinition roleDef = roleList.get(i);
-			int componentCount = dataContainer.get(roleDef.getType().toString()).getNumInstances();
+			int componentCount = dataContainer.get(roleDef.getName().toString()).getNumInstances(ensembleIndex);
 			assignments[i] = ComponentAssignmentSet.create(ctx, opt, ensembleIndex, i, roleDef.getName(), componentCount);
 		}
 		

@@ -21,22 +21,25 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EquitableQuery;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.FieldDeclaration;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
+import cz.cuni.mff.d3s.jdeeco.edl.utils.ITypeResolutionContext;
 
 class DataContractInstancesPerEnsembleContainer {
 	private List<? extends BaseDataContract> instances;
+	//private int[] globalIndices;
 	private Map<String, KnowledgeFieldVector> knowledgeFields;
 	
 	public DataContractInstancesPerEnsembleContainer(Context ctx, Optimize opt, DataContractDefinition dataContractDefinition,
-			FilteredKnowledgeContainer filteredKnowledgeContainer, EquitableQuery whereClause)
+			FilteredKnowledgeContainer filteredKnowledgeContainer, EquitableQuery whereClause, String roleName, int ensembleIndex)
 			throws UnsupportedDataTypeException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-		this.instances = filteredKnowledgeContainer.getFilteredTrackedKnowledge(dataContractDefinition.getName(), whereClause, 0);
+		this.instances = filteredKnowledgeContainer.getFilteredTrackedKnowledge(dataContractDefinition.getName(), whereClause, ensembleIndex);
+		//this.globalIndices = filteredKnowledgeContainer.getGlobalIndices(instances);
 		
 		knowledgeFields = new HashMap<>();
 		
 		for (FieldDeclaration fieldDecl : dataContractDefinition.getFields()) {
 			String fieldName = fieldDecl.getName();
 			String fieldType = fieldDecl.getType().toString();
-			KnowledgeFieldVector field = new KnowledgeFieldVector(ctx, opt, dataContractDefinition.getName(), fieldName, fieldType);
+			KnowledgeFieldVector field = new KnowledgeFieldVector(ctx, opt, roleName, ensembleIndex, fieldName, fieldType);
 			knowledgeFields.put(fieldName, field);
 			for (int i = 0; i < instances.size(); i++) {
 				Object value = readField(fieldName, instances.get(i));
@@ -75,23 +78,32 @@ class DataContractInstancesPerEnsembleContainer {
 	public Map<String, KnowledgeFieldVector> getKnowledgeFields() {
 		return knowledgeFields;
 	}
+	/*
+	public int[] getGlobalIndices() {
+		return globalIndices;
+	}*/
 }
 
 class DataContractInstancesContainer {
+	private RoleDefinition roleDefinition;
 	private DataContractDefinition dataContractDefinition;
-	private DataContractInstancesPerEnsembleContainer instances;
+	private DataContractInstancesPerEnsembleContainer[] instances;
 	private String dataContractName;
 	private EquitableQuery whereClause;
 	
-	public DataContractInstancesContainer(Context ctx, Optimize opt, DataContractDefinition dataContractDefinition,
-			FilteredKnowledgeContainer filteredKnowledgeContainer, EquitableQuery whereClause)
+	public DataContractInstancesContainer(Context ctx, Optimize opt, RoleDefinition roleDefinition, ITypeResolutionContext typeResolution,
+			FilteredKnowledgeContainer filteredKnowledgeContainer, EquitableQuery whereClause, int maxEnsembleCount)
 			throws ClassNotFoundException, KnowledgeContainerException, UnsupportedDataTypeException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		
-		this.dataContractDefinition = dataContractDefinition;	
+		this.roleDefinition = roleDefinition;
+		this.dataContractDefinition = (DataContractDefinition) typeResolution.getDataType(roleDefinition.getType());	
 		this.dataContractName = dataContractDefinition.getName();
 		this.whereClause = whereClause;
-		this.instances = new DataContractInstancesPerEnsembleContainer(ctx, opt, dataContractDefinition, filteredKnowledgeContainer, 
-				whereClause);
+		this.instances = new DataContractInstancesPerEnsembleContainer[maxEnsembleCount];
+		for (int e = 0; e < maxEnsembleCount; e++) {
+			this.instances[e] = new DataContractInstancesPerEnsembleContainer(ctx, opt, dataContractDefinition, filteredKnowledgeContainer, 
+					whereClause, roleDefinition.getName(), e);
+		}
 	}
 	
 	public DataContractDefinition getDataContractDefinition() {
@@ -102,20 +114,24 @@ class DataContractInstancesContainer {
 		return dataContractName;
 	}
 	
-	public BaseDataContract getInstance(int componentIndex) {
-		return instances.getInstances().get(componentIndex);
+	public BaseDataContract getInstance(int componentIndex, int ensembleIndex) {
+		return instances[ensembleIndex].getInstances().get(componentIndex);
+	}
+	/*
+	public int getInstanceGlobalIndex(int componentIndex, int ensembleIndex) {
+		return instances[ensembleIndex].getGlobalIndices()[componentIndex];
+	}
+	*/
+	public KnowledgeFieldVector get(String fieldName, int ensembleIndex) {
+		return instances[ensembleIndex].getKnowledgeFields().get(fieldName);
 	}
 	
-	public KnowledgeFieldVector get(String fieldName) {
-		return instances.getKnowledgeFields().get(fieldName);
+	public Expr get(String fieldName, Expr componentIndex, int ensembleIndex) {
+		return get(fieldName, ensembleIndex).get(componentIndex);
 	}
 	
-	public Expr get(String fieldName, Expr componentIndex) {
-		return get(fieldName).get(componentIndex);
-	}
-	
-	public int getNumInstances() {
-		return instances.getInstances().size();
+	public int getNumInstances(int ensembleIndex) {
+		return instances[ensembleIndex].getInstances().size();
 	}
 	
 }

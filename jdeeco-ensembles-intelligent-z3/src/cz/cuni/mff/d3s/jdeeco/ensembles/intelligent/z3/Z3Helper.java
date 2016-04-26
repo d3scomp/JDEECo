@@ -23,6 +23,10 @@ public class Z3Helper {
 	public IntExpr getSetSize(ArrayExpr set, String name, int length) {
 		ArrayExpr tempCounts = ctx.mkArrayConst("_tmp_counter_" + name, ctx.getIntSort(), ctx.getIntSort());
 		
+		if (length == 0) {
+			return ctx.mkInt(0);
+		}
+		
 		BoolExpr firstInSet = get(set, 0);
 		opt.Add(ctx.mkImplies(firstInSet, ctx.mkEq(ctx.mkSelect(tempCounts, ctx.mkInt(0)), ctx.mkInt(1))));
 		opt.Add(ctx.mkImplies(ctx.mkNot(firstInSet), ctx.mkEq(ctx.mkSelect(tempCounts, ctx.mkInt(0)), ctx.mkInt(0))));
