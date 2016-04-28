@@ -21,7 +21,6 @@ ensemble PendolinoEnsemble
 		constraints
 		constraint rescuers.pos == rescuers.pos
 		
-		fitness -1
 		
 	knowledge exchange
 		x := x

@@ -32,6 +32,7 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.LogicalOperator;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Negation;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.NumericLiteral;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.QualifiedName;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Query;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RelationOperator;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.StringLiteral;
@@ -66,7 +67,13 @@ class ConstraintParser extends QueryVisitorImpl<Expr> {
 	}
 	
 	public ArithExpr parseFitness() {
-		Expr expr = assignmentMatrix.getEnsembleDefinition().getFitness().accept(this);
+		Query q = assignmentMatrix.getEnsembleDefinition().getFitness();
+		Expr expr;
+		if (q == null)
+			expr = ctx.mkInt(1);
+		else
+			expr = q.accept(this);
+		
 		Expr resultExpr = ctx.mkConst("fitness_e" + assignmentMatrix.getEnsembleIndex(), expr.getSort());
 		opt.Add(ctx.mkImplies(assignmentMatrix.ensembleExists(), ctx.mkEq(resultExpr, expr)));
 		opt.Add(ctx.mkImplies(ctx.mkNot(assignmentMatrix.ensembleExists()), ctx.mkEq(resultExpr, ctx.mkInt(0))));
