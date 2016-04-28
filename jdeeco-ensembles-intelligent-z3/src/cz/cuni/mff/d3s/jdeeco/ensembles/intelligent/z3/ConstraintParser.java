@@ -64,6 +64,14 @@ class ConstraintParser extends QueryVisitorImpl<Expr> {
 			opt.Add(ctx.mkImplies(assignmentMatrix.ensembleExists(), (BoolExpr) q.accept(this)));
 		}
 	}
+	
+	public ArithExpr parseFitness() {
+		Expr expr = assignmentMatrix.getEnsembleDefinition().getFitness().accept(this);
+		Expr resultExpr = ctx.mkConst("fitness_e" + assignmentMatrix.getEnsembleIndex(), expr.getSort());
+		opt.Add(ctx.mkImplies(assignmentMatrix.ensembleExists(), ctx.mkEq(resultExpr, expr)));
+		opt.Add(ctx.mkImplies(ctx.mkNot(assignmentMatrix.ensembleExists()), ctx.mkEq(resultExpr, ctx.mkInt(0))));
+		return (ArithExpr) resultExpr;
+	}
 
 	@Override
 	public Expr visit(AdditiveInverse query) {

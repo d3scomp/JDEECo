@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.microsoft.z3.ArithExpr;
 import com.microsoft.z3.ArrayExpr;
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
@@ -15,6 +16,7 @@ import com.microsoft.z3.Expr;
 import com.microsoft.z3.IntExpr;
 import com.microsoft.z3.Model;
 import com.microsoft.z3.Optimize;
+import com.microsoft.z3.Optimize.Handle;
 import com.microsoft.z3.Status;
 import com.microsoft.z3.enumerations.Z3_lbool;
 
@@ -196,41 +198,20 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 				}
 			}
 			
-			/*
-			// assignment to one <ensemble,role> implies nonassignment to the others
-			for (DataContractInstancesContainer dataContract : dataContainer.getAllDataContracts()) {
-				for (int c = 0; c < dataContract.getNumInstances(); c++) {
-					List<BoolExpr> assigned = new ArrayList<BoolExpr>();
-					for (int e = 0; e < maxEnsembleCount; e++) {
-						for (int r = 0; r < assignments.get(e).getRoleCount(); r++) {
-							if (roles.get(r).getType().toString().equals(dataContract.getName()))
-								assigned.add(assignments.get(e, r, c));
-						}
-					}
-								
-					opt.Add(ctx.mkOr(assigned.toArray(new BoolExpr [assigned.size()])));
-					for (int j = 0; j < assigned.size(); j++) {
-						BoolExpr[] assignedOthers = new BoolExpr[assigned.size()-1];
-						for (int k = 0; k < assigned.size(); k++) {
-							if (k < j)
-								assignedOthers[k] = assigned.get(k);
-							else if (k > j)
-								assignedOthers[k-1] = assigned.get(k);
-						}
-						
-						opt.Add(ctx.mkImplies(assigned.get(j), ctx.mkNot(ctx.mkOr(assignedOthers))));
-					}
-				}
-			}*/
-			
+			ArithExpr[] fitnesses = new ArithExpr[maxEnsembleCount];
 			for (int e = 0; e < assignments.getMaxEnsembleCount(); e++) {
-				new ConstraintParser(ctx, opt, dataContainer, assignments.get(e), e, typeResolution).parseConstraints();
+				ConstraintParser cp = new ConstraintParser(ctx, opt, dataContainer, assignments.get(e), e, typeResolution);
+				cp.parseConstraints();
+				fitnesses[e] = cp.parseFitness();
 			}
+			
+			Handle h = opt.MkMaximize(ctx.mkAdd(fitnesses));
 			
 			opt.Add(assignments.ensembleExists(0));
 								
 			//System.out.println("Solver: " + opt);
 			Status status = opt.Check();
+			System.out.println("Maximize: " + h);
 			if (status == Status.SATISFIABLE) {
 				//System.out.println("Model = " + opt.getModel());
 				printModel(opt.getModel(), assignments, roles, dataContainer);

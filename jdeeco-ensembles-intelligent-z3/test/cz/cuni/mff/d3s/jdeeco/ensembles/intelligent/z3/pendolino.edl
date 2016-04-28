@@ -15,13 +15,13 @@ ensemble PendolinoEnsemble
 	membership
 		roles
 			leader [1..1] : Rescuer
-			rescuers [3..4] : Rescuer
+			rescuers [1..4] : Rescuer
 			firefighter [0..1] : FireFighter
 		
 		constraints
 		constraint rescuers.pos == rescuers.pos
 		
-		fitness 0
+		fitness -1
 		
 	knowledge exchange
 		x := x
