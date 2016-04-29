@@ -140,15 +140,17 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 		return result;
 	}
 
-	@Override
-	public Collection<EnsembleInstance> createInstances(KnowledgeContainer container) throws EnsembleFormationException {
+	private Collection<EnsembleInstance> createInstancesOfEnsemble(KnowledgeContainer container, 
+			EnsembleDefinition ensembleDefinition) throws EnsembleFormationException {
+		
+		System.out.println("\nEnsemble: " + ensembleDefinition.getName());
+		
 		try {
-			long time_milis = System.currentTimeMillis();
+    		long time_milis = System.currentTimeMillis();
 
-			initConfiguration();
+    		initConfiguration();
 
-	        EnsembleDefinition ensembleDefinition = edlDocument.getEnsembles().get(0);	        
-	        List<RoleDefinition> roles = ensembleDefinition.getRoles();
+    		List<RoleDefinition> roles = ensembleDefinition.getRoles();
 			DataContainer dataContainer = new DataContainer(ctx, opt, edlDocument.getPackage().toString(), edlDocument, container, 
 					typeResolution, ensembleDefinition);			
 	        int maxEnsembleCount = dataContainer.getMaxEnsembleCount();
@@ -230,6 +232,19 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 		} catch (Exception e) {
 			throw new EnsembleFormationException(e);
 		}
+	}	
+
+	@Override
+	public Collection<EnsembleInstance> createInstances(KnowledgeContainer container) throws EnsembleFormationException {
+
+		List<EnsembleInstance> result = new ArrayList<>();
+		
+        for (EnsembleDefinition ensembleDefinition : edlDocument.getEnsembles()) {	        
+        	Collection<EnsembleInstance> instances = createInstancesOfEnsemble(container, ensembleDefinition);
+        	result.addAll(instances);
+        }
+        
+        return result;
 	}
 
 	@Override
