@@ -34,7 +34,7 @@ import cz.cuni.mff.d3s.deeco.runtime.PluginInitFailedException;
  */
 public class AdaptationPlugin implements DEECoPlugin {
 
-	private long period = 100;
+	private long period = 10000;
 	
 	private AdaptationManager adaptationManager;
 	
