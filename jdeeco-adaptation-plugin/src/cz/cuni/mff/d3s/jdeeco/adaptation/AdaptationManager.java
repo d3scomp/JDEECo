@@ -62,7 +62,7 @@ public class AdaptationManager {
 	 * @param id
 	 */
 	@Process
-	@PeriodicScheduling(period = 1000)
+	@PeriodicScheduling(period = 1000) // TODO: parametrizable
 	public static void reason(@In("id") String id,
 			@In("adaptations") List<MAPEAdaptation> adaptations) {
 		for(MAPEAdaptation adaptation : adaptations){

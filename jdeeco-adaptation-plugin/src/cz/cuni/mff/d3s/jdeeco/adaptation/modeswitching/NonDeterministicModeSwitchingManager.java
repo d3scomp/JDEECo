@@ -15,6 +15,7 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -147,10 +148,17 @@ public class NonDeterministicModeSwitchingManager implements MAPEAdaptation {
 			return false;
 		}
 		
+		// Stop the adaptation when the search is finished
+		ModeChart modeChart = managedComponent.getModeChart();
+		StateSpaceSearch sss = modeChart.getStateSpaceSearch();	
+		if(sss.isFinished(stateSpace.getState(currentNonDeterminismLevel))){
+			return false;
+		}
+		
 		try {
 			// Don't plan and execute while in mode that excludes fitness computation
 			NonDetModeSwitchMode mode = (NonDetModeSwitchMode)
-					managedComponent.getModeChart().getCurrentMode().newInstance();
+					modeChart.getCurrentMode().newInstance();
 			if(!mode.isFitnessComputed()){
 				return false;
 			}
@@ -195,6 +203,18 @@ public class NonDeterministicModeSwitchingManager implements MAPEAdaptation {
 		// Restart the evaluator for next measurements with new probabilities
 		evaluator.restart();
 
+		// Log the current non-determinism level
+		try {
+			NonDeterministicLevelRecord record = new NonDeterministicLevelRecord("EMS"); // Enhanced Mode Switching
+			record.setProbability(currentNonDeterminismLevel);
+			record.setComponent(managedComponent);
+			ProcessContext.getRuntimeLogger().log(record);
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		if(verbose) {
 			long currentTime = ProcessContext.getTimeProvider().getCurrentMilliseconds();
 			Object knowledge[] = getValues(managedComponent, new String[]{"id"});

@@ -140,4 +140,25 @@ public class Annealing implements StateSpaceSearch {
 				? new Random((int) oSeed)
 				: new Random();
 	}
+
+	/* 
+	 * The Annealing is finished when the temperature is 0 and no neighboring state
+	 * has lower energy. 
+	 */
+	@Override
+	public boolean isFinished(SearchState currentState) {
+		if(temperature.getTemperature() > 0){
+			return false;
+		}
+		boolean isBetterNeighbor = false;
+		AnnealingState current = (AnnealingState) currentState;
+		AnnealingState[] neighbors = current.getNeighbors();
+		for(AnnealingState neighbor : neighbors){
+			if(neighbor.getEnergy() < current.getEnergy()){
+				isBetterNeighbor = true;
+			}
+		}
+		
+		return !isBetterNeighbor;
+	}
 }

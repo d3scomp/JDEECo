@@ -25,4 +25,5 @@ public interface StateSpaceSearch {
 	
 	void processParameters(SearchParameters parameters);
 	SearchState getNextState(SearchState currentState);
+	boolean isFinished(SearchState currentState);
 }
