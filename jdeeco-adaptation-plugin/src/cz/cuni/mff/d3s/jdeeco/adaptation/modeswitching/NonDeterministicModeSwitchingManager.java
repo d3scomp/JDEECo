@@ -33,10 +33,10 @@ import cz.cuni.mff.d3s.deeco.modes.ModeChart;
 import cz.cuni.mff.d3s.deeco.search.StateSpaceSearch;
 import cz.cuni.mff.d3s.deeco.task.ProcessContext;
 import cz.cuni.mff.d3s.jdeeco.adaptation.MAPEAdaptation;
+import cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching.runtimelog.NonDetModeTransitionLogger;
 import cz.cuni.mff.d3s.jdeeco.modes.ModeChartImpl;
 import cz.cuni.mff.d3s.jdeeco.modes.ModeSuccessor;
 import cz.cuni.mff.d3s.jdeeco.modes.TrueGuard;
-import cz.cuni.mff.d3s.jdeeco.modes.runtimelog.ModeTransitionLogger;
 
 /**
  * Adapts the annotated components in the same DEECo node by adding
@@ -167,7 +167,6 @@ public class NonDeterministicModeSwitchingManager implements MAPEAdaptation {
 			return false;
 		}
 		
-		// TODO: check whether the search is complete
 		return true;
 	}
 
@@ -260,9 +259,20 @@ public class NonDeterministicModeSwitchingManager implements MAPEAdaptation {
 	
 	private static void addNondeterministicTransitions(ModeChartImpl modeChart){
 		// Make full graph
-		// TODO: exclude nodes prohibited for non-deterministic switching
 		for(Class<? extends DEECoMode> from : modeChart.getModes())
 		{
+			// Don't add new outward transitions if the mode doesn't allow it
+			try {
+				NonDetModeSwitchMode fromInstance = (NonDetModeSwitchMode) from.newInstance();
+				if(!fromInstance.nonDeterministicOut()){
+					continue;
+				}
+			} catch (InstantiationException | IllegalAccessException e) {
+				Log.e(String.format("Checking nonDeterministicOut "
+						+ "while adding non deterministic transitions failed.\n%s",
+						e.getMessage()));
+			}
+			
 			// Identify missing transitions
 			Set<Class<? extends DEECoMode>> allModes = modeChart.getModes();
 			Set<Class<? extends DEECoMode>> missingModes = new HashSet<>(allModes);
@@ -270,6 +280,18 @@ public class NonDeterministicModeSwitchingManager implements MAPEAdaptation {
 			
 			// Add missing transitions
 			for(Class<? extends DEECoMode> to : missingModes){
+				// Don't add new inward transitions if the mode doesn't allow it
+				try {
+					NonDetModeSwitchMode toInstance = (NonDetModeSwitchMode) to.newInstance();
+					if(!toInstance.nonDeterministicIn()){
+						continue;
+					}
+				} catch (InstantiationException | IllegalAccessException e) {
+					Log.e(String.format("Checking nonDeterministicIn "
+							+ "while adding non deterministic transitions failed.\n%s",
+							e.getMessage()));
+				}
+				
 				if (!modeChart.modes.containsKey(from)) {
 					modeChart.modes.put(from, new HashSet<>());
 				} else {
@@ -286,7 +308,7 @@ public class NonDeterministicModeSwitchingManager implements MAPEAdaptation {
 				modeChart.modes.get(from).add(successor);
 				
 				// Add transition listener
-				modeChart.addTransitionListener(from, to, new ModeTransitionLogger(from, to));
+				modeChart.addTransitionListener(from, to, new NonDetModeTransitionLogger(from, to));
 			}
 		}
 

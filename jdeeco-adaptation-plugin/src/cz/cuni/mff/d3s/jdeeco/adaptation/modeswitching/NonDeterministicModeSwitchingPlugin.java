@@ -138,7 +138,7 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 						}
 					}
 
-					// Create non-deterministic mode switching manager or thecomponent
+					// Create non-deterministic mode switching manager of the component
 					NonDeterministicModeSwitchingManager manager;
 					try {
 						manager = new NonDeterministicModeSwitchingManager(startTime,
