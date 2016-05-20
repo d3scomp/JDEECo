@@ -154,6 +154,11 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 			DataContainer dataContainer = new DataContainer(ctx, opt, edlDocument.getPackage().toString(), edlDocument, container, 
 					typeResolution, ensembleDefinition);			
 	        int maxEnsembleCount = dataContainer.getMaxEnsembleCount();
+	        
+	        if (maxEnsembleCount == 0) {
+	        	System.out.println("Not enough components of suitable roles to form any ensemble instance of the type " + ensembleDefinition.getName() + ".");
+	        	return Collections.emptyList();
+	        }
 						
 			EnsembleAssignmentMatrix assignments = EnsembleAssignmentMatrix.create(
 					ctx, opt, maxEnsembleCount, ensembleDefinition, dataContainer);
