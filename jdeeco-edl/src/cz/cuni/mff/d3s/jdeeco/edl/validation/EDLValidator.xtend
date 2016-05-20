@@ -94,7 +94,7 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 		if (ensemble.fitness != null) {
 			val type = EDLUtils.getType(this, ensemble.fitness, ensemble)
 			if (!type.equals(PrimitiveTypes.INT))
-				error("Fitness function must be a numeric expression.", ensemble.fitness, EdlPackage.Literals.ENSEMBLE_DEFINITION__FITNESS)
+				error("Fitness function must be a numeric expression.", ensemble, EdlPackage.Literals.ENSEMBLE_DEFINITION__FITNESS)
 		}
 		
 		if (ensemble.id.isIsAssigned) {

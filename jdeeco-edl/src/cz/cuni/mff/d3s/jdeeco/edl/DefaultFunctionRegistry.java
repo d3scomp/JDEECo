@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.jdeeco.edl;
 import java.util.HashMap;
 import java.util.Map;
 
+import cz.cuni.mff.d3s.jdeeco.edl.functions.Abs;
 import cz.cuni.mff.d3s.jdeeco.edl.functions.Count;
 import cz.cuni.mff.d3s.jdeeco.edl.functions.IConstraintFunction;
 import cz.cuni.mff.d3s.jdeeco.edl.functions.IFunction;
@@ -26,6 +27,7 @@ public class DefaultFunctionRegistry implements IFunctionRegistry {
 		registerFunction("SetsEqual", new SetsEqual());
 		registerFunction("OneOf", new OneOf());
 		registerFunction("Count", new Count());
+		registerFunction("Abs", new Abs());
 	}
 	
 	private void registerFunction(String name, IConstraintFunction f) {
