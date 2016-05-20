@@ -32,43 +32,64 @@ public class StandaloneEnsemblesTest {
 
 	public void testStandaloneEnsembles(boolean silent) throws InstantiationException, IllegalAccessException, DEECoException, AnnotationProcessorException, IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		
+		PrintStream outputStream;
+		
 		if (silent) {
-			RescuerComponent.outputStream = new PrintStream(baos);
+			outputStream = new PrintStream(baos);
 		} else {
-			RescuerComponent.outputStream = System.out;
+			outputStream = System.out;
 		}
 
-		cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlPackage.eINSTANCE.eClass();		
-		
 		EdlDocument model = (EdlDocument) new EDLReader().readDocument("test/cz/cuni/mff/d3s/jdeeco/ensembles/intelligent/z3/pendolino.edl");
 
 		EnsembleFactory factory = new Z3IntelligentEnsembleFactory(model);
 		DataclassKnowledgeContainer container = new DataclassKnowledgeContainer();		
-		container.storeComponent(new RescuerComponent("1", 100));
-		container.storeComponent(new RescuerComponent("2", 80));
-		container.storeComponent(new RescuerComponent("3", 60));
-		container.storeComponent(new RescuerComponent("4", 40));
-		container.storeComponent(new RescuerComponent("5", 20));
-		container.storeComponent(new RescuerComponent("6", 0));
-		container.storeComponent(new RescuerComponent("7", 10));
-		container.storeComponent(new RescuerComponent("8", 30));
-		container.storeComponent(new RescuerComponent("9", 50));
-		container.storeComponent(new RescuerComponent("10", 70));
-		container.storeComponent(new RescuerComponent("11", 90));
-		container.storeComponent(new RescuerComponent("12", 80));
-		container.storeComponent(new RescuerComponent("13", 80));
-		container.storeComponent(new RescuerComponent("14", 80));
-		container.storeComponent(new RescuerComponent("15", 80));
-		container.storeComponent(new FireFighterComponent("101", 10));
-		container.storeComponent(new FireFighterComponent("102", 20));
-		container.storeComponent(new FireFighterComponent("103", 30));
+		container.storeComponent(new Rescuer("1", 100));
+		container.storeComponent(new Rescuer("2", 80));
+		container.storeComponent(new Rescuer("3", 60));
+		container.storeComponent(new Rescuer("4", 40));
+		container.storeComponent(new Rescuer("5", 20));
+		container.storeComponent(new Rescuer("6", 0));
+		container.storeComponent(new Rescuer("7", 10));
+		container.storeComponent(new Rescuer("8", 30));
+		container.storeComponent(new Rescuer("9", 50));
+		container.storeComponent(new Rescuer("10", 70));
+		container.storeComponent(new Rescuer("11", 90));
+		container.storeComponent(new Rescuer("12", 80));
+		container.storeComponent(new Rescuer("13", 80));
+		container.storeComponent(new Rescuer("14", 80));
+		container.storeComponent(new Rescuer("15", 80));
+		container.storeComponent(new FireFighter("101", 10));
+		container.storeComponent(new FireFighter("102", 20));
+		container.storeComponent(new FireFighter("103", 30));
 		
 		
 		Collection<EnsembleInstance> formed = factory.createInstances(container);
 		
 		for (EnsembleInstance instance : formed) {
 			instance.performKnowledgeExchange();
-		}		
+		}
+		
+		for (Rescuer rescuer : container.getTrackedKnowledgeForRole(Rescuer.class)) {
+			if (rescuer.trainId > 0) {
+				outputStream.printf("Rescuer %s: train %d", rescuer.id, rescuer.trainId);
+				if (rescuer.isLeader) {
+					outputStream.print(" (leader)");
+				}
+				outputStream.println();
+			} else {
+				outputStream.printf("Rescuer %s: unassigned\n", rescuer.id);
+			}
+		}
+		
+		for (FireFighter fighter : container.getTrackedKnowledgeForRole(FireFighter.class)) {
+			if (fighter.trainId > 0) {
+				outputStream.printf("FireFighter %s: train %d\n", fighter.id, fighter.trainId);
+			} else {
+				outputStream.printf("FireFighter %s: unassigned\n", fighter.id);
+			}
+		}
 		
 		if (silent) {
 			assertThat(baos.toString(), containsString("Rescuer 1: train 2"));

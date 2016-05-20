@@ -2,27 +2,41 @@ package cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainerException;
 
 public class DataclassKnowledgeContainer implements KnowledgeContainer {
+	
+	private List<Object> componentData;
 
 	public DataclassKnowledgeContainer() {
-		// TODO Auto-generated constructor stub
+		componentData = new ArrayList<Object>();
+	}
+	
+	private <TRole> boolean hasRole(Object component, Class<TRole> roleClass) {
+		return roleClass.isAssignableFrom(component.getClass());
 	}
 
 	@Override
 	public <TRole> Collection<TRole> getUntrackedKnowledgeForRole(
 			Class<TRole> roleClass) throws KnowledgeContainerException {
-		return Collections.emptyList();
+		
+		List<TRole> result = new ArrayList<>();
+		
+		for (Object comp : componentData) {
+			if(this.hasRole(comp, roleClass))
+				result.add((TRole) comp);				
+		}
+		
+		return result;
 	}
 
 	@Override
 	public <TRole> Collection<TRole> getTrackedKnowledgeForRole(
 			Class<TRole> roleClass) throws KnowledgeContainerException {
-		return Collections.emptyList();
+		return getUntrackedKnowledgeForRole(roleClass);
 	}
 
 	@Override
@@ -38,7 +52,6 @@ public class DataclassKnowledgeContainer implements KnowledgeContainer {
 	}
 	
 	public <TComponent>void storeComponent(TComponent component) {
-		
+		componentData.add(component);
 	}
-
 }

@@ -11,5 +11,15 @@ public class Rescuer extends BaseDataContract {
 	public Boolean isLeader;
 	
 	public Integer trainId;
-
+	
+	public Rescuer() {
+		
+	}
+	
+	public Rescuer(String id, Integer pos) {
+		this.id = id;
+		this.pos = pos;
+		this.isLeader = false;
+		this.trainId = 0;
+	}
 }

@@ -4,30 +4,20 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.Reader;
 
-import org.eclipse.emf.ecore.EObject;
-import org.junit.Assume;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
-import cz.cuni.mff.d3s.deeco.demo.ensembles.Robot;
-import cz.cuni.mff.d3s.deeco.demo.ensembles.SimpleEnsembleFactory;
 import cz.cuni.mff.d3s.deeco.runners.DEECoSimulation;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.timer.DiscreteEventTimer;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
-import cz.cuni.mff.d3s.jdeeco.edl.EDLDemo;
 import cz.cuni.mff.d3s.jdeeco.edl.EDLReader;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlDocument;
-import cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3.Z3IntelligentEnsembleFactory;
 
 public class IntelligentEnsemblesTest {
 
@@ -77,8 +67,6 @@ public class IntelligentEnsemblesTest {
 		deeco.deployComponent(new FireFighterComponent("102", 20));
 		deeco.deployComponent(new FireFighterComponent("103", 30));
 
-		cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlPackage.eINSTANCE.eClass();		
-		
 		EdlDocument model = (EdlDocument) new EDLReader().readDocument("test/cz/cuni/mff/d3s/jdeeco/ensembles/intelligent/z3/pendolino.edl");
 
 		deeco.deployEnsembleFactory(new Z3IntelligentEnsembleFactory(model));

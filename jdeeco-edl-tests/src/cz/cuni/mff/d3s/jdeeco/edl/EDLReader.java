@@ -21,6 +21,7 @@ public class EDLReader {
     private IParser parser;
 
 	public EDLReader() {
+		cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlPackage.eINSTANCE.eClass();
 		Injector injector = new EDLStandaloneSetup().createInjectorAndDoEMFRegistration();
         injector.injectMembers(this);
 	}
