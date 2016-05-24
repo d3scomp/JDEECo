@@ -205,7 +205,7 @@ public class ProcessTask extends Task {
 			throw new TaskInvocationException(String.format(
 					"Error when invoking a process method \"%s\"", componentProcess.getName()), e);
 		} catch (InvocationTargetException e) {
-			Log.w(String.format(
+			Log.e(String.format(
 					"Process method \"%s\" returned an exception.", componentProcess.getName()),
 					e.getTargetException());
 		}		

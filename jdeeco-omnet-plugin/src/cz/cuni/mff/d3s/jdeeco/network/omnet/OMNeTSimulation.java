@@ -122,13 +122,13 @@ public class OMNeTSimulation implements IOMNeTSimulation {
 		}
 
 		@Override
-		public void packetReceived(byte[] packet, double rssi) {
+		public void packetReceived(byte[] packet, double rssi, int sender) {
 			if (rssi == -1 && infrastructureDevice != null) {
-				infrastructureDevice.receivePacket(packet);
+				infrastructureDevice.receivePacket(packet, sender);
 			}
 
 			if (rssi >= 0 && broadcastDevice != null) {
-				broadcastDevice.receivePacket(packet, rssi);
+				broadcastDevice.receivePacket(packet, rssi, sender);
 			}
 		}
 	}

@@ -16,7 +16,7 @@ public class OMNeTBroadcastDevice extends OMNeTDevice {
 	@Override
 	public int getMTU() {
 		// TODO: Read from OMNeT
-		return 128;
+		return 1024;
 	}
 
 	@Override
@@ -48,9 +48,9 @@ public class OMNeTBroadcastDevice extends OMNeTDevice {
 		positionPlugin = container.getPluginInstance(PositionPlugin.class);
 	}
 	
-	public void receivePacket(byte[] data, double rssi) {
-		// TODO: Get source address from OMNeT
-		Address source = MANETBroadcastAddress.BROADCAST;
+	public void receivePacket(byte[] data, double rssi, int sender) {
+		// TODO: Get real source address from OMNeT
+		Address source = new MANETBroadcastAddress(String.valueOf(sender));
 		
 		network.getL1().processL0Packet(data, this, new MANETReceivedInfo(source, rssi));
 	}

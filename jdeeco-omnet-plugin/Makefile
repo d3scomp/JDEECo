@@ -1,4 +1,3 @@
-JDK_HOME ?= C:/Progra~2/Java/jdk8
 OMNETPP_ROOT ?= C:\tools64\omnetpp-4.6
 INET_DIR ?= ${OMNETPP_ROOT}/../inet
 MIXIM_DIR ?= ${OMNETPP_ROOT}/../mixim
@@ -6,6 +5,8 @@ MIXIM_DIR ?= ${OMNETPP_ROOT}/../mixim
 OMNETPP_SRC_DIR ?= ${OMNETPP_ROOT}/src
 OMNETPP_INCL_DIR ?= ${OMNETPP_INCL_DIR}/include
 
+# TODO: Is this really the only way in 21st century?
+JAVA_HOME:=$(shell cygpath "$(JAVA_HOME)" | sed 's/Program Files/Progra~1/')
 
 CONFIGFILE = ${OMNETPP_ROOT}/Makefile.inc
 include $(CONFIGFILE)
@@ -15,12 +16,18 @@ LDFLAGS += -Wl,--allow-multiple-definition,--kill-at
 all: checkmakefiles header
 	cd src && $(MAKE) LDFLAGS="$(LDFLAGS)"
 	
+copy: omnet\jdeeco-omnetpp.dll
+
+omnet\jdeeco-omnetpp.dll: out\gcc-debug\src\libjdeeco-omnetpp.dll
+	cp out/gcc-debug/src/libjdeeco-omnetpp.dll omnet/jdeeco-omnetpp.dll
+	
 header:
-	$(JDK_HOME)/bin/javah -o src/OMNeTJDEECoAPI.h -classpath src cz.cuni.mff.d3s.deeco.simulation.omnet.OMNeTNative
+	$(JAVA_HOME)/bin/javah -o src/OMNeTJDEECoAPI.h -classpath src cz.cuni.mff.d3s.deeco.simulation.omnet.OMNeTNative
 
 clean: checkmakefiles
 	cd src && $(MAKE) clean
 	rm -f src/OMNeTJDEECoAPI.h
+	rm -f src/Makefile
 
 cleanall: checkmakefiles
 	cd src && $(MAKE) clean
@@ -91,8 +98,8 @@ install:
 # Create makefiles that allows building mixim without a separate INET installation.
 makefiles:
 	cd src && ${OMNETPP_ROOT}/bin/opp_makemake -f --deep --make-so -o jdeeco-omnetpp -O out \
-	-I${JDK_HOME}/include \
-	-I${JDK_HOME}/include/win32 \
+	-I${JAVA_HOME}/include \
+	-I${JAVA_HOME}/include/win32 \
 	-I${OMNETPP_SRC_DIR}/common -I${OMNETPP_INCL_DIR}/platdep -I${OMNETPP_SRC_DIR}/envir \
 	-I${MIXIM_DIR}/src \
 	-I${MIXIM_DIR}/src/base \
