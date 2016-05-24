@@ -1,14 +1,9 @@
 package cz.cuni.mff.d3s.deeco.runtimelog;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
-import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 
 /**
  * This class holds the runtime log writer for data, index and snapshot periods.
@@ -51,11 +46,6 @@ class RuntimeLogWriter {
 	 * The default instance of {@link RuntimeLogWriter}.
 	 */
 	private static RuntimeLogWriter INSTANCE = null;
-	
-	/**
-	 * The counter of references pointing to the instance of {@link RuntimeLogWriter}
-	 */
-	private int referenceCounter;
 
 	/**
 	 * Provides the default instance of {@link RuntimeLogWriter}.
@@ -68,7 +58,7 @@ class RuntimeLogWriter {
 		if (INSTANCE == null) {
 			INSTANCE = new RuntimeLogWriter(new RuntimeLogWriters());
 		} else {
-			INSTANCE.referenceCounter++;
+			INSTANCE.writers.incrementReference();
 		}
 		return INSTANCE;
 	}
@@ -86,11 +76,10 @@ class RuntimeLogWriter {
 			throw new IllegalArgumentException(String.format("The argument \"%s\" is null.", "writers"));
 
 		this.writers = writers;
+		this.writers.incrementReference();
 
 		currentDataOffset = 0;
 		lastIndexTime = 0;
-		
-		referenceCounter = 1;
 		
 		writeStartElement();
 	}
@@ -214,8 +203,7 @@ class RuntimeLogWriter {
 	 *             cannot be closed.
 	 */
 	public synchronized void closeWriters() throws IOException {
-		referenceCounter--;
-		if(referenceCounter > 0){
+		if(writers.decrementReference() > 0){
 			return;
 		}
 		writeEndElement();

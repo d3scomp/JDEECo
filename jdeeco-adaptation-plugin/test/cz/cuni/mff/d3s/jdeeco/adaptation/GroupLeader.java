@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.jdeeco.adaptation;
 import java.util.Random;
 
 import cz.cuni.mff.d3s.deeco.annotations.Component;
+import cz.cuni.mff.d3s.deeco.annotations.CorrelationData;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.InOut;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
@@ -11,6 +12,7 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ProcessContext;
 import cz.cuni.mff.d3s.jdeeco.adaptation.CorrelationTest.Variances;
 import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper;
+import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metric.DifferenceMetric;
 
 @Component
 public class GroupLeader {
@@ -18,7 +20,9 @@ public class GroupLeader {
 	public String id;
 	public Integer leaderId;
 
+	@CorrelationData(metric=DifferenceMetric.class,boundary=8,confidence=0.9)
 	public CorrelationMetadataWrapper<Integer> position;
+	@CorrelationData(metric=DifferenceMetric.class,boundary=3,confidence=0.9)
 	public CorrelationMetadataWrapper<Integer> temperature;
 
 	public GroupLeader(String id) {

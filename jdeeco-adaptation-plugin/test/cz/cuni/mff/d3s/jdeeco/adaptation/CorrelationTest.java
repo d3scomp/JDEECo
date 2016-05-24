@@ -19,9 +19,6 @@ import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogWriters;
 import cz.cuni.mff.d3s.deeco.timer.DiscreteEventTimer;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.CorrelationPlugin;
-import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.KnowledgeMetadataHolder;
-import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metric.DifferenceMetric;
-import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metric.Metric;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.device.SimpleBroadcastDevice;
 import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
@@ -53,6 +50,7 @@ public class CorrelationTest {
 		realm.addPlugin(DefaultKnowledgePublisher.class);
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
 		realm.addPlugin(new PositionPlugin(0.0,0.0));
+		realm.addPlugin(AdaptationPlugin.class);
 
 		DEECoNode deeco1 = realm.createNode(1, runtimeLogWriters);
 		nodesInRealm.add(deeco1);
@@ -66,32 +64,10 @@ public class CorrelationTest {
 		nodesInRealm.add(deeco3);
 		deeco3.deployComponent(new GroupLeader("3"));
 
-		/* Register metadata for fields */
-		final String positionLabel = "position";
-		final String temperatureLabel = "temperature";
-		final String batteryLabel = "battery";
-
-		final int positionBoundary = 8;
-		final int temperatureBoundary = 3;
-		final int batteryBoundary = 2;
-
-		final Metric simpleMetric = new DifferenceMetric();
-
-		final double positionConfidence = 0.9;
-		final double temperatureConfidence = 0.9;
-		final double batteryConfidence = 0.9;
-
-		KnowledgeMetadataHolder.setBoundAndMetric(positionLabel, positionBoundary, simpleMetric, positionConfidence);
-		KnowledgeMetadataHolder.setBoundAndMetric(temperatureLabel, temperatureBoundary, simpleMetric, temperatureConfidence);
-		KnowledgeMetadataHolder.setBoundAndMetric(batteryLabel, batteryBoundary, simpleMetric, batteryConfidence);
-
 		/* Create node that holds the correlation component */
 		DEECoNode deeco4 = realm.createNode(4, runtimeLogWriters,
 				new CorrelationPlugin(nodesInRealm));
-		// FIXME these two ensembles could be unified if we implement the "member.*" in knowledge exchange parameters
-		deeco4.deployEnsemble(GroupMemberDataAggregation.class);
-		deeco4.deployEnsemble(GroupLeaderDataAggregation.class);
-
+		nodesInRealm.add(deeco4);
 
 		/* WHEN simulation is performed */
 	

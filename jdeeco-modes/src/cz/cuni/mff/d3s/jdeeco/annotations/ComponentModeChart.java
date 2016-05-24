@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2012 Charles University in Prague
+ * Copyright 2015 Charles University in Prague
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package cz.cuni.mff.d3s.deeco.annotations;
+package cz.cuni.mff.d3s.jdeeco.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metric.DifferenceMetric;
-import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metric.Metric;
+import cz.cuni.mff.d3s.jdeeco.modes.ModeChartHolder;
 
 /**
- * Used to mark a knowledge field to be considered in correlation process.
+ * Used to mark a class to be a DEECo component.
  * 
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface CorrelationData {
-	Class<? extends Metric> metric() default DifferenceMetric.class;
-	double boundary() default 0;
-	double confidence() default 1;
+@Target(ElementType.TYPE)
+public @interface ComponentModeChart {
+	Class<? extends ModeChartHolder> value();
 }

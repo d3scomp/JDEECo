@@ -52,6 +52,11 @@ public class RuntimeLogWriters {
 	final String logPath;
 	
 	/**
+	 * The counter of DEECo nodes using these writers.
+	 */
+	private int referenceCounter = 0;
+	
+	/**
 	 * This {@link Writer} is used to write into the file for the runtime events
 	 * being logged.
 	 * <p>
@@ -176,7 +181,23 @@ public class RuntimeLogWriters {
 		indexWriter = new BufferedWriter(indexOut);
 		snapshotPeriodWriter = new BufferedWriter(periodOut);
 	}
+	
+	/**
+	 * Increment reference counter when this instance is passed to a DEECo node.
+	 * @return The number of references to this {@link RuntimeLogWriters} instance.
+	 */
+	int incrementReference(){
+		return ++referenceCounter;
+	}
 
+	/**
+	 * Decrement reference counter when this instance is closed by a DEECo node.
+	 * @return The number of references to this {@link RuntimeLogWriters} instance.
+	 */
+	int decrementReference(){
+		return --referenceCounter;
+	}
+	
 	/**
 	 * Close the {@link #dataWriter}, {@link #indexWriter} and the
 	 * {@link #snapshotPeriodWriter}.
