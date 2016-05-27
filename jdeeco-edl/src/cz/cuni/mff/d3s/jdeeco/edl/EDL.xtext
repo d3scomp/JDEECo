@@ -168,6 +168,18 @@ enum RelationOperatorType returns RelationOperatorType:
 // ===== Ordinal query (Fitness function, constraints) =====
 
 OrdinalQuery returns EquitableQuery:
+	Aggregation	
+;
+
+Aggregation returns EquitableQuery:
+	Sum | AdditiveQuery
+;
+
+Sum returns Sum:	
+	'sum' collection = QualifiedName item = OrdinalQuery 
+;
+
+AdditiveQuery returns EquitableQuery:
 	MultiplicativeOrdinalQuery
 	(({AdditiveOperator.left=current}
 	operatorType = AdditiveOperatorType)

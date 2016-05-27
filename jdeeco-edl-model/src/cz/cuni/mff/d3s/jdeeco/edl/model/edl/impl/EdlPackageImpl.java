@@ -4,6 +4,7 @@ package cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl;
 
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.AdditiveInverse;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.AdditiveOperator;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Aggregation;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.AliasDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.BinaryOperator;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.BinaryOperatorType;
@@ -34,6 +35,7 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RelationOperator;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RelationOperatorType;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.StringLiteral;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Sum;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.TypeDefinition;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -247,6 +249,20 @@ public class EdlPackageImpl extends EPackageImpl implements EdlPackage {
 	 * @generated
 	 */
 	private EClass queryVisitorEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass aggregationEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass sumEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -1172,6 +1188,42 @@ public class EdlPackageImpl extends EPackageImpl implements EdlPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getAggregation() {
+		return aggregationEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getAggregation_Collection() {
+		return (EReference)aggregationEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getSum() {
+		return sumEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getSum_Item() {
+		return (EReference)sumEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EEnum getBoolOperatorType() {
 		return boolOperatorTypeEEnum;
 	}
@@ -1343,6 +1395,12 @@ public class EdlPackageImpl extends EPackageImpl implements EdlPackage {
 		createEOperation(queryVisitorEClass, QUERY_VISITOR___VISIT__RELATIONOPERATOR);
 		createEOperation(queryVisitorEClass, QUERY_VISITOR___VISIT__STRINGLITERAL);
 
+		aggregationEClass = createEClass(AGGREGATION);
+		createEReference(aggregationEClass, AGGREGATION__COLLECTION);
+
+		sumEClass = createEClass(SUM);
+		createEReference(sumEClass, SUM__ITEM);
+
 		// Create enums
 		boolOperatorTypeEEnum = createEEnum(BOOL_OPERATOR_TYPE);
 		binaryOperatorTypeEEnum = createEEnum(BINARY_OPERATOR_TYPE);
@@ -1395,6 +1453,8 @@ public class EdlPackageImpl extends EPackageImpl implements EdlPackage {
 		multiplicativeOperatorEClass.getESuperTypes().add(this.getBinaryOperator());
 		additiveInverseEClass.getESuperTypes().add(this.getComparableQuery());
 		dataContractDefinitionEClass.getESuperTypes().add(this.getTypeDefinition());
+		aggregationEClass.getESuperTypes().add(this.getComparableQuery());
+		sumEClass.getESuperTypes().add(this.getAggregation());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(edlDocumentEClass, EdlDocument.class, "EdlDocument", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1571,6 +1631,12 @@ public class EdlPackageImpl extends EPackageImpl implements EdlPackage {
 		addEParameter(op, this.getStringLiteral(), "query", 0, 1, IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(queryVisitorEClass_T);
 		initEOperation(op, g1);
+
+		initEClass(aggregationEClass, Aggregation.class, "Aggregation", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getAggregation_Collection(), this.getQualifiedName(), null, "collection", null, 1, 1, Aggregation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(sumEClass, Sum.class, "Sum", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getSum_Item(), this.getQuery(), null, "item", null, 1, 1, Sum.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(boolOperatorTypeEEnum, BoolOperatorType.class, "BoolOperatorType");

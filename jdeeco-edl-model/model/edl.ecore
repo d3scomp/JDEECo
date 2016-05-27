@@ -217,4 +217,12 @@
       <eParameters name="query" eType="#//StringLiteral"/>
     </eOperations>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Aggregation" abstract="true" eSuperTypes="#//ComparableQuery">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="collection" lowerBound="1"
+        eType="#//QualifiedName" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Sum" eSuperTypes="#//Aggregation">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="item" lowerBound="1" eType="#//Query"
+        containment="true"/>
+  </eClassifiers>
 </ecore:EPackage>

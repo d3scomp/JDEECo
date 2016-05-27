@@ -80,6 +80,7 @@ public class EdlFactoryImpl extends EFactoryImpl implements EdlFactory {
 			case EdlPackage.DATA_CONTRACT_DEFINITION: return createDataContractDefinition();
 			case EdlPackage.FIELD_DECLARATION: return createFieldDeclaration();
 			case EdlPackage.TYPE_DEFINITION: return createTypeDefinition();
+			case EdlPackage.SUM: return createSum();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -351,6 +352,16 @@ public class EdlFactoryImpl extends EFactoryImpl implements EdlFactory {
 	public TypeDefinition createTypeDefinition() {
 		TypeDefinitionImpl typeDefinition = new TypeDefinitionImpl();
 		return typeDefinition;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Sum createSum() {
+		SumImpl sum = new SumImpl();
+		return sum;
 	}
 
 	/**
