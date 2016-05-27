@@ -141,7 +141,7 @@ class EDLUtils {
 						getKnowledgeType(ctx, name, ensemble)	
 					}
 					else {
-						ctx.reportError("Only the ensemble id field and the it operator can be used in the where filter.", query, EdlPackage.Literals.KNOWLEDGE_VARIABLE__PATH)
+						ctx.reportError("Only the ensemble id field and the it operator can be used in this context.", query, EdlPackage.Literals.KNOWLEDGE_VARIABLE__PATH)
 						PrimitiveTypes.UNKNOWN
 					}				
 				}
@@ -256,6 +256,24 @@ class EDLUtils {
 					ctx.reportError("Unknown function name: " + query.name, query, EdlPackage.Literals.FUNCTION_CALL__NAME);
 					PrimitiveTypes.UNKNOWN;
 				}
+			}
+			
+		Sum:
+			{
+				if (!ensemble.roles.exists[it.name.equals(query.collection.toString())]) {
+					ctx.reportError("Aggregation functions can be used only over existing ensemble roles.", query, EdlPackage.Literals.AGGREGATION__COLLECTION);
+					PrimitiveTypes.UNKNOWN
+				} else {
+					var RoleDefinition roleDef = ensemble.roles.findFirst[it.name.equals(query.collection.toString())];
+					if (!getType(ctx, query.item, ensemble, roleDef).equals(PrimitiveTypes.INT)) {
+						ctx.reportError("Sum only accepts integer items.", query, EdlPackage.Literals.AGGREGATION__COLLECTION);
+						PrimitiveTypes.UNKNOWN						
+					}
+					else {
+						PrimitiveTypes.INT
+					}			
+				}
+			
 			}
 					
 		default:
