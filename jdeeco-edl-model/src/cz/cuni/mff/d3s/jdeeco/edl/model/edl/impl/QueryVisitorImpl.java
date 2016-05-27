@@ -16,6 +16,7 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.QueryVisitor;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RelationOperator;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.StringLiteral;
 
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Sum;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.emf.common.util.EList;
@@ -133,6 +134,13 @@ public abstract class QueryVisitorImpl<T> extends MinimalEObjectImpl.Container i
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public abstract T visit(Sum query);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
@@ -160,6 +168,8 @@ public abstract class QueryVisitorImpl<T> extends MinimalEObjectImpl.Container i
 				return visit((RelationOperator)arguments.get(0));
 			case EdlPackage.QUERY_VISITOR___VISIT__STRINGLITERAL:
 				return visit((StringLiteral)arguments.get(0));
+			case EdlPackage.QUERY_VISITOR___VISIT__SUM:
+				return visit((Sum)arguments.get(0));
 		}
 		return super.eInvoke(operationID, arguments);
 	}

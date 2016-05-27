@@ -4,14 +4,13 @@ package cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl;
 
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlPackage;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Query;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.QueryVisitor;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Sum;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
@@ -171,5 +170,15 @@ public class SumImpl extends AggregationImpl implements Sum {
 		}
 		return super.eIsSet(featureID);
 	}
-
+	
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	
+	@Override
+	public <T> T accept(QueryVisitor<T> visitor) {
+		return visitor.visit(this);
+	}
 } //SumImpl

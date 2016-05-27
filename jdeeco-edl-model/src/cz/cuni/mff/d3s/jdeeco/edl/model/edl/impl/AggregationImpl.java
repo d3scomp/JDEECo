@@ -109,13 +109,9 @@ public abstract class AggregationImpl extends MinimalEObjectImpl.Container imple
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
-	public <T> T accept(QueryVisitor<T> visitor) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
-	}
+	public abstract <T> T accept(QueryVisitor<T> visitor);
 
 	/**
 	 * <!-- begin-user-doc -->

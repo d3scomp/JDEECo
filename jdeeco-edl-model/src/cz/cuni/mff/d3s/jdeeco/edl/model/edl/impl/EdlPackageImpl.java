@@ -1188,6 +1188,15 @@ public class EdlPackageImpl extends EPackageImpl implements EdlPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EOperation getQueryVisitor__Visit__Sum() {
+		return queryVisitorEClass.getEOperations().get(11);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getAggregation() {
 		return aggregationEClass;
 	}
@@ -1394,6 +1403,7 @@ public class EdlPackageImpl extends EPackageImpl implements EdlPackage {
 		createEOperation(queryVisitorEClass, QUERY_VISITOR___VISIT__NUMERICLITERAL);
 		createEOperation(queryVisitorEClass, QUERY_VISITOR___VISIT__RELATIONOPERATOR);
 		createEOperation(queryVisitorEClass, QUERY_VISITOR___VISIT__STRINGLITERAL);
+		createEOperation(queryVisitorEClass, QUERY_VISITOR___VISIT__SUM);
 
 		aggregationEClass = createEClass(AGGREGATION);
 		createEReference(aggregationEClass, AGGREGATION__COLLECTION);
@@ -1629,6 +1639,11 @@ public class EdlPackageImpl extends EPackageImpl implements EdlPackage {
 
 		op = initEOperation(getQueryVisitor__Visit__StringLiteral(), null, "visit", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getStringLiteral(), "query", 0, 1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(queryVisitorEClass_T);
+		initEOperation(op, g1);
+
+		op = initEOperation(getQueryVisitor__Visit__Sum(), null, "visit", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getSum(), "query", 0, 1, IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(queryVisitorEClass_T);
 		initEOperation(op, g1);
 

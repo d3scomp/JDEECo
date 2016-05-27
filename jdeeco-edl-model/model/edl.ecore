@@ -216,6 +216,10 @@
       <eGenericType eTypeParameter="#//QueryVisitor/T"/>
       <eParameters name="query" eType="#//StringLiteral"/>
     </eOperations>
+    <eOperations name="visit">
+      <eGenericType eTypeParameter="#//QueryVisitor/T"/>
+      <eParameters name="query" eType="#//Sum"/>
+    </eOperations>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Aggregation" abstract="true" eSuperTypes="#//ComparableQuery">
     <eStructuralFeatures xsi:type="ecore:EReference" name="collection" lowerBound="1"

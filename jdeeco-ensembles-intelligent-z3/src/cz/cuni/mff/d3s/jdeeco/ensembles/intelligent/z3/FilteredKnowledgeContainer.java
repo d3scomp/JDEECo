@@ -28,6 +28,7 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.NumericLiteral;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RelationOperator;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.StringLiteral;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Sum;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.QueryVisitorImpl;
 import cz.cuni.mff.d3s.jdeeco.edl.utils.ITypeResolutionContext;
 
@@ -284,5 +285,9 @@ class DataContractFilterVisitor extends QueryVisitorImpl<Object> {
 	public Object visit(StringLiteral query) {
 		return null;
 	}
-	
+
+	@Override
+	public Object visit(Sum query) {		
+		return null;
+	}	
 }

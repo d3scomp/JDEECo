@@ -16,6 +16,7 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.NumericLiteral;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Query;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RelationOperator;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.StringLiteral;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Sum;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.QueryVisitorImpl;
 
 public class ToStringVisitor extends QueryVisitorImpl<String> implements QueryVisitor<String> {
@@ -91,5 +92,10 @@ public class ToStringVisitor extends QueryVisitorImpl<String> implements QueryVi
 	@Override
 	public String visit(StringLiteral query) {
 		return "\"" + ((StringLiteral) query).getValue() + "\"";
+	}
+
+	@Override
+	public String visit(Sum query) {
+		return "sum " + query.getCollection().toString() + " " + query.getItem().accept(this);
 	}
 }
