@@ -2,11 +2,15 @@ package cz.cuni.mff.d3s.deeco.annotations.checking;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.CoordinatorRole;
+import cz.cuni.mff.d3s.deeco.annotations.Local;
 import cz.cuni.mff.d3s.deeco.annotations.MemberRole;
 import cz.cuni.mff.d3s.deeco.annotations.PlaysRole;
 import cz.cuni.mff.d3s.deeco.annotations.Role;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 
 /**
  * Helper methods for Annotations that are connected to component roles.
@@ -75,6 +79,31 @@ public class RoleAnnotationsHelper {
 
 	static boolean isPublicAndNonstatic(Field field) {
 		return !Modifier.isStatic(field.getModifiers()) && Modifier.isPublic(field.getModifiers());
+	}
+
+	/**
+	 * Returns all fields of a class that are interpreted as a public knowledge, i.e. all public
+	 * non-static fields that are not annotated by the {@link Local} attribute.
+	 * @param clazz The meta-class
+	 * @return List of fields
+	 */
+	public static List<Field> getNonLocalKnowledgeFields(Class<?> clazz, boolean warnings) {
+		List<Field> knowledgeFields = new ArrayList<>();
+		for (Field field : clazz.getFields()) {
+			if (!isPublicAndNonstatic(field)) {
+				if (warnings) {
+					Log.i("Class " + clazz.getSimpleName() + ": Field " + field.getName() + " ignored (is it public and non-static?).");
+				}
+				continue; // static or non-public fields are not put into the knowledge
+			}
+			
+			if (field.isAnnotationPresent(Local.class))
+				continue; // local fields are not shared (are they? TODO)
+			
+			knowledgeFields.add(field);
+		}
+		
+		return knowledgeFields;
 	}
 
 }

@@ -2,10 +2,10 @@ package cz.cuni.mff.d3s.jdeeco.network.l2;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 import cz.cuni.mff.d3s.jdeeco.network.address.Address;
-import cz.cuni.mff.d3s.jdeeco.network.l1.L2PacketSender;
+import cz.cuni.mff.d3s.jdeeco.network.l1.L2PacketProcessor;
 import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
 
 /**
@@ -18,14 +18,14 @@ import cz.cuni.mff.d3s.jdeeco.network.marshaller.MarshallerRegistry;
  *
  */
 public class Layer2 implements L2StrategyManager, L1DataProcessor {
-	private final Collection<L2Strategy> strategies = new HashSet<L2Strategy>();
+	private final Collection<L2Strategy> strategies = new LinkedHashSet<>();
 	private final MarshallerRegistry marshallers;
-	private L2PacketSender l2Sender;
+	private final Collection<L2PacketProcessor> l2Processors = new LinkedHashSet<>();
 
 	/**
 	 * Creates L2 layer
 	 * 
-	 * @param l2Sender
+	 * @param l2Processors
 	 *            Reference to implementation of lower layer, that can send the L2 packets produced by Layer 2
 	 * 
 	 * @param marshallerRegistry
@@ -38,11 +38,11 @@ public class Layer2 implements L2StrategyManager, L1DataProcessor {
 	/**
 	 * Sets l2 packet sender
 	 * 
-	 * @param l2packetSender
+	 * @param l2packetProcessor
 	 *            packet sender used by L2 to send packets towards L1
 	 */
-	public void setL2PacketSender(L2PacketSender l2packetSender) {
-		this.l2Sender = l2packetSender;
+	public void addL2PacketProcessor(L2PacketProcessor l2packetProcessor) {
+		l2Processors.add(l2packetProcessor);
 	}
 
 	/**
@@ -88,7 +88,9 @@ public class Layer2 implements L2StrategyManager, L1DataProcessor {
 		packet.setLayer(this);
 
 		// Pass packet to lower layer
-		l2Sender.sendL2Packet(packet, address);
+		for(L2PacketProcessor processor: l2Processors) {
+			processor.processL2Packet(packet, address);
+		}
 	}
 
 	/**

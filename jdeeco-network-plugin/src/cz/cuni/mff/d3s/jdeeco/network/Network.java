@@ -45,9 +45,9 @@ public class Network implements DEECoPlugin {
 		// Initialize Layer 2
 		l2 = new Layer2(registery);
 
-		l1.setL1DataProcessor(l2);
-		l2.setL2PacketSender(l1);
-
+		l1.addL1PacketProcessor(l2);
+		l2.addL2PacketProcessor(l1);
+		
 		// Add default marshaler for knowledge
 		registery.registerMarshaller(L2PacketType.KNOWLEDGE, new PathCancelingFSTmarshaller());
 	}
