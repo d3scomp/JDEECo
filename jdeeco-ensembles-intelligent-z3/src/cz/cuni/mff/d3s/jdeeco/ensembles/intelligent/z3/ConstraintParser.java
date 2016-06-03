@@ -1,7 +1,11 @@
 package cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.activation.UnsupportedDataTypeException;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
@@ -17,6 +21,7 @@ import com.microsoft.z3.Quantifier;
 import com.microsoft.z3.Sort;
 import com.microsoft.z3.Symbol;
 
+import cz.cuni.mff.d3s.jdeeco.edl.ContextSymbols;
 import cz.cuni.mff.d3s.jdeeco.edl.IFunctionRegistry;
 import cz.cuni.mff.d3s.jdeeco.edl.functions.IConstraintFunction;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.AdditiveInverse;
@@ -36,18 +41,19 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Query;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RelationOperator;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.StringLiteral;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Sum;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.TypeDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.QueryVisitorImpl;
 import cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils;
 import cz.cuni.mff.d3s.jdeeco.edl.utils.ITypeResolutionContext;
 
 class ConstraintParser extends QueryVisitorImpl<Expr> {
-	private Context ctx;
-	private Optimize opt;
-	private DataContainer dataContainer;
-	private EnsembleRoleAssignmentMatrix assignmentMatrix;
-	private int ensembleIndex;
-	private ITypeResolutionContext typeResolution;
+	protected Context ctx;
+	protected Optimize opt;
+	protected DataContainer dataContainer;
+	protected EnsembleRoleAssignmentMatrix assignmentMatrix;
+	protected int ensembleIndex;
+	protected ITypeResolutionContext typeResolution;
 	
 	public ConstraintParser(Context ctx, Optimize opt, DataContainer dataContainer, EnsembleRoleAssignmentMatrix assignmentMatrix,
 			int ensembleIndex, ITypeResolutionContext typeResolution) {
@@ -249,4 +255,69 @@ class ConstraintParser extends QueryVisitorImpl<Expr> {
 	public Expr visit(StringLiteral query) {
 		return null;
 	}
+
+	@Override
+	public Expr visit(Sum query) {		
+		
+		RoleDefinition roleDefinition = getRoleDefinition(query.getCollection().toString());
+		
+		DataContractInstancesContainer dataContractContainer = dataContainer.get(roleDefinition.getName().toString());
+		int roleIndex = assignmentMatrix.getEnsembleDefinition().getRoles().indexOf(roleDefinition);
+		ComponentAssignmentSet componentAssignmentSet = assignmentMatrix.get(roleIndex);
+		
+		ArithExpr zero = ctx.mkInt(0);
+		
+		if (componentAssignmentSet.getLength() == 0)
+			return zero;
+		
+		
+		ArithExpr prev = zero;
+		
+				
+		for (int i = 0; i < componentAssignmentSet.getLength(); ++i) {
+			
+			//ArithExpr knowledgeValue = (ArithExpr) dataContractContainer.get(fieldName, ctx.mkInt(i), ensembleIndex);
+			
+			String itemValueName = RandomNameGenerator.getNext();
+			IntExpr itemValueResult = ctx.mkIntConst(itemValueName);
+			
+			ArithExpr itemValue = (ArithExpr) query.getItem().accept(new ItemBoundConstraintParser(this, dataContractContainer, i));
+			
+			opt.Add(ctx.mkImplies(componentAssignmentSet.get(i), ctx.mkEq(itemValueResult, itemValue)));
+			opt.Add(ctx.mkImplies(ctx.mkNot(componentAssignmentSet.get(i)), ctx.mkEq(itemValueResult, zero)));			
+			//opt.Add(ctx.mkImplies(componentAssignmentSet.get(i), ctx.mkEq(itemValueResult, zero)));
+			
+			prev = ctx.mkAdd(prev, itemValueResult);
+		}
+		
+		return prev;
+	}
+}
+
+class ItemBoundConstraintParser extends ConstraintParser {
+	
+	private DataContractInstancesContainer dataSource;
+	private int currentItem;	
+	
+	public ItemBoundConstraintParser(ConstraintParser origin, DataContractInstancesContainer dataSource, int currentItem) {
+		super(origin.ctx, origin.opt,origin.dataContainer, origin.assignmentMatrix, origin.ensembleIndex, origin.typeResolution);
+		this.dataSource = dataSource;
+		this.currentItem = currentItem;
+	}
+	
+	@Override
+	public Expr visit(KnowledgeVariable query) {
+		List<String> parts = new ArrayList<String>(query.getPath().toParts());		
+		
+		if (parts.get(0).equals(ContextSymbols.WHERE_IT_SYMBOL)) {
+			parts.remove(0);
+			String fieldName = String.join(".", parts);
+			
+			ArithExpr knowledgeValue = (ArithExpr) dataSource.get(fieldName, ctx.mkInt(currentItem), ensembleIndex);
+			
+			return knowledgeValue;
+		} else
+			return super.visit(query);
+	}
+	
 }
