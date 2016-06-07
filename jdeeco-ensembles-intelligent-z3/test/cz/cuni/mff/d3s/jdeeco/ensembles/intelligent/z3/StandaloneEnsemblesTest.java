@@ -41,14 +41,24 @@ public class StandaloneEnsemblesTest {
 			outputStream = System.out;
 		}
 
-		EdlDocument model = (EdlDocument) new EDLReader().readDocument("test/cz/cuni/mff/d3s/jdeeco/ensembles/intelligent/z3/pendolino.edl");
+		EDLReader reader = new EDLReader();
+		
+		EdlDocument model = null;
+		
+		try {
+			model = (EdlDocument) reader.readDocument("test/cz/cuni/mff/d3s/jdeeco/ensembles/intelligent/z3/pendolino.edl");
+		} catch (Exception e) {
+			System.out.println("Validation errors encountered when parsing the document. ");
+			System.out.println(e);
+			return;
+		}		
 
 		EnsembleFactory factory = new Z3IntelligentEnsembleFactory(model);
 		DataclassKnowledgeContainer container = new DataclassKnowledgeContainer();		
 		container.storeComponent(new Rescuer("1", 100));
-		container.storeComponent(new Rescuer("2", 80));
+		container.storeComponent(new Rescuer("2", 800));
 		container.storeComponent(new Rescuer("3", 60));
-		container.storeComponent(new Rescuer("4", 40));
+		container.storeComponent(new Rescuer("4", 40));/*
 		container.storeComponent(new Rescuer("5", 20));
 		container.storeComponent(new Rescuer("6", 0));
 		container.storeComponent(new Rescuer("7", 10));
@@ -57,12 +67,16 @@ public class StandaloneEnsemblesTest {
 		container.storeComponent(new Rescuer("10", 70));
 		container.storeComponent(new Rescuer("11", 90));
 		container.storeComponent(new Rescuer("12", 80));
-		container.storeComponent(new Rescuer("13", 80));
-		container.storeComponent(new Rescuer("14", 80));
-		container.storeComponent(new Rescuer("15", 80));
+		container.storeComponent(new Rescuer("13", 80));/*
+		container.storeComponent(new Rescuer("14", 81));
+		container.storeComponent(new Rescuer("15", 82));*/
 		container.storeComponent(new FireFighter("101", 10));
-		container.storeComponent(new FireFighter("102", 20));
-		container.storeComponent(new FireFighter("103", 30));
+		container.storeComponent(new FireFighter("102", 20));/*
+		container.storeComponent(new FireFighter("104", 40));
+		container.storeComponent(new FireFighter("105", 50));/*
+		*/
+		/*
+		container.storeComponent(new FireFighter("103", 30));*/
 		
 		
 		Collection<EnsembleInstance> formed = factory.createInstances(container);

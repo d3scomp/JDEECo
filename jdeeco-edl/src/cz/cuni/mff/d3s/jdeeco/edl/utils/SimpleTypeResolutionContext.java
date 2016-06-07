@@ -41,8 +41,14 @@ public class SimpleTypeResolutionContext implements ITypeResolutionContext {
 	public void reportError(String message, EObject source,
 			EStructuralFeature feature) {
 		// TODO Throw exception?
-
 	}
+	
+	@Override
+	public void reportError(String message, EObject source,
+			EStructuralFeature feature, int index) {
+		// TODO Throw exception?
+	}
+
 
 	@Override
 	public boolean isKnownType(QualifiedName name) {

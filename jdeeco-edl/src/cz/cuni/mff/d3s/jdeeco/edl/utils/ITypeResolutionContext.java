@@ -9,6 +9,7 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.TypeDefinition;
 
 public interface ITypeResolutionContext {
 	void reportError(String message, EObject source, EStructuralFeature feature);
+	void reportError(String message, EObject source, EStructuralFeature feature, int index);
 	boolean isKnownType(QualifiedName name);
 	TypeDefinition getDataType(QualifiedName name);
 	IFunctionRegistry getFunctionRegistry();

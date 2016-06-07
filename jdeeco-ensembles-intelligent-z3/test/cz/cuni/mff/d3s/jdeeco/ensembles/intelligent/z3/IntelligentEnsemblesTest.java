@@ -18,20 +18,21 @@ import cz.cuni.mff.d3s.deeco.timer.DiscreteEventTimer;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.jdeeco.edl.EDLReader;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlDocument;
+import cz.cuni.mff.d3s.jdeeco.edl.validation.EdlValidationException;
 
 public class IntelligentEnsemblesTest {
 
-	public static void main(String[] args) throws InstantiationException, IllegalAccessException, DEECoException, AnnotationProcessorException, IOException {
+	public static void main(String[] args) throws InstantiationException, IllegalAccessException, DEECoException, AnnotationProcessorException, IOException, EdlValidationException {
 		new IntelligentEnsemblesTest().testEnsembles(false);
 	}
 	
 	@Test
 	@Ignore
-	public void testEnsembles() throws InstantiationException, IllegalAccessException, DEECoException, AnnotationProcessorException, IOException {
+	public void testEnsembles() throws InstantiationException, IllegalAccessException, DEECoException, AnnotationProcessorException, IOException, EdlValidationException {
 		testEnsembles(true);
 	}
 	
-	private void testEnsembles(boolean silent) throws InstantiationException, IllegalAccessException, DEECoException, AnnotationProcessorException, IOException {		
+	private void testEnsembles(boolean silent) throws InstantiationException, IllegalAccessException, DEECoException, AnnotationProcessorException, IOException, EdlValidationException {		
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		if (silent) {

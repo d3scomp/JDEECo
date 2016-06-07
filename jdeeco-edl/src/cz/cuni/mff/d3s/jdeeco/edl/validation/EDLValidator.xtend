@@ -44,7 +44,7 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 				dataTypes.put(d.name, d);
 			} 
 			else {
-				error("Duplicate data type definition.", d, EdlPackage.Literals.TYPE_DEFINITION__NAME)
+				reportError("Duplicate data type definition.", d, EdlPackage.Literals.TYPE_DEFINITION__NAME)
 			}							
 		}				
 		
@@ -53,7 +53,7 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 				dataTypes.put(d.name, d);
 			} 
 			else {
-				error("Duplicate data type definition.", d, EdlPackage.Literals.TYPE_DEFINITION__NAME)
+				reportError("Duplicate data type definition.", d, EdlPackage.Literals.TYPE_DEFINITION__NAME)
 			}							
 		}
 		
@@ -62,7 +62,7 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 				ensembleNames.add(d.name);
 			} 
 			else {
-				error("Duplicate ensemble definition.", d, EdlPackage.Literals.ENSEMBLE_DEFINITION__NAME)
+				reportError("Duplicate ensemble definition.", d, EdlPackage.Literals.ENSEMBLE_DEFINITION__NAME)
 			}							
 		}
 	}	
@@ -78,11 +78,11 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 					{}
 				default:
 					if(!dataTypes.containsKey(d.type.name)) {
-						error("Field type must be either a primitive type or an existing knowledge type.", d, EdlPackage.Literals.FIELD_DECLARATION__TYPE)						
+						reportError("Field type must be either a primitive type or an existing knowledge type.", d, EdlPackage.Literals.FIELD_DECLARATION__TYPE)						
 					}
 					else {
 						if (dataTypes.get(d.type.name) instanceof DataContractDefinition) {
-							error("Field type must be a knowledge type, not a data contract.", d, EdlPackage.Literals.FIELD_DECLARATION__TYPE)
+							reportError("Field type must be a knowledge type, not a data contract.", d, EdlPackage.Literals.FIELD_DECLARATION__TYPE)
 						}
 					}
 			}
@@ -94,7 +94,7 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 		if (ensemble.fitness != null) {
 			val type = EDLUtils.getType(this, ensemble.fitness, ensemble)
 			if (!type.equals(PrimitiveTypes.INT))
-				error("Fitness function must be a numeric expression.", ensemble, EdlPackage.Literals.ENSEMBLE_DEFINITION__FITNESS)
+				reportError("Fitness function must be a numeric expression.", ensemble, EdlPackage.Literals.ENSEMBLE_DEFINITION__FITNESS)
 		}
 		
 		if (ensemble.id.isIsAssigned) {
@@ -102,7 +102,7 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 			var fieldType = ensemble.id.type;
 			
 			if (!EDLUtils.convertible(queryType, fieldType.name)) {
-				error("Invalid assignment - Id and query types do not correspond. Id type: " + fieldType + " Query type: " + queryType, ensemble.id, EdlPackage.Literals.ID_DEFINITION__VALUE)
+				reportError("Invalid assignment - Id and query types do not correspond. Id type: " + fieldType + " Query type: " + queryType, ensemble.id, EdlPackage.Literals.ID_DEFINITION__VALUE)
 			}
 		}		
 		
@@ -110,7 +110,7 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 			val type = EDLUtils.getType(this, c, ensemble)
 			
 			if (!type.equals(PrimitiveTypes.BOOL)) {
-				error("Constraint must be a logical expression. - " + type, ensemble, EdlPackage.Literals.ENSEMBLE_DEFINITION__CONSTRAINTS, ensemble.constraints.indexOf(c))
+				reportError("Constraint must be a logical expression. - " + type, ensemble, EdlPackage.Literals.ENSEMBLE_DEFINITION__CONSTRAINTS, ensemble.constraints.indexOf(c))
 			}
 		}	
 		
@@ -123,29 +123,29 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 			var fieldType = EDLUtils.getKnowledgeType(this, rule.field, ensemble)
 			
 			if (!EDLUtils.convertible(queryType, fieldType)) {
-				error("Invalid assignment - field and query types do not correspond. Field type: " + fieldType + " Query type: " + queryType, rule, EdlPackage.Literals.EXCHANGE_RULE__FIELD)
+				reportError("Invalid assignment - field and query types do not correspond. Field type: " + fieldType + " Query type: " + queryType, rule, EdlPackage.Literals.EXCHANGE_RULE__FIELD)
 			}
 			
 			if (queryType.equals(fieldType) && !EDLUtils.stripSet(fieldType).startsWith("set") && ensemble.roles.exists[it.cardinalityMax != 1 && rule.field.toParts().get(0).equals(it.name)]) {
-				error("Invalid assignment - it is not allowed to change the members of a role in knowledge exchange rules." , rule, EdlPackage.Literals.EXCHANGE_RULE__FIELD)
+				reportError("Invalid assignment - it is not allowed to change the members of a role in knowledge exchange rules." , rule, EdlPackage.Literals.EXCHANGE_RULE__FIELD)
 			}
 		}
 		
 		for (RoleDefinition roleDefinition : ensemble.roles) {
 			if (dataTypes.containsKey(roleDefinition.type.name)) {
 				if (!(dataTypes.get(roleDefinition.type.name) instanceof DataContractDefinition))
-					error("The type is present, but is not a data contract.", roleDefinition, EdlPackage.Literals.CHILD_DEFINITION__TYPE)
+					reportError("The type is present, but is not a data contract.", roleDefinition, EdlPackage.Literals.CHILD_DEFINITION__TYPE)
 					
 				if (roleDefinition.whereFilter != null) {
 					if (EDLUtils.getType(this, roleDefinition.whereFilter, ensemble, roleDefinition) != PrimitiveTypes.BOOL) {						
-						error("A query used in the where filter must return logical value.", roleDefinition, EdlPackage.Literals.ROLE_DEFINITION__WHERE_FILTER)					
+						reportError("A query used in the where filter must return logical value.", roleDefinition, EdlPackage.Literals.ROLE_DEFINITION__WHERE_FILTER)					
 					}
 					
 					
 				}				
 			}			
 			else
-				error("This data contract is not present in the package.", roleDefinition, EdlPackage.Literals.CHILD_DEFINITION__TYPE)
+				reportError("This data contract is not present in the package.", roleDefinition, EdlPackage.Literals.CHILD_DEFINITION__TYPE)
 		}
 		
 		EDLUtils.getType(this, ensemble.id.value, ensemble)		
@@ -161,6 +161,10 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 	
 	override reportError(String message, EObject source, EStructuralFeature feature) {
 		error(message, source, feature)
+	}
+	
+	override reportError(String message, EObject source, EStructuralFeature feature, int index) {
+		error(message, source, feature, index)
 	}
 	
 	override getFunctionRegistry() {

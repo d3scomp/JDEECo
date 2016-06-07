@@ -192,8 +192,11 @@ struct «d.name» {
 		// Left intentionally empty - no need to report type errors during generation, document should be valid at this point
 	}
 	
+	override reportError(String message, EObject source, EStructuralFeature feature, int index) {
+		// Left intentionally empty - no need to report type errors during generation, document should be valid at this point		
+	}
+	
 	override getFunctionRegistry() {
 		return registry;
 	}
-	
 }
