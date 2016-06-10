@@ -6,7 +6,7 @@ import java.util.List;
 import cz.cuni.mff.d3s.jdeeco.edl.PrimitiveTypes;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Query;
-import cz.cuni.mff.d3s.jdeeco.edl.utils.ITypeResolutionContext;
+import cz.cuni.mff.d3s.jdeeco.edl.typing.ITypeInformationProvider;
 
 public class Count implements IFunction {
 
@@ -28,7 +28,7 @@ public class Count implements IFunction {
 	}
 
 	@Override
-	public String getReturnType(ITypeResolutionContext ctx,
+	public String getReturnType(ITypeInformationProvider typing,
 			EnsembleDefinition ensemble, Query... params) {
 		return PrimitiveTypes.INT;
 	}

@@ -9,8 +9,8 @@ import com.microsoft.z3.Expr;
 import cz.cuni.mff.d3s.jdeeco.edl.PrimitiveTypes;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Query;
+import cz.cuni.mff.d3s.jdeeco.edl.typing.ITypeInformationProvider;
 import cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils;
-import cz.cuni.mff.d3s.jdeeco.edl.utils.ITypeResolutionContext;
 
 public class SetsEqual implements IConstraintFunction {
 	
@@ -35,7 +35,7 @@ public class SetsEqual implements IConstraintFunction {
 	}
 
 	@Override
-	public String getReturnType(ITypeResolutionContext ctx, EnsembleDefinition ensemble, Query... params) {
+	public String getReturnType(ITypeInformationProvider typing, EnsembleDefinition ensemble, Query... params) {
 		return PrimitiveTypes.BOOL;		
 	}
 

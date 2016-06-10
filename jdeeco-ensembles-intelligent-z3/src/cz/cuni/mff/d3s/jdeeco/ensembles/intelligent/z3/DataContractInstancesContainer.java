@@ -1,7 +1,6 @@
 package cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3;
 
 import java.lang.reflect.Field;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,16 +11,14 @@ import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Optimize;
 
-import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainerException;
 import cz.cuni.mff.d3s.jdeeco.edl.BaseDataContract;
 import cz.cuni.mff.d3s.jdeeco.edl.PrimitiveTypes;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.DataContractDefinition;
-import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EquitableQuery;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.FieldDeclaration;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
-import cz.cuni.mff.d3s.jdeeco.edl.utils.ITypeResolutionContext;
+import cz.cuni.mff.d3s.jdeeco.edl.typing.IDataTypeContext;
 
 class DataContractInstancesPerEnsembleContainer {
 	private List<? extends BaseDataContract> instances;
@@ -91,7 +88,7 @@ class DataContractInstancesContainer {
 	private String dataContractName;
 	private EquitableQuery whereClause;
 	
-	public DataContractInstancesContainer(Context ctx, Optimize opt, RoleDefinition roleDefinition, ITypeResolutionContext typeResolution,
+	public DataContractInstancesContainer(Context ctx, Optimize opt, RoleDefinition roleDefinition, IDataTypeContext typeResolution,
 			FilteredKnowledgeContainer filteredKnowledgeContainer, EquitableQuery whereClause, int maxEnsembleCount)
 			throws ClassNotFoundException, KnowledgeContainerException, UnsupportedDataTypeException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		

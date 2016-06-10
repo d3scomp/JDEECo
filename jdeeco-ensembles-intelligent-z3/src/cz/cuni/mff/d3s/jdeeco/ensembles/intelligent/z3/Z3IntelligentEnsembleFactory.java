@@ -28,8 +28,8 @@ import cz.cuni.mff.d3s.jdeeco.edl.BaseDataContract;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlDocument;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
-import cz.cuni.mff.d3s.jdeeco.edl.utils.ITypeResolutionContext;
-import cz.cuni.mff.d3s.jdeeco.edl.utils.SimpleTypeResolutionContext;
+import cz.cuni.mff.d3s.jdeeco.edl.typing.IDataTypeContext;
+import cz.cuni.mff.d3s.jdeeco.edl.typing.SimpleDataTypeContext;
 
 class GlobalComponentAssignment {
 	private Context ctx;
@@ -54,13 +54,13 @@ class GlobalComponentAssignment {
 public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 
 	private EdlDocument edlDocument;
-	private ITypeResolutionContext typeResolution;
+	private IDataTypeContext typeResolution;
 	private Context ctx;
 	private Optimize opt;
 	
 	public Z3IntelligentEnsembleFactory(EdlDocument edlDocument) {
 		this.edlDocument = edlDocument;
-		this.typeResolution = new SimpleTypeResolutionContext(edlDocument);
+		this.typeResolution = new SimpleDataTypeContext(edlDocument);
 	}
 	
 	private void initConfiguration() {

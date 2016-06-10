@@ -8,23 +8,25 @@ import org.eclipse.xtext.generator.IGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.*
 import cz.cuni.mff.d3s.jdeeco.edl.utils.*
-import cz.cuni.mff.d3s.jdeeco.edl.model.edl.QualifiedName
-import org.eclipse.emf.ecore.EObject
-import org.eclipse.emf.ecore.EStructuralFeature
 import java.util.HashMap
 import java.util.Map
 import com.google.inject.Inject
-import cz.cuni.mff.d3s.jdeeco.edl.IFunctionRegistry
+import cz.cuni.mff.d3s.jdeeco.edl.functions.IFunctionRegistry
 import cz.cuni.mff.d3s.jdeeco.edl.PrimitiveTypes
+import cz.cuni.mff.d3s.jdeeco.edl.typing.ITypeInformationProvider
+import cz.cuni.mff.d3s.jdeeco.edl.typing.DefaultTypeInformationProvider
+import cz.cuni.mff.d3s.jdeeco.edl.validation.NullErrorReportingService
 
 /**
  * Generates code from your model files on save.
  * 
  * see http://www.eclipse.org/Xtext/documentation.html#TutorialCodeGeneration
  */
-class EDLGenerator implements IGenerator, ITypeResolutionContext {
+class EDLGenerator implements IGenerator {
 	
 	Map<String, TypeDefinition> dataTypes;
+	
+	ITypeInformationProvider typing;
 	
 	@Inject
 	IFunctionRegistry registry;
@@ -32,11 +34,14 @@ class EDLGenerator implements IGenerator, ITypeResolutionContext {
 	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
 		dataTypes = new HashMap();
 		
-		var document = resource.contents.filter(typeof(EdlDocument)).findFirst[true];
+		var document = resource.contents.filter(typeof(EdlDocument)).findFirst[true];		
 		var allParts = document.package.toParts()			
 		
 		var packageString = String.join(".", allParts);
-		var path = String.join("/", allParts) + "/";		
+		var path = String.join("/", allParts) + "/";				
+		
+		// We use null error reporting service, as there should not be any errors present during code generation - validation would not allow it
+		typing = new DefaultTypeInformationProvider(new NullErrorReportingService(), document, registry);
 		
 		for(TypeDefinition d : document.knowledgeTypes) {
 			generateType(d, fsa, path, packageString)
@@ -56,7 +61,7 @@ class EDLGenerator implements IGenerator, ITypeResolutionContext {
 	}
 	
 	def void generateEnsemble(EnsembleDefinition e, IFileSystemAccess fsa, String path, String packageString) {
-		var generatorVisitor = new CodeGeneratorVisitor(this, e)
+		var generatorVisitor = new CodeGeneratorVisitor(typing, e)
 		
 		fsa.generateFile(path+e.name + ".java", 
 			
@@ -83,7 +88,7 @@ public class «e.name» implements EnsembleInstance {
 	
 	// Aliases
 	«FOR a : e.aliases»	
-	public «EDLUtils.getJavaTypeName(EDLUtils.getType(this, a.aliasValue, e))» «a.aliasId»() {
+	public «EDLUtils.getJavaTypeName(typing.getType(a.aliasValue, e))» «a.aliasId»() {
 		return «a.aliasValue.accept(generatorVisitor)»;
 	}
 		
@@ -141,7 +146,7 @@ public class «d.name» extends BaseDataContract {
 
 public class «d.name» {	
 	«FOR f : d.fields»				
-	public «EDLUtils.getJavaTypeName(f.type.name)» «f.name»
+	public «EDLUtils.getJavaTypeName(f.type.name)» «f.name»;
 	«ENDFOR»				
 }'''
 			);
@@ -178,25 +183,5 @@ struct «d.name» {
 			default:
 				type
 		}			
-	}
-	
-	override getDataType(QualifiedName name) {
-		return dataTypes.get(name.name);
-	}
-	
-	override isKnownType(QualifiedName name) {
-		return dataTypes.containsKey(name.name);
-	}
-	
-	override reportError(String message, EObject source, EStructuralFeature feature) {
-		// Left intentionally empty - no need to report type errors during generation, document should be valid at this point
-	}
-	
-	override reportError(String message, EObject source, EStructuralFeature feature, int index) {
-		// Left intentionally empty - no need to report type errors during generation, document should be valid at this point		
-	}
-	
-	override getFunctionRegistry() {
-		return registry;
-	}
+	}	
 }

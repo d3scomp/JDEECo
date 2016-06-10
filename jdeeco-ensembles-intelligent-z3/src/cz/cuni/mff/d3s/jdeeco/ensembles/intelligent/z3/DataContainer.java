@@ -13,11 +13,10 @@ import com.microsoft.z3.Optimize;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainerException;
 import cz.cuni.mff.d3s.jdeeco.edl.BaseDataContract;
-import cz.cuni.mff.d3s.jdeeco.edl.model.edl.DataContractDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlDocument;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
-import cz.cuni.mff.d3s.jdeeco.edl.utils.ITypeResolutionContext;
+import cz.cuni.mff.d3s.jdeeco.edl.typing.IDataTypeContext;
 
 class DataContainer {
 	private EdlDocument edlDocument;
@@ -25,7 +24,7 @@ class DataContainer {
 	private int maxEnsembleCount;
 	
 	public DataContainer(Context ctx, Optimize opt, String packageName, EdlDocument edlDocument, KnowledgeContainer knowledgeContainer,
-			ITypeResolutionContext typeResolution, EnsembleDefinition ensembleDefinition)
+			IDataTypeContext typeResolution, EnsembleDefinition ensembleDefinition)
 			throws ClassNotFoundException, KnowledgeContainerException, UnsupportedDataTypeException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		
 		this.edlDocument = edlDocument;

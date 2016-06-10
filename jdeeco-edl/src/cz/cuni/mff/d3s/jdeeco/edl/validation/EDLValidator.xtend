@@ -6,28 +6,27 @@ package cz.cuni.mff.d3s.jdeeco.edl.validation
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition
 import org.eclipse.xtext.validation.Check
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.*
-import java.util.Map
-import java.util.HashMap
 import java.util.Set
 import java.util.HashSet
 import com.google.inject.Inject
-import cz.cuni.mff.d3s.jdeeco.edl.IFunctionRegistry
-import cz.cuni.mff.d3s.jdeeco.edl.utils.ITypeResolutionContext
-import cz.cuni.mff.d3s.jdeeco.edl.model.edl.QualifiedName
 import cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.emf.ecore.EObject
 import cz.cuni.mff.d3s.jdeeco.edl.PrimitiveTypes
+import cz.cuni.mff.d3s.jdeeco.edl.typing.ITypeInformationProvider
+import cz.cuni.mff.d3s.jdeeco.edl.typing.DefaultTypeInformationProvider
+import cz.cuni.mff.d3s.jdeeco.edl.functions.IFunctionRegistry
+import cz.cuni.mff.d3s.jdeeco.edl.validation.IErrorReportingService
 
 /**
  * Custom validation rules. 
  *
  * see http://www.eclipse.org/Xtext/documentation.html#validation
  */
-class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContext {	
+class EDLValidator extends AbstractEDLValidator implements IErrorReportingService {
 	
-	Map<String, TypeDefinition> dataTypes;
 	Set<String> ensembleNames
+	ITypeInformationProvider typing;
 	
 	@Inject
 	IFunctionRegistry registry;
@@ -35,27 +34,8 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 	@Check
 	def generateDocumentInfo(EdlDocument document) {
 			
-		dataTypes = new HashMap();
-		ensembleNames = new HashSet();
 		
-		
-		for (DataContractDefinition d : document.dataContracts) {
-			if (!dataTypes.containsKey(d.name)) {
-				dataTypes.put(d.name, d);
-			} 
-			else {
-				reportError("Duplicate data type definition.", d, EdlPackage.Literals.TYPE_DEFINITION__NAME)
-			}							
-		}				
-		
-		for (TypeDefinition d : document.knowledgeTypes) {
-			if (!dataTypes.containsKey(d.name)) {
-				dataTypes.put(d.name, d);
-			} 
-			else {
-				reportError("Duplicate data type definition.", d, EdlPackage.Literals.TYPE_DEFINITION__NAME)
-			}							
-		}
+		ensembleNames = new HashSet();	
 		
 		for (EnsembleDefinition d : document.ensembles) {
 			if (!ensembleNames.contains(d.name)) {
@@ -65,6 +45,8 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 				reportError("Duplicate ensemble definition.", d, EdlPackage.Literals.ENSEMBLE_DEFINITION__NAME)
 			}							
 		}
+		
+		typing = new DefaultTypeInformationProvider(this, document, registry);
 	}	
 	
 	@Check
@@ -77,11 +59,11 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 				case PrimitiveTypes.BOOL:
 					{}
 				default:
-					if(!dataTypes.containsKey(d.type.name)) {
+					if(!typing.isKnownType(d.type)) {
 						reportError("Field type must be either a primitive type or an existing knowledge type.", d, EdlPackage.Literals.FIELD_DECLARATION__TYPE)						
 					}
 					else {
-						if (dataTypes.get(d.type.name) instanceof DataContractDefinition) {
+						if (typing.getDataType(d.type) instanceof DataContractDefinition) {
 							reportError("Field type must be a knowledge type, not a data contract.", d, EdlPackage.Literals.FIELD_DECLARATION__TYPE)
 						}
 					}
@@ -92,13 +74,13 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 	@Check
 	def validateEnsembleDefinition(EnsembleDefinition ensemble) {
 		if (ensemble.fitness != null) {
-			val type = EDLUtils.getType(this, ensemble.fitness, ensemble)
+			val type = typing.getType(ensemble.fitness, ensemble)
 			if (!type.equals(PrimitiveTypes.INT))
 				reportError("Fitness function must be a numeric expression.", ensemble, EdlPackage.Literals.ENSEMBLE_DEFINITION__FITNESS)
 		}
 		
 		if (ensemble.id.isIsAssigned) {
-			var queryType = EDLUtils.getType(this, ensemble.id.value, ensemble)
+			var queryType = typing.getType(ensemble.id.value, ensemble)
 			var fieldType = ensemble.id.type;
 			
 			if (!EDLUtils.convertible(queryType, fieldType.name)) {
@@ -107,7 +89,7 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 		}		
 		
 		for (Query c : ensemble.constraints) {
-			val type = EDLUtils.getType(this, c, ensemble)
+			val type = typing.getType(c, ensemble)
 			
 			if (!type.equals(PrimitiveTypes.BOOL)) {
 				reportError("Constraint must be a logical expression. - " + type, ensemble, EdlPackage.Literals.ENSEMBLE_DEFINITION__CONSTRAINTS, ensemble.constraints.indexOf(c))
@@ -115,12 +97,12 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 		}	
 		
 		for (AliasDefinition a : ensemble.aliases) {
-			EDLUtils.getType(this, a.aliasValue, ensemble)
+			typing.getType(a.aliasValue, ensemble)
 		}
 		
 		for (ExchangeRule rule : ensemble.exchangeRules) {
-			var queryType = EDLUtils.getType(this, rule.query, ensemble)
-			var fieldType = EDLUtils.getKnowledgeType(this, rule.field, ensemble)
+			var queryType = typing.getType(rule.query, ensemble)
+			var fieldType = typing.getKnowledgeType(rule.field, ensemble)
 			
 			if (!EDLUtils.convertible(queryType, fieldType)) {
 				reportError("Invalid assignment - field and query types do not correspond. Field type: " + fieldType + " Query type: " + queryType, rule, EdlPackage.Literals.EXCHANGE_RULE__FIELD)
@@ -132,12 +114,12 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 		}
 		
 		for (RoleDefinition roleDefinition : ensemble.roles) {
-			if (dataTypes.containsKey(roleDefinition.type.name)) {
-				if (!(dataTypes.get(roleDefinition.type.name) instanceof DataContractDefinition))
+			if (typing.isKnownType(roleDefinition.type)) {
+				if (!(typing.getDataType(roleDefinition.type) instanceof DataContractDefinition))
 					reportError("The type is present, but is not a data contract.", roleDefinition, EdlPackage.Literals.CHILD_DEFINITION__TYPE)
 					
 				if (roleDefinition.whereFilter != null) {
-					if (EDLUtils.getType(this, roleDefinition.whereFilter, ensemble, roleDefinition) != PrimitiveTypes.BOOL) {						
+					if (typing.getType(roleDefinition.whereFilter, ensemble, roleDefinition) != PrimitiveTypes.BOOL) {						
 						reportError("A query used in the where filter must return logical value.", roleDefinition, EdlPackage.Literals.ROLE_DEFINITION__WHERE_FILTER)					
 					}
 					
@@ -148,15 +130,7 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 				reportError("This data contract is not present in the package.", roleDefinition, EdlPackage.Literals.CHILD_DEFINITION__TYPE)
 		}
 		
-		EDLUtils.getType(this, ensemble.id.value, ensemble)		
-	}
-	
-	override isKnownType(QualifiedName name) {
-		return dataTypes.containsKey(name.name);
-	}
-	
-	override getDataType(QualifiedName name) {
-		return dataTypes.get(name.name);
+		typing.getType(ensemble.id.value, ensemble)		
 	}
 	
 	override reportError(String message, EObject source, EStructuralFeature feature) {
@@ -166,9 +140,4 @@ class EDLValidator extends AbstractEDLValidator implements ITypeResolutionContex
 	override reportError(String message, EObject source, EStructuralFeature feature, int index) {
 		error(message, source, feature, index)
 	}
-	
-	override getFunctionRegistry() {
-		return registry
-	}
-	
 }

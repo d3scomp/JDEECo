@@ -22,8 +22,8 @@ import com.microsoft.z3.Sort;
 import com.microsoft.z3.Symbol;
 
 import cz.cuni.mff.d3s.jdeeco.edl.ContextSymbols;
-import cz.cuni.mff.d3s.jdeeco.edl.IFunctionRegistry;
 import cz.cuni.mff.d3s.jdeeco.edl.functions.IConstraintFunction;
+import cz.cuni.mff.d3s.jdeeco.edl.functions.IFunctionRegistry;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.AdditiveInverse;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.BinaryOperator;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.BoolLiteral;
@@ -44,8 +44,8 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.StringLiteral;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Sum;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.TypeDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.QueryVisitorImpl;
-import cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils;
-import cz.cuni.mff.d3s.jdeeco.edl.utils.ITypeResolutionContext;
+import cz.cuni.mff.d3s.jdeeco.edl.typing.IDataTypeContext;
+
 
 class ConstraintParser extends QueryVisitorImpl<Expr> {
 	protected Context ctx;
@@ -53,10 +53,10 @@ class ConstraintParser extends QueryVisitorImpl<Expr> {
 	protected DataContainer dataContainer;
 	protected EnsembleRoleAssignmentMatrix assignmentMatrix;
 	protected int ensembleIndex;
-	protected ITypeResolutionContext typeResolution;
+	protected IDataTypeContext typeResolution;
 	
 	public ConstraintParser(Context ctx, Optimize opt, DataContainer dataContainer, EnsembleRoleAssignmentMatrix assignmentMatrix,
-			int ensembleIndex, ITypeResolutionContext typeResolution) {
+			int ensembleIndex, IDataTypeContext typeResolution) {
 		super();
 		this.ctx = ctx;
 		this.opt = opt;

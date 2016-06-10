@@ -7,6 +7,9 @@ import org.eclipse.xtext.conversion.IValueConverterService;
 
 import com.google.inject.Binder;
 
+import cz.cuni.mff.d3s.jdeeco.edl.functions.DefaultFunctionRegistry;
+import cz.cuni.mff.d3s.jdeeco.edl.functions.IFunctionRegistry;
+
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */

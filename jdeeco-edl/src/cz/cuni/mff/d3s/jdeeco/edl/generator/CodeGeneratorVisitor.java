@@ -1,23 +1,27 @@
-package cz.cuni.mff.d3s.jdeeco.edl.utils;
+package cz.cuni.mff.d3s.jdeeco.edl.generator;
 
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.FunctionCall;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.KnowledgeVariable;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Query;
+import cz.cuni.mff.d3s.jdeeco.edl.typing.ITypeInformationProvider;
+import cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils;
+import cz.cuni.mff.d3s.jdeeco.edl.utils.ToStringVisitor;
 
 public class CodeGeneratorVisitor extends ToStringVisitor {
 	
-	private ITypeResolutionContext typeContext;
 	private EnsembleDefinition parentEnsemble;
+	private ITypeInformationProvider typing;
 
-	public CodeGeneratorVisitor(ITypeResolutionContext typeContext, EnsembleDefinition parentEnsemble) {
-		this.typeContext = typeContext;
+	public CodeGeneratorVisitor(ITypeInformationProvider typing, EnsembleDefinition parentEnsemble) {
+		
 		this.parentEnsemble = parentEnsemble;
+		this.typing = typing;
 	}
 	
 	@Override
 	public String visit(KnowledgeVariable query) {		
-		return EDLUtils.getAccessPath(typeContext, query.getPath(), parentEnsemble);
+		return typing.getAccessPath(query.getPath(), parentEnsemble);
 	}
 	
 	@Override
@@ -25,7 +29,7 @@ public class CodeGeneratorVisitor extends ToStringVisitor {
 		StringBuilder builder = new StringBuilder();		
 		
 		builder.append("(" + 
-		EDLUtils.getJavaTypeName(typeContext.getFunctionRegistry().getFunctionReturnType(typeContext, parentEnsemble, query.getName(), query.getParameters().toArray(new Query[]{}))) 
+		EDLUtils.getJavaTypeName(typing.getFunctionRegistry().getFunctionReturnType(typing, parentEnsemble, query.getName(), query.getParameters().toArray(new Query[]{}))) 
 		+") new " + query.getName() + "().evaluate(");
 		
 		for (Query p : query.getParameters()) {

@@ -5,8 +5,8 @@ import java.util.List;
 
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Query;
+import cz.cuni.mff.d3s.jdeeco.edl.typing.ITypeInformationProvider;
 import cz.cuni.mff.d3s.jdeeco.edl.utils.EDLUtils;
-import cz.cuni.mff.d3s.jdeeco.edl.utils.ITypeResolutionContext;
 
 public class OneOf implements IFunction {
 	
@@ -29,10 +29,10 @@ public class OneOf implements IFunction {
 	}
 
 	@Override
-	public String getReturnType(ITypeResolutionContext ctx, EnsembleDefinition ensemble, Query... params) {		
+	public String getReturnType(ITypeInformationProvider typing, EnsembleDefinition ensemble, Query... params) {		
 		if(params.length == 0)
 			return "unknown";
 		
-		return EDLUtils.stripSet(EDLUtils.getType(ctx, params[0], ensemble));
+		return EDLUtils.stripSet(typing.getType(params[0], ensemble));
 	}	
 }

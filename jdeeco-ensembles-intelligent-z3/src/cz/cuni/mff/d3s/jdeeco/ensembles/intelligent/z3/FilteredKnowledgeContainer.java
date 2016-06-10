@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainerException;
@@ -30,7 +29,7 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.StringLiteral;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Sum;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.QueryVisitorImpl;
-import cz.cuni.mff.d3s.jdeeco.edl.utils.ITypeResolutionContext;
+import cz.cuni.mff.d3s.jdeeco.edl.typing.IDataTypeContext;
 
 public class FilteredKnowledgeContainer {
 
@@ -39,9 +38,9 @@ public class FilteredKnowledgeContainer {
 	//private Set<Integer> usedComponentIds;
 	
 	private KnowledgeContainer knowledgeContainer;
-	private ITypeResolutionContext typeResolution;
+	private IDataTypeContext typeResolution;
 	
-	public FilteredKnowledgeContainer(KnowledgeContainer knowledgeContainer, ITypeResolutionContext typeResolution) {
+	public FilteredKnowledgeContainer(KnowledgeContainer knowledgeContainer, IDataTypeContext typeResolution) {
 		this.knowledgeContainer = knowledgeContainer;
 		this.typeResolution = typeResolution;
 	}
@@ -144,9 +143,9 @@ class DataContractFilterVisitor extends QueryVisitorImpl<Object> {
 
 	BaseDataContract instance;
 	int ensembleId;
-	ITypeResolutionContext typeResolution;
+	IDataTypeContext typeResolution;
 	
-	public DataContractFilterVisitor(ITypeResolutionContext typeResolution, BaseDataContract instance, int ensembleId) {
+	public DataContractFilterVisitor(IDataTypeContext typeResolution, BaseDataContract instance, int ensembleId) {
 		super();
 		this.typeResolution = typeResolution;
 		this.instance = instance;
