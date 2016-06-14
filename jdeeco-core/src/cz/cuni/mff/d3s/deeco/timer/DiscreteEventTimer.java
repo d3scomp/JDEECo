@@ -16,7 +16,15 @@ public class DiscreteEventTimer extends BaseTimer implements SimulationTimer {
 	long currentTime;
 
 	public DiscreteEventTimer() {
-		currentTime = 0;
+		this(0);
+	}
+	
+	/**
+	 * Create new {@link DiscreteEventTimer} with defined time to start from.
+	 * @param startTime The time from which the timer starts.
+	 */
+	public DiscreteEventTimer(long startTime) {
+		currentTime = startTime;
 		eventTimes = new PriorityQueue<>();
 		containerEvents = new HashMap<>();
 	}
