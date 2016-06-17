@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.microsoft.z3.ArithExpr;
-import com.microsoft.z3.ArrayExpr;
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
@@ -97,7 +96,7 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 	}
 	
 	private List<EnsembleInstance> createEnsembles(Model m, EnsembleAssignmentMatrix assignments, EnsembleDefinition ensembleDefinition,
-			DataContainer dataContainer, String packageName) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, InstantiationException, ClassNotFoundException {
+			DataContainer dataContainer, String packageName) throws SecurityException, ReflectiveOperationException {
 		int maxEnsembleCount = assignments.getMaxEnsembleCount();
 		
 		// create ensembles
@@ -109,9 +108,8 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 			if (exists.getBoolValue() == Z3_lbool.Z3_L_FALSE)
 				continue;
 			
-			// TODO
-			//EnsembleInstance ie = (EnsembleInstance) ensembleClass.getConstructor(int.class).
-			EnsembleInstance ie = new PendolinoEnsemble(e + 1);
+			
+			EnsembleInstance ie = (EnsembleInstance) ensembleClass.getConstructor(int.class).newInstance(e + 1);
 
 			for (int r = 0; r < assignments.get(e).getRoleCount(); r++) {
 				RoleDefinition role = roles.get(r);

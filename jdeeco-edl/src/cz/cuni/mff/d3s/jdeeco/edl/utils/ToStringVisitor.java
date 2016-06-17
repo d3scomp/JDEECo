@@ -22,7 +22,7 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.QueryVisitorImpl;
 public class ToStringVisitor extends QueryVisitorImpl<String> implements QueryVisitor<String> {
 
 	public ToStringVisitor() {
-		// TODO Auto-generated constructor stub
+		
 	}	
 
 	@Override
