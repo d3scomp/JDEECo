@@ -115,7 +115,7 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 				RoleDefinition role = roles.get(r);
 				Field roleField = ensembleClass.getField(role.getName());
 				List<Object> list = new ArrayList<>();
-				if (role.getCardinalityMax() > 1) {
+				if ((role.getCardinalityMax() > 1) || (role.getCardinalityMax() == ContextSymbols.STAR_CARDINALITY_VALUE)) {
 					roleField.set(ie, list);
 				}
 				
@@ -131,9 +131,9 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 						}
 					}
 				}
-				
-				result.add(ie);
 			}
+			
+			result.add(ie);
 		}
 		
 		return result;
