@@ -16,7 +16,7 @@ public class EDLValueConverter extends DefaultTerminalConverters {
 	                if (string.isEmpty())
 	                    throw new ValueConverterException("Couldn't convert empty string to int", node, null);
 	                else if ("*".equals(string.trim()))
-	                    return -1;
+	                    return ContextSymbols.STAR_CARDINALITY_VALUE;
 	                try {
 	                    return Integer.parseInt(string);
 	                } catch (NumberFormatException e) {
@@ -27,7 +27,7 @@ public class EDLValueConverter extends DefaultTerminalConverters {
 
 			@Override
 			public String toString(Integer value) {
-			 	return ((value == -1) ? "*" : Integer.toString(value));
+			 	return ((value == ContextSymbols.STAR_CARDINALITY_VALUE) ? "*" : Integer.toString(value));
 			}
 		};
 	}

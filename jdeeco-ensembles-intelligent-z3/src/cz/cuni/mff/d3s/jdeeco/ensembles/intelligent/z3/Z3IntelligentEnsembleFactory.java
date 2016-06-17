@@ -25,6 +25,7 @@ import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFormationException;
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleInstance;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer;
 import cz.cuni.mff.d3s.jdeeco.edl.BaseDataContract;
+import cz.cuni.mff.d3s.jdeeco.edl.ContextSymbols;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlDocument;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
@@ -169,7 +170,15 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 			for (int i = 0; i < maxEnsembleCount; i++) {
 				for (int j = 0; j < assignments.get(i).getRoleCount(); j++) {
 					RoleDefinition roleDefinition = roles.get(j);
-					BoolExpr le = ctx.mkLe(assignments.getAssignedCount(i, j), ctx.mkInt(roleDefinition.getCardinalityMax()));
+					
+					// Validate max cardinality bound, star cardinality gets treated separately as always true
+					int maxCardinality = roleDefinition.getCardinalityMax();
+					BoolExpr le;
+					if (maxCardinality != ContextSymbols.STAR_CARDINALITY_VALUE)
+						 le = ctx.mkLe(assignments.getAssignedCount(i, j), ctx.mkInt(maxCardinality));
+					else
+						 le = ctx.mkTrue();						
+					
 					BoolExpr ge = ctx.mkGe(assignments.getAssignedCount(i, j), ctx.mkInt(roleDefinition.getCardinalityMin()));
 					BoolExpr cardinalityOk = ctx.mkAnd(le, ge);
 					opt.Add(ctx.mkImplies(assignments.ensembleExists(i), cardinalityOk));
