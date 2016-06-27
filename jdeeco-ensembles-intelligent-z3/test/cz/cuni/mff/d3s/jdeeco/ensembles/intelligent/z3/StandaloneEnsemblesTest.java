@@ -55,28 +55,31 @@ public class StandaloneEnsemblesTest {
 
 		EnsembleFactory factory = new Z3IntelligentEnsembleFactory(model);
 		DataclassKnowledgeContainer container = new DataclassKnowledgeContainer();		
-		container.storeComponent(new Rescuer("1", 100));
-		container.storeComponent(new Rescuer("2", 800));
-		container.storeComponent(new Rescuer("3", 60));
-		container.storeComponent(new Rescuer("4", 40));/*
-		container.storeComponent(new Rescuer("5", 20));
-		container.storeComponent(new Rescuer("6", 0));
-		container.storeComponent(new Rescuer("7", 10));
-		container.storeComponent(new Rescuer("8", 30));
-		container.storeComponent(new Rescuer("9", 50));
+		container.storeDataClass(new Rescuer("1", 100));
+		container.storeDataClass(new Rescuer("2", 800));
+		container.storeDataClass(new Rescuer("3", 60));
+		container.storeDataClass(new Rescuer("4", 400));
+		container.storeDataClass(new Rescuer("5", 20));
+		container.storeDataClass(new Rescuer("6", 0));
+		container.storeDataClass(new Rescuer("7", 10));
+		container.storeDataClass(new Rescuer("8", 30));
+		container.storeDataClass(new Rescuer("9", 50));/*
 		container.storeComponent(new Rescuer("10", 70));
 		container.storeComponent(new Rescuer("11", 90));
 		container.storeComponent(new Rescuer("12", 80));
-		container.storeComponent(new Rescuer("13", 80));/*
+		container.storeComponent(new Rescuer("13", 80));
 		container.storeComponent(new Rescuer("14", 81));
 		container.storeComponent(new Rescuer("15", 82));*/
-		container.storeComponent(new FireFighter("101", 10));
-		container.storeComponent(new FireFighter("102", 20));/*
+		container.storeDataClass(new FireFighter("101", 10));
+		container.storeDataClass(new FireFighter("102", 20));/*
 		container.storeComponent(new FireFighter("104", 40));
 		container.storeComponent(new FireFighter("105", 50));/*
 		*/
 		/*
 		container.storeComponent(new FireFighter("103", 30));*/
+		
+		container.storeDataClass(new Position(10, 20));
+		container.storeDataClass(new Position(10, 30));
 		
 		
 		Collection<EnsembleInstance> formed = factory.createInstances(container);

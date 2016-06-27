@@ -95,6 +95,18 @@ class DefaultTypeInformationProvider implements ITypeInformationProvider {
 			}			 						
 		}
 		else {
+			
+			if(ensemble.id.fieldName.equals(name.prefix.findFirst[true])) {
+				if(isKnownType(ensemble.id.type)) {
+					return getKnowledgeType(name, getDataType(ensemble.id.type), 1);
+				}
+				else {
+					ctx.reportError("Could not resolve the name: " + ensemble.id.type, ensemble.id.type, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
+					return PrimitiveTypes.UNKNOWN
+				}	
+			}
+				
+			
 			var role = ensemble.roles.findFirst[it.name.equals(name.prefix.findFirst[true])]
 			if (role != null) {
 				if(isKnownType(role.type)) {

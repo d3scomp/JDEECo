@@ -32,7 +32,9 @@ class DataContainer {
 		
 		FilteredKnowledgeContainer filteredKnowledgeContainer = new FilteredKnowledgeContainer(knowledgeContainer, typeResolution);
 		filteredKnowledgeContainer.load(edlDocument, packageName);
+		
 		maxEnsembleCount = filteredKnowledgeContainer.getMaxEnsembleCount(edlDocument, ensembleDefinition);
+		
 		for (RoleDefinition roleDef : ensembleDefinition.getRoles()) {
 			containers.put(roleDef.getName(), new DataContractInstancesContainer(ctx, opt, roleDef, typeResolution, 
 					filteredKnowledgeContainer, roleDef.getWhereFilter(), maxEnsembleCount));

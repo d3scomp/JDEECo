@@ -10,18 +10,24 @@ data contract FireFighter
 	trainId : int
 end
 
+data contract Position
+	x : int
+	y : int
+end
+
 ensemble PendolinoEnsemble
-	id trainId : int
+	id trainId : Position
 	membership
 		roles
 			leader [1..1] : Rescuer
-			rescuers [1..4] : Rescuer
-			firefighter [0..1] : FireFighter
+			rescuers [1..*] : Rescuer
+			firefighter [1..1] : FireFighter
 		
 		constraints
-		constraint rescuers.pos == rescuers.pos
+		constraint trainId.y == 20
 		
+		fitness 1
 		
-	knowledge exchange
-		x := x
+	//knowledge exchange
+		//x := x
 end

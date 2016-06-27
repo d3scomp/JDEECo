@@ -10,6 +10,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainerException;
 import cz.cuni.mff.d3s.jdeeco.edl.BaseDataContract;
 import cz.cuni.mff.d3s.jdeeco.edl.ContextSymbols;
+import cz.cuni.mff.d3s.jdeeco.edl.PrimitiveTypes;
 import cz.cuni.mff.d3s.jdeeco.edl.functions.IFunction;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.AdditiveInverse;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.BinaryOperator;
@@ -24,6 +25,7 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.KnowledgeVariable;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.LogicalOperator;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Negation;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.NumericLiteral;
+import cz.cuni.mff.d3s.jdeeco.edl.model.edl.QualifiedName;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RelationOperator;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.StringLiteral;
@@ -107,6 +109,15 @@ public class FilteredKnowledgeContainer {
 	public <TDataContract> int getMaxEnsembleCount(EdlDocument edlDocument,
 			EnsembleDefinition ensembleDefinition) {
 		int result = Integer.MAX_VALUE;
+		
+		QualifiedName idType = ensembleDefinition.getId().getType();
+		
+		// TODO Extend to int ranges
+		if (!idType.toString().equals(PrimitiveTypes.INT)) {
+			result = components.get(idType.getName()).length;
+		}
+		
+		
 		for (DataContractDefinition contract : edlDocument.getDataContracts()) {
 			int maxEnsembleCount = getMaxEnsembleCount(contract.getName(), ensembleDefinition);
 			if (maxEnsembleCount < result) {

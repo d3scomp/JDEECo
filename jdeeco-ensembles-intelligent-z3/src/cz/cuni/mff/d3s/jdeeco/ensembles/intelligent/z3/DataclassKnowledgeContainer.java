@@ -51,7 +51,7 @@ public class DataclassKnowledgeContainer implements KnowledgeContainer {
 
 	}
 	
-	public <TComponent>void storeComponent(TComponent component) {
+	public <TComponent>void storeDataClass(TComponent component) {
 		componentData.add(component);
 	}
 }

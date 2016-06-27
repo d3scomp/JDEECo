@@ -5,10 +5,6 @@ import java.util.List;
 
 import javax.activation.UnsupportedDataTypeException;
 
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
-
 import com.microsoft.z3.ArithExpr;
 import com.microsoft.z3.ArrayExpr;
 import com.microsoft.z3.BoolExpr;
@@ -16,19 +12,15 @@ import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.IntExpr;
 import com.microsoft.z3.Optimize;
-import com.microsoft.z3.Pattern;
-import com.microsoft.z3.Quantifier;
 import com.microsoft.z3.Sort;
-import com.microsoft.z3.Symbol;
 
+import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFormationException;
+import cz.cuni.mff.d3s.deeco.runtime.InvalidOperationException;
 import cz.cuni.mff.d3s.jdeeco.edl.ContextSymbols;
 import cz.cuni.mff.d3s.jdeeco.edl.functions.IConstraintFunction;
-import cz.cuni.mff.d3s.jdeeco.edl.functions.IFunctionRegistry;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.AdditiveInverse;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.BinaryOperator;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.BoolLiteral;
-import cz.cuni.mff.d3s.jdeeco.edl.model.edl.DataContractDefinition;
-import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EquitableQuery;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.FloatLiteral;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.FunctionCall;
@@ -36,13 +28,11 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.KnowledgeVariable;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.LogicalOperator;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Negation;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.NumericLiteral;
-import cz.cuni.mff.d3s.jdeeco.edl.model.edl.QualifiedName;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Query;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RelationOperator;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.StringLiteral;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Sum;
-import cz.cuni.mff.d3s.jdeeco.edl.model.edl.TypeDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.QueryVisitorImpl;
 import cz.cuni.mff.d3s.jdeeco.edl.typing.IDataTypeContext;
 
@@ -54,9 +44,10 @@ class ConstraintParser extends QueryVisitorImpl<Expr> {
 	protected EnsembleRoleAssignmentMatrix assignmentMatrix;
 	protected int ensembleIndex;
 	protected IDataTypeContext typeResolution;
+	protected EnsembleIdMapping idMapping;
 	
 	public ConstraintParser(Context ctx, Optimize opt, DataContainer dataContainer, EnsembleRoleAssignmentMatrix assignmentMatrix,
-			int ensembleIndex, IDataTypeContext typeResolution) {
+			int ensembleIndex, IDataTypeContext typeResolution, EnsembleIdMapping idMapping) {
 		super();
 		this.ctx = ctx;
 		this.opt = opt;
@@ -64,6 +55,7 @@ class ConstraintParser extends QueryVisitorImpl<Expr> {
 		this.assignmentMatrix = assignmentMatrix;
 		this.ensembleIndex = ensembleIndex;
 		this.typeResolution = typeResolution;
+		this.idMapping = idMapping;
 	}
 	
 	public void parseConstraints() {
@@ -139,6 +131,15 @@ class ConstraintParser extends QueryVisitorImpl<Expr> {
 	public Expr visit(KnowledgeVariable query) {
 		String roleName = query.getPath().toParts().get(0);
 		String fieldName = query.getPath().toParts().size() > 1 ? query.getPath().toParts().get(1) : null;
+		
+		if (roleName.equals(assignmentMatrix.getEnsembleDefinition().getId().getFieldName())) {
+			try {
+				return idMapping.getFieldExpression(ctx, ensembleIndex, query.getPath());
+			} catch (Exception e) {				
+				// TODO Rethrow?
+				System.out.println("Catch!");
+			}
+		}
 		
 		RoleDefinition roleDefinition = getRoleDefinition(roleName);
 		DataContractInstancesContainer dataContractContainer = dataContainer.get(roleDefinition.getName().toString());
@@ -300,7 +301,7 @@ class ItemBoundConstraintParser extends ConstraintParser {
 	private int currentItem;	
 	
 	public ItemBoundConstraintParser(ConstraintParser origin, DataContractInstancesContainer dataSource, int currentItem) {
-		super(origin.ctx, origin.opt,origin.dataContainer, origin.assignmentMatrix, origin.ensembleIndex, origin.typeResolution);
+		super(origin.ctx, origin.opt,origin.dataContainer, origin.assignmentMatrix, origin.ensembleIndex, origin.typeResolution, origin.idMapping);
 		this.dataSource = dataSource;
 		this.currentItem = currentItem;
 	}

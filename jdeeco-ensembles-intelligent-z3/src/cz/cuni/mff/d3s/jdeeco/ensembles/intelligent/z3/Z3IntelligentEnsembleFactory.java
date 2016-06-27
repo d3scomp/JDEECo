@@ -25,6 +25,7 @@ import cz.cuni.mff.d3s.deeco.ensembles.EnsembleInstance;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer;
 import cz.cuni.mff.d3s.jdeeco.edl.BaseDataContract;
 import cz.cuni.mff.d3s.jdeeco.edl.ContextSymbols;
+import cz.cuni.mff.d3s.jdeeco.edl.PrimitiveTypes;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlDocument;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
@@ -152,19 +153,32 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
     		List<RoleDefinition> roles = ensembleDefinition.getRoles();
 			DataContainer dataContainer = new DataContainer(ctx, opt, edlDocument.getPackage().toString(), edlDocument, container, 
 					typeResolution, ensembleDefinition);			
-	        int maxEnsembleCount = dataContainer.getMaxEnsembleCount();
+	        
+			
+			// Get the max possible number of ensemble instances of this ensemble type - this includes checks on number of components for specific roles, as well as the id
+			
+			int maxEnsembleCount = dataContainer.getMaxEnsembleCount();
 	        
 	        if (maxEnsembleCount == 0) {
 	        	System.out.println("Not enough components of suitable roles to form any ensemble instance of the type " + ensembleDefinition.getName() + ".");
 	        	return Collections.emptyList();
 	        }
-						
+
+	        
+	        // Create assignment expressions 
+	        
 			EnsembleAssignmentMatrix assignments = EnsembleAssignmentMatrix.create(
 					ctx, opt, maxEnsembleCount, ensembleDefinition, dataContainer);
-	
+			
+			// Create expressions representing sizes of role assignment sets
 			assignments.createCounters();
 			
-			// number of rescuers is within cardinality conditions
+			// Create the mapping between local ensemble id, and id data classes
+			
+			EnsembleIdMapping idMapping = new EnsembleIdMapping(edlDocument.getPackage().toString(), ensembleDefinition, typeResolution, container);
+			
+
+			// Check cardinality conditions for individual roles
 			for (int i = 0; i < maxEnsembleCount; i++) {
 				for (int j = 0; j < assignments.get(i).getRoleCount(); j++) {
 					RoleDefinition roleDefinition = roles.get(j);
@@ -214,7 +228,7 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 			
 			ArithExpr[] fitnesses = new ArithExpr[maxEnsembleCount];
 			for (int e = 0; e < assignments.getMaxEnsembleCount(); e++) {
-				ConstraintParser cp = new ConstraintParser(ctx, opt, dataContainer, assignments.get(e), e, typeResolution);
+				ConstraintParser cp = new ConstraintParser(ctx, opt, dataContainer, assignments.get(e), e, typeResolution, idMapping);
 				cp.parseConstraints();
 				fitnesses[e] = cp.parseFitness();
 			}
