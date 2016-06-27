@@ -79,6 +79,9 @@ class EDLValidator extends AbstractEDLValidator implements IErrorReportingServic
 				reportError("Fitness function must be a numeric expression.", ensemble, EdlPackage.Literals.ENSEMBLE_DEFINITION__FITNESS)
 		}
 		
+		if (!this.typing.isKnownType(ensemble.id.type))
+				reportError("Could not resolve the type name: " + ensemble.id.type, ensemble.id.type, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
+		
 		if (ensemble.id.isIsAssigned) {
 			var queryType = typing.getType(ensemble.id.value, ensemble)
 			var fieldType = ensemble.id.type;
@@ -116,7 +119,7 @@ class EDLValidator extends AbstractEDLValidator implements IErrorReportingServic
 		for (RoleDefinition roleDefinition : ensemble.roles) {
 			if (typing.isKnownType(roleDefinition.type)) {
 				if (!(typing.getDataType(roleDefinition.type) instanceof DataContractDefinition))
-					reportError("The type is present, but is not a data contract.", roleDefinition, EdlPackage.Literals.CHILD_DEFINITION__TYPE)
+					reportError("The type is present, but is not a data contract: " + roleDefinition.type, roleDefinition, EdlPackage.Literals.CHILD_DEFINITION__TYPE)
 					
 				if (roleDefinition.whereFilter != null) {
 					if (typing.getType(roleDefinition.whereFilter, ensemble, roleDefinition) != PrimitiveTypes.BOOL) {						
@@ -127,7 +130,7 @@ class EDLValidator extends AbstractEDLValidator implements IErrorReportingServic
 				}				
 			}			
 			else
-				reportError("This data contract is not present in the package.", roleDefinition, EdlPackage.Literals.CHILD_DEFINITION__TYPE)
+				reportError("This data contract is not present in the package: " + roleDefinition.type, roleDefinition, EdlPackage.Literals.CHILD_DEFINITION__TYPE)				
 		}
 		
 		typing.getType(ensemble.id.value, ensemble)		

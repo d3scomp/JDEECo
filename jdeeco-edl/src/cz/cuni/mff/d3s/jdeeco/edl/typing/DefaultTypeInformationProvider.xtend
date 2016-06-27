@@ -30,7 +30,7 @@ class DefaultTypeInformationProvider implements ITypeInformationProvider {
 				dataTypes.put(d.name, d);
 			} 
 			else {
-				ctx.reportError("Duplicate data type definition.", d, EdlPackage.Literals.TYPE_DEFINITION__NAME)
+				ctx.reportError("Duplicate data type definition: " + d.name, d, EdlPackage.Literals.TYPE_DEFINITION__NAME)
 			}							
 		}				
 		
@@ -39,7 +39,7 @@ class DefaultTypeInformationProvider implements ITypeInformationProvider {
 				dataTypes.put(d.name, d);
 			} 
 			else {
-				ctx.reportError("Duplicate data type definition.", d, EdlPackage.Literals.TYPE_DEFINITION__NAME)
+				ctx.reportError("Duplicate data type definition: " + d.name, d, EdlPackage.Literals.TYPE_DEFINITION__NAME)
 			}							
 		}
 	}
@@ -51,7 +51,7 @@ class DefaultTypeInformationProvider implements ITypeInformationProvider {
 				return f.type.name;
 			}
 			else {
-				ctx.reportError("The specified data type does not contain a field of this name.", name, EdlPackage.Literals.QUALIFIED_NAME__NAME)
+				ctx.reportError("The specified data type " + type.name + " does not contain a field of this name: " + name.name, name, EdlPackage.Literals.QUALIFIED_NAME__NAME)
 			}			
 		}
 		else {
@@ -62,11 +62,12 @@ class DefaultTypeInformationProvider implements ITypeInformationProvider {
 					return getKnowledgeType(name, nestedType, position+1)					
 				}
 				else {
-					ctx.reportError("A data type with this name was not found in the package.", name, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
+					// TODO Suppress, might result in some spurious reports - esp. in case of primitive types
+					ctx.reportError("A data type with this name was not found in the package: " + f.type.name, name, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
 				}
 			}
 			else {
-				ctx.reportError("The specified data type does not contain a field of this name.", name, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
+				ctx.reportError("The specified data type "+ type.name +" does not contain a field of this name: " + name.prefix.get(position), name, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
 			}
 		}
 		
@@ -101,7 +102,7 @@ class DefaultTypeInformationProvider implements ITypeInformationProvider {
 					return getKnowledgeType(name, getDataType(ensemble.id.type), 1);
 				}
 				else {
-					ctx.reportError("Could not resolve the name: " + ensemble.id.type, ensemble.id.type, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
+					// Reporting for this is done elsewhere, regardless of whether the id fields are used or not
 					return PrimitiveTypes.UNKNOWN
 				}	
 			}
@@ -118,11 +119,12 @@ class DefaultTypeInformationProvider implements ITypeInformationProvider {
 						return "set<" + getKnowledgeType(name, roleType, 1) + ">"
 				}
 				else {
-					ctx.reportError("Could not resolve the name: " + role.type, role.type, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
+					// Reporting for this is done elsewhere, regardless of whether the id fields are used or not
+					//ctx.reportError("Could not resolve the type name: " + role.type, role.type, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
 				}				
 			}
 			else {
-				ctx.reportError("A role with this name was not found in the ensemble: " + name, name, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
+				ctx.reportError("A role with this name was not found in the ensemble: " + name.prefix.get(0), name, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
 			}
 		}
 		
@@ -278,20 +280,25 @@ class DefaultTypeInformationProvider implements ITypeInformationProvider {
 			
 		Sum:
 			{
-				if (!ensemble.roles.exists[it.name.equals(query.collection.toString())]) {
-					ctx.reportError("Aggregation functions can be used only over existing ensemble roles.", query, EdlPackage.Literals.AGGREGATION__COLLECTION);
-					PrimitiveTypes.UNKNOWN
-				} else {
-					var RoleDefinition roleDef = ensemble.roles.findFirst[it.name.equals(query.collection.toString())];
-					if (!getType(query.item, ensemble, roleDef).equals(PrimitiveTypes.INT)) {
-						ctx.reportError("Sum only accepts integer items.", query, EdlPackage.Literals.AGGREGATION__COLLECTION);
-						PrimitiveTypes.UNKNOWN						
-					}
-					else {
-						PrimitiveTypes.INT
-					}			
-				}
-			
+				if (role != null) {
+					ctx.reportError("Aggregation functions cannot be used in role filters.", role, EdlPackage.Literals.ROLE_DEFINITION__WHERE_FILTER)
+					return PrimitiveTypes.UNKNOWN;					
+				} else {				
+				
+					if (!ensemble.roles.exists[it.name.equals(query.collection.toString())]) {
+						ctx.reportError("Aggregation functions can be used only over existing ensemble roles.", query, EdlPackage.Literals.AGGREGATION__COLLECTION);
+						PrimitiveTypes.UNKNOWN
+					} else {
+						var RoleDefinition roleDef = ensemble.roles.findFirst[it.name.equals(query.collection.toString())];
+						if (!getType(query.item, ensemble, roleDef).equals(PrimitiveTypes.INT)) {
+							ctx.reportError("Sum only accepts integer items.", query, EdlPackage.Literals.AGGREGATION__COLLECTION);
+							PrimitiveTypes.UNKNOWN						
+						}
+						else {
+							PrimitiveTypes.INT
+						}			
+					}					
+				}			
 			}
 					
 		default:
