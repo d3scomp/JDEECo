@@ -4,6 +4,7 @@
 package cz.cuni.mff.d3s.jdeeco.edl;
 
 import org.eclipse.xtext.conversion.IValueConverterService;
+import org.eclipse.xtext.generator.IOutputConfigurationProvider;
 
 import com.google.inject.Binder;
 
@@ -23,5 +24,8 @@ public class EDLRuntimeModule extends cz.cuni.mff.d3s.jdeeco.edl.AbstractEDLRunt
 	public void configure(Binder binder) {	
 		super.configure(binder);
 		binder.bind(IFunctionRegistry.class).to(DefaultFunctionRegistry.class);
+		binder.bind(IOutputConfigurationProvider.class).to(EDLConfigurationProvider.class);
 	}
+	
+	
 }

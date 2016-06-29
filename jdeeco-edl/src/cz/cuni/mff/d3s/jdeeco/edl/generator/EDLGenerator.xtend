@@ -16,6 +16,7 @@ import cz.cuni.mff.d3s.jdeeco.edl.PrimitiveTypes
 import cz.cuni.mff.d3s.jdeeco.edl.typing.ITypeInformationProvider
 import cz.cuni.mff.d3s.jdeeco.edl.typing.DefaultTypeInformationProvider
 import cz.cuni.mff.d3s.jdeeco.edl.validation.NullErrorReportingService
+import cz.cuni.mff.d3s.jdeeco.edl.ContextSymbols
 
 /**
  * Generates code from your model files on save.
@@ -73,7 +74,7 @@ import cz.cuni.mff.d3s.deeco.ensembles.EnsembleInstance;
 import cz.cuni.mff.d3s.jdeeco.edl.functions.*;
 import java.util.stream.*;
 
-public class «e.name» implements EnsembleInstance {
+public «IF e.isExternalKnowledgeExchange»abstract«ELSE»final«ENDIF» class «e.name» implements EnsembleInstance {
 	// Ensemble ID
 	public final «EDLUtils.getJavaTypeName(e.id.type.name)» «e.id.fieldName»;
 	
@@ -103,6 +104,7 @@ public class «e.name» implements EnsembleInstance {
 	«ENDIF»
 	«ENDFOR»
 
+	«IF !e.isExternalKnowledgeExchange»
 	// Knowledge exchange
 
 	@Override
@@ -117,10 +119,24 @@ public class «e.name» implements EnsembleInstance {
 		«rule.field.toString()» = «rule.query.accept(generatorVisitor)»;
 		«ENDIF»				
 		«ENDFOR»		
-	}		
+	}
+	«ENDIF»		
 }'''
 			);
+			
+		if (e.isExternalKnowledgeExchange) 
+			fsa.generateFile(path+e.name + "Impl.java", ContextSymbols.GENERATE_ONCE, 
+'''package «packageString»;
+
+public final class «e.name»Impl extends «e.name» {
+	
+	// Knowledge exchange
+	
+	public void performKnowledgeExchange() {
+		// TODO Implement knowledge exchange 
 	}
+}''');
+}
 	
 	def void generateDataContract(DataContractDefinition d, IFileSystemAccess fsa, String path, String packageString) {
 		fsa.generateFile(path+d.name + ".java", 

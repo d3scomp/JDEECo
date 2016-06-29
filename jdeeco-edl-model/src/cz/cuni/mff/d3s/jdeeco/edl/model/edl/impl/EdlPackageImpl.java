@@ -486,6 +486,15 @@ public class EdlPackageImpl extends EPackageImpl implements EdlPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getEnsembleDefinition_ExternalKnowledgeExchange() {
+		return (EAttribute)ensembleDefinitionEClass.getEStructuralFeatures().get(9);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getRoleDefinition() {
 		return roleDefinitionEClass;
 	}
@@ -1299,6 +1308,7 @@ public class EdlPackageImpl extends EPackageImpl implements EdlPackage {
 		createEReference(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__CHILD_ENSEMBLES);
 		createEReference(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__EXCHANGE_RULES);
 		createEReference(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__FITNESS);
+		createEAttribute(ensembleDefinitionEClass, ENSEMBLE_DEFINITION__EXTERNAL_KNOWLEDGE_EXCHANGE);
 
 		roleDefinitionEClass = createEClass(ROLE_DEFINITION);
 		createEAttribute(roleDefinitionEClass, ROLE_DEFINITION__EXCLUSIVE);
@@ -1483,6 +1493,7 @@ public class EdlPackageImpl extends EPackageImpl implements EdlPackage {
 		initEReference(getEnsembleDefinition_ChildEnsembles(), this.getChildDefinition(), null, "childEnsembles", null, 0, -1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEnsembleDefinition_ExchangeRules(), this.getExchangeRule(), null, "exchangeRules", null, 0, -1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEnsembleDefinition_Fitness(), this.getQuery(), null, "fitness", null, 0, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEnsembleDefinition_ExternalKnowledgeExchange(), ecorePackage.getEBoolean(), "externalKnowledgeExchange", null, 1, 1, EnsembleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(roleDefinitionEClass, RoleDefinition.class, "RoleDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getRoleDefinition_Exclusive(), ecorePackage.getEBoolean(), "exclusive", "false", 1, 1, RoleDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

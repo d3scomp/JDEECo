@@ -38,6 +38,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.EnsembleDefinitionImpl#getChildEnsembles <em>Child Ensembles</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.EnsembleDefinitionImpl#getExchangeRules <em>Exchange Rules</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.EnsembleDefinitionImpl#getFitness <em>Fitness</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.EnsembleDefinitionImpl#isExternalKnowledgeExchange <em>External Knowledge Exchange</em>}</li>
  * </ul>
  * </p>
  *
@@ -153,6 +154,26 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	 * @ordered
 	 */
 	protected Query fitness;
+
+	/**
+	 * The default value of the '{@link #isExternalKnowledgeExchange() <em>External Knowledge Exchange</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isExternalKnowledgeExchange()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean EXTERNAL_KNOWLEDGE_EXCHANGE_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isExternalKnowledgeExchange() <em>External Knowledge Exchange</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isExternalKnowledgeExchange()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean externalKnowledgeExchange = EXTERNAL_KNOWLEDGE_EXCHANGE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -366,6 +387,27 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean isExternalKnowledgeExchange() {
+		return externalKnowledgeExchange;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setExternalKnowledgeExchange(boolean newExternalKnowledgeExchange) {
+		boolean oldExternalKnowledgeExchange = externalKnowledgeExchange;
+		externalKnowledgeExchange = newExternalKnowledgeExchange;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, EdlPackage.ENSEMBLE_DEFINITION__EXTERNAL_KNOWLEDGE_EXCHANGE, oldExternalKnowledgeExchange, externalKnowledgeExchange));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -413,6 +455,8 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 				return getExchangeRules();
 			case EdlPackage.ENSEMBLE_DEFINITION__FITNESS:
 				return getFitness();
+			case EdlPackage.ENSEMBLE_DEFINITION__EXTERNAL_KNOWLEDGE_EXCHANGE:
+				return isExternalKnowledgeExchange();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -458,6 +502,9 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 			case EdlPackage.ENSEMBLE_DEFINITION__FITNESS:
 				setFitness((Query)newValue);
 				return;
+			case EdlPackage.ENSEMBLE_DEFINITION__EXTERNAL_KNOWLEDGE_EXCHANGE:
+				setExternalKnowledgeExchange((Boolean)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -497,6 +544,9 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 			case EdlPackage.ENSEMBLE_DEFINITION__FITNESS:
 				setFitness((Query)null);
 				return;
+			case EdlPackage.ENSEMBLE_DEFINITION__EXTERNAL_KNOWLEDGE_EXCHANGE:
+				setExternalKnowledgeExchange(EXTERNAL_KNOWLEDGE_EXCHANGE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -527,6 +577,8 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 				return exchangeRules != null && !exchangeRules.isEmpty();
 			case EdlPackage.ENSEMBLE_DEFINITION__FITNESS:
 				return fitness != null;
+			case EdlPackage.ENSEMBLE_DEFINITION__EXTERNAL_KNOWLEDGE_EXCHANGE:
+				return externalKnowledgeExchange != EXTERNAL_KNOWLEDGE_EXCHANGE_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -545,6 +597,8 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 		result.append(name);
 		result.append(", parentEnsemble: ");
 		result.append(parentEnsemble);
+		result.append(", externalKnowledgeExchange: ");
+		result.append(externalKnowledgeExchange);
 		result.append(')');
 		return result.toString();
 	}
