@@ -45,6 +45,9 @@ class DefaultTypeInformationProvider implements ITypeInformationProvider {
 	}
 	
 	def String getKnowledgeType(QualifiedName name, TypeDefinition type, int position) {
+		if (type == null)
+			return PrimitiveTypes.UNKNOWN
+		
 		if (position >= name.prefix.length) {			
 			var FieldDeclaration f = type.fields.findFirst[it.name.equals(name.name)]
 			if (f != null) {
@@ -62,8 +65,8 @@ class DefaultTypeInformationProvider implements ITypeInformationProvider {
 					return getKnowledgeType(name, nestedType, position+1)					
 				}
 				else {
-					// TODO Suppress, might result in some spurious reports - esp. in case of primitive types
-					ctx.reportError("A data type with this name was not found in the package: " + f.type.name, name, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
+					if (PrimitiveTypes.isPrimitiveType(f.type.name))					
+						ctx.reportError("This type is primitive and does not have any fields: " + f.type.name, name, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
 				}
 			}
 			else {
