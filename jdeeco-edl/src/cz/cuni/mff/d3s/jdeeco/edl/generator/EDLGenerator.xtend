@@ -130,6 +130,10 @@ public «IF e.isExternalKnowledgeExchange»abstract«ELSE»final«ENDIF» class 
 
 public final class «e.name»Impl extends «e.name» {
 	
+	public «e.name»Impl(«EDLUtils.getJavaTypeName(e.id.type.name)» «e.id.fieldName») {
+		super(«e.id.fieldName»);
+	}
+	
 	// Knowledge exchange
 	
 	public void performKnowledgeExchange() {
