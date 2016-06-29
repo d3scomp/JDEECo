@@ -25,9 +25,7 @@ public class EnsembleIdMapping {
 	public EnsembleIdMapping(String packageName, EnsembleDefinition ensembleDefinition, IDataTypeContext typeResolution, KnowledgeContainer container) 
 				throws ReflectiveOperationException, KnowledgeContainerException {		
 		
-		TypeDefinition contract = typeResolution.getDataType(ensembleDefinition.getId().getType());
-		
-		
+		TypeDefinition contract = typeResolution.getDataType(ensembleDefinition.getId().getType());		
 		roleClass = (Class<? extends BaseDataContract>) Class.forName(
 				packageName + "." + contract.getName());
 		
@@ -43,8 +41,8 @@ public class EnsembleIdMapping {
 		}
 	}
 
-	public void getIdClass(int localEnsembleIndex) {
-		// TODO Auto-generated method stub		
+	public BaseDataContract getIdClass(int localEnsembleIndex) {
+		return mapping[localEnsembleIndex];				
 	}
 	
 	public Expr getFieldExpression(Context ctx, int localEnsembleIndex, QualifiedName path) throws ReflectiveOperationException, SecurityException {

@@ -110,18 +110,16 @@ public class FilteredKnowledgeContainer {
 			EnsembleDefinition ensembleDefinition) {
 		int result = Integer.MAX_VALUE;
 		
-		QualifiedName idType = ensembleDefinition.getId().getType();
-		
 		// TODO Extend to int ranges
-		if (!idType.toString().equals(PrimitiveTypes.INT)) {
+		if (Extensions.hasDataContractBoundId(ensembleDefinition)) {
+			QualifiedName idType = ensembleDefinition.getId().getType();
 			result = components.get(idType.getName()).length;
-		}
-		
-		
-		for (DataContractDefinition contract : edlDocument.getDataContracts()) {
-			int maxEnsembleCount = getMaxEnsembleCount(contract.getName(), ensembleDefinition);
-			if (maxEnsembleCount < result) {
-				result = maxEnsembleCount;
+		} else {
+			for (DataContractDefinition contract : edlDocument.getDataContracts()) {
+				int maxEnsembleCount = getMaxEnsembleCount(contract.getName(), ensembleDefinition);
+				if (maxEnsembleCount < result) {
+					result = maxEnsembleCount;
+				}
 			}
 		}
 		

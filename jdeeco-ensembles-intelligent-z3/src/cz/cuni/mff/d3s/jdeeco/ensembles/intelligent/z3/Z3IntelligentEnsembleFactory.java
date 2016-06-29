@@ -25,7 +25,6 @@ import cz.cuni.mff.d3s.deeco.ensembles.EnsembleInstance;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer;
 import cz.cuni.mff.d3s.jdeeco.edl.BaseDataContract;
 import cz.cuni.mff.d3s.jdeeco.edl.ContextSymbols;
-import cz.cuni.mff.d3s.jdeeco.edl.PrimitiveTypes;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlDocument;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.RoleDefinition;
@@ -97,20 +96,32 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 	}
 	
 	private List<EnsembleInstance> createEnsembles(Model m, EnsembleAssignmentMatrix assignments, EnsembleDefinition ensembleDefinition,
-			DataContainer dataContainer, String packageName) throws SecurityException, ReflectiveOperationException {
+			DataContainer dataContainer, String packageName, EnsembleIdMapping mapping) throws SecurityException, ReflectiveOperationException {
 		int maxEnsembleCount = assignments.getMaxEnsembleCount();
 		
 		// create ensembles
 		List<EnsembleInstance> result = new ArrayList<>();
 		List<RoleDefinition> roles = ensembleDefinition.getRoles();
-		Class<?> ensembleClass = Class.forName(packageName + "." + ensembleDefinition.getName());
+		Class<?> ensembleClass;
+		
+		if (ensembleDefinition.isExternalKnowledgeExchange())
+			ensembleClass = Class.forName(packageName + "." + ensembleDefinition.getName() + "Impl");
+		else 
+			ensembleClass = Class.forName(packageName + "." + ensembleDefinition.getName());
+		
 		for (int e = 0; e < maxEnsembleCount; e++) {
 			Expr exists = m.getConstInterp(assignments.ensembleExists(e));
 			if (exists.getBoolValue() == Z3_lbool.Z3_L_FALSE)
-				continue;
+				continue;			
 			
+			EnsembleInstance ie;
 			
-			EnsembleInstance ie = (EnsembleInstance) ensembleClass.getConstructor(int.class).newInstance(e + 1);
+			if (Extensions.hasDataContractBoundId(ensembleDefinition)) {
+				Class<?> idClass = Class.forName(packageName + "." + ensembleDefinition.getId().getType().toString());
+				ie = (EnsembleInstance) ensembleClass.getConstructor(idClass).newInstance(mapping.getIdClass(e));				
+			} else {
+				ie = (EnsembleInstance) ensembleClass.getConstructor(int.class).newInstance(e + 1);
+			}
 
 			for (int r = 0; r < assignments.get(e).getRoleCount(); r++) {
 				RoleDefinition role = roles.get(r);
@@ -175,7 +186,10 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 			
 			// Create the mapping between local ensemble id, and id data classes
 			
-			EnsembleIdMapping idMapping = new EnsembleIdMapping(edlDocument.getPackage().toString(), ensembleDefinition, typeResolution, container);
+			EnsembleIdMapping idMapping = null;
+			
+			if (Extensions.hasDataContractBoundId(ensembleDefinition))			
+				idMapping = new EnsembleIdMapping(edlDocument.getPackage().toString(), ensembleDefinition, typeResolution, container);
 			
 
 			// Check cardinality conditions for individual roles
@@ -198,10 +212,18 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 					opt.Add(ctx.mkImplies(ctx.mkNot(assignments.ensembleExists(i)), ensembleEmpty));
 				}
 			}
-
-			// nonexistence of an ensemble implies nonexistence of the following ensembles (use consecutive number set from 1)
-			for (int i = 1; i < maxEnsembleCount; i++) {
-				opt.Add(ctx.mkImplies(ctx.mkNot(assignments.ensembleExists(i-1)), ctx.mkNot(assignments.ensembleExists(i))));
+			
+			// Only in case of integer ids - does not make sense to impose this for data contract bound ensembles
+			if (!Extensions.hasDataContractBoundId(ensembleDefinition)) {
+				// Enforce creation of at least one (or rather, first) ensemble
+				opt.Add(assignments.ensembleExists(0));
+				
+				// Nonexistence of an ensemble implies nonexistence of the following ensembles (use consecutive number set from 1)				
+				for (int i = 1; i < maxEnsembleCount; i++) {
+					opt.Add(ctx.mkImplies(ctx.mkNot(assignments.ensembleExists(i-1)), ctx.mkNot(assignments.ensembleExists(i))));
+				}
+			} else {
+				// TODO at least one ensemble exists
 			}
 			
 			
@@ -234,8 +256,6 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 			}
 			
 			Handle h = opt.MkMaximize(ctx.mkAdd(fitnesses));
-			
-			opt.Add(assignments.ensembleExists(0));
 								
 			//System.out.println("Solver: " + opt);
 			Status status = opt.Check();
@@ -245,7 +265,7 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 				printModel(opt.getModel(), assignments, roles, dataContainer);
 				
 				List<EnsembleInstance> result = createEnsembles(opt.getModel(), assignments, ensembleDefinition, 
-						dataContainer, edlDocument.getPackage().toString());
+						dataContainer, edlDocument.getPackage().toString(), idMapping);
 				System.out.println("Time taken (ms): " + (System.currentTimeMillis() - time_milis));
 				return result;
 				
