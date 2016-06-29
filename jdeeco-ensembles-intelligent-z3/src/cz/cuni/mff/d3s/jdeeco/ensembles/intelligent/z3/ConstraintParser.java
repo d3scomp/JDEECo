@@ -136,8 +136,7 @@ class ConstraintParser extends QueryVisitorImpl<Expr> {
 			try {
 				return idMapping.getFieldExpression(ctx, ensembleIndex, query.getPath());
 			} catch (Exception e) {				
-				// TODO Rethrow?
-				System.out.println("Catch!");
+				// TODO Rethrow?				
 			}
 		}
 		

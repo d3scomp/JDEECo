@@ -79,7 +79,7 @@ class EDLValidator extends AbstractEDLValidator implements IErrorReportingServic
 				reportError("Fitness function must be a numeric expression.", ensemble, EdlPackage.Literals.ENSEMBLE_DEFINITION__FITNESS)
 		}
 		
-		if (!this.typing.isKnownType(ensemble.id.type))
+		if (!this.typing.isKnownType(ensemble.id.type) && !ensemble.id.type.toString().equals(PrimitiveTypes.INT))
 				reportError("Could not resolve the type name: " + ensemble.id.type, ensemble.id.type, EdlPackage.Literals.QUALIFIED_NAME__PREFIX)
 		
 		if (ensemble.id.isIsAssigned) {
