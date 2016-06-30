@@ -133,10 +133,14 @@ class ConstraintParser extends QueryVisitorImpl<Expr> {
 		String fieldName = query.getPath().toParts().size() > 1 ? query.getPath().toParts().get(1) : null;
 		
 		if (roleName.equals(assignmentMatrix.getEnsembleDefinition().getId().getFieldName())) {
-			try {
-				return idMapping.getFieldExpression(ctx, ensembleIndex, query.getPath());
-			} catch (Exception e) {				
-				// TODO Rethrow?				
+			if (Extensions.hasDataContractBoundId(assignmentMatrix.getEnsembleDefinition())) {
+				try {
+					return idMapping.getFieldExpression(ctx, ensembleIndex, query.getPath());
+				} catch (Exception e) {				
+					// TODO Rethrow?				
+				}
+			} else {
+				return ctx.mkInt(assignmentMatrix.getEnsembleIndex());				
 			}
 		}
 		

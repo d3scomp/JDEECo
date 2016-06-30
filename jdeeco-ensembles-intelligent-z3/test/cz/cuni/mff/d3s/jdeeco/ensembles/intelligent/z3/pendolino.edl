@@ -16,17 +16,17 @@ data contract Position
 end
 
 ensemble PendolinoEnsemble
-	id trainId : Position
+	id trainId : int
 	membership
 		roles
 			leader [1..1] : Rescuer
 			rescuers [1..*] : Rescuer
 			firefighter [1..1] : FireFighter
 		
-		constraints
-		constraint trainId.y == 20
+		//constraints
+		//constraint trainId.y == 20
 		
-		fitness 1
+		fitness sum rescuers (it.pos - trainId) * (it.pos - trainId)
 		
 	//knowledge exchange
 		//x := x

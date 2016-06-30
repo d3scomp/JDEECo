@@ -49,26 +49,39 @@ public class IntelligentEnsemblesTest {
 		DEECoNode deeco = realm.createNode(0);
 		/* deploy components and ensemble factories */
 		
-		deeco.deployComponent(new RescuerComponent("1", 100));
-		deeco.deployComponent(new RescuerComponent("2", 80));
-		deeco.deployComponent(new RescuerComponent("3", 60));
-		deeco.deployComponent(new RescuerComponent("4", 40));
-		deeco.deployComponent(new RescuerComponent("5", 20));
-		deeco.deployComponent(new RescuerComponent("6", 0));
-		deeco.deployComponent(new RescuerComponent("7", 10));
-		deeco.deployComponent(new RescuerComponent("8", 30));
-		deeco.deployComponent(new RescuerComponent("9", 50));
-		deeco.deployComponent(new RescuerComponent("10", 70));
-		deeco.deployComponent(new RescuerComponent("11", 90));
+		deeco.deployComponent(new RescuerComponent("0", 100));
+		deeco.deployComponent(new RescuerComponent("1", 80));
+		deeco.deployComponent(new RescuerComponent("2", 60));
+		deeco.deployComponent(new RescuerComponent("3", 40));
+		deeco.deployComponent(new RescuerComponent("4", 20));
+		deeco.deployComponent(new RescuerComponent("5", 0));
+		deeco.deployComponent(new RescuerComponent("6", 10));
+		deeco.deployComponent(new RescuerComponent("7", 30));
+		deeco.deployComponent(new RescuerComponent("8", 50));
+		deeco.deployComponent(new RescuerComponent("9", 70));
+		deeco.deployComponent(new RescuerComponent("10", 90));
+		deeco.deployComponent(new RescuerComponent("11", 80));
 		deeco.deployComponent(new RescuerComponent("12", 80));
 		deeco.deployComponent(new RescuerComponent("13", 80));
 		deeco.deployComponent(new RescuerComponent("14", 80));
-		deeco.deployComponent(new RescuerComponent("15", 80));
-		deeco.deployComponent(new FireFighterComponent("101", 10));
-		deeco.deployComponent(new FireFighterComponent("102", 20));
-		deeco.deployComponent(new FireFighterComponent("103", 30));
+		deeco.deployComponent(new FireFighterComponent("ff0", 10));
+		deeco.deployComponent(new FireFighterComponent("ff1", 20));
+		deeco.deployComponent(new FireFighterComponent("ff2", 30));
 
-		EdlDocument model = (EdlDocument) new EDLReader().readDocument("test/cz/cuni/mff/d3s/jdeeco/ensembles/intelligent/z3/pendolino.edl");
+		EDLReader reader = new EDLReader();		
+		EdlDocument model = null;
+		
+		try {
+			model = (EdlDocument) reader.readDocument("test/cz/cuni/mff/d3s/jdeeco/ensembles/intelligent/z3/pendolino.edl");
+		} catch (Exception e) {
+			if (!silent) {
+				System.out.println("Validation errors encountered when parsing the document. ");
+				System.out.println(e);
+				return;
+			} else
+				throw e;
+			
+		}	
 
 		deeco.deployEnsembleFactory(new Z3IntelligentEnsembleFactory(model));
 		
@@ -76,12 +89,12 @@ public class IntelligentEnsemblesTest {
 		realm.start(999);
 		
 		if (silent) {
+			assertThat(baos.toString(), containsString("Rescuer 0: train 2"));
 			assertThat(baos.toString(), containsString("Rescuer 1: train 2"));
-			assertThat(baos.toString(), containsString("Rescuer 2: train 2"));
-			assertThat(baos.toString(), containsString("Rescuer 3: train 1"));
-			assertThat(baos.toString(), containsString("Rescuer 4: train 2"));
+			assertThat(baos.toString(), containsString("Rescuer 2: train 1"));
+			assertThat(baos.toString(), containsString("Rescuer 3: train 2"));
+			assertThat(baos.toString(), containsString("Rescuer 4: train 1"));
 			assertThat(baos.toString(), containsString("Rescuer 5: train 1"));
-			assertThat(baos.toString(), containsString("Rescuer 6: train 1"));
 		}
 	}
 }
