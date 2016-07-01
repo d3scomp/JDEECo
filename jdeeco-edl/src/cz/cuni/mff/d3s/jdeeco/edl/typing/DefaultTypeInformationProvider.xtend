@@ -332,7 +332,7 @@ class DefaultTypeInformationProvider implements ITypeInformationProvider {
 			var firstName = new QualifiedNameImpl() {};
 			firstName.name = first;			
 			
-			if (getKnowledgeType(firstName, ensemble).startsWith("set")
+			if (getKnowledgeType(firstName, ensemble).startsWith(ContextSymbols.SET_SYMBOL)
 			) {
 				result + ".stream().map(x -> x." + String.join(".", remainder) + ").collect(Collectors.toList())";
 			}

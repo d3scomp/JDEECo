@@ -6,6 +6,7 @@ import java.util.List;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 
+import cz.cuni.mff.d3s.jdeeco.edl.ContextSymbols;
 import cz.cuni.mff.d3s.jdeeco.edl.PrimitiveTypes;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Query;
@@ -18,8 +19,8 @@ public class SetsEqual implements IConstraintFunction {
 
 	public SetsEqual() {
 		params = new ArrayList<String>();
-		params.add("set");
-		params.add("set");
+		params.add(ContextSymbols.SET_SYMBOL);
+		params.add(ContextSymbols.SET_SYMBOL);
 	}
 
 	@Override

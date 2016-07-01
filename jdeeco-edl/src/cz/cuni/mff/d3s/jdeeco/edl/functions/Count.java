@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.jdeeco.edl.functions;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.cuni.mff.d3s.jdeeco.edl.ContextSymbols;
 import cz.cuni.mff.d3s.jdeeco.edl.PrimitiveTypes;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EnsembleDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Query;
@@ -14,7 +15,7 @@ public class Count implements IFunction {
 
 	public Count() {
 		params = new ArrayList<String>();
-		params.add("set");
+		params.add(ContextSymbols.SET_SYMBOL);
 	}
 
 	@Override

@@ -136,6 +136,7 @@ public final class «e.name»Impl extends «e.name» {
 	
 	// Knowledge exchange
 	
+	@Override
 	public void performKnowledgeExchange() {
 		// TODO Implement knowledge exchange 
 	}
@@ -180,28 +181,10 @@ public class «d.name» {
 
 struct «d.name» {	
 	«FOR f : d.fields»
-	«offset»: «getThriftTypeName(f.type.name)» «f.name»«IF (fieldCount != d.fields.length)»,«ENDIF»
+	«offset»: «EDLUtils.getThriftTypeName(f.type.name)» «f.name»«IF (fieldCount != d.fields.length)»,«ENDIF»
 	«{fieldCount++; offset++; ""}»
 	«ENDFOR»				
 }'''		
 		);
 	}
-	
-	def String getThriftTypeName(String type) {
-		if (type.startsWith("set"))
-			return "set<" + getThriftTypeName(EDLUtils.stripSet(type)) + ">"
-		
-		switch type {
-			case PrimitiveTypes.INT:
-				"i32"
-			case PrimitiveTypes.FLOAT:
-				"double"
-			case PrimitiveTypes.STRING:
-				"string"
-			case PrimitiveTypes.BOOL:
-				"bool"
-			default:
-				type
-		}			
-	}	
 }

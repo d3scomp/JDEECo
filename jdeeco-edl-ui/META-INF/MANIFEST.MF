@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: cz.cuni.mff.d3s.jdeeco.edl.ui
-Bundle-Vendor: My Company
+Bundle-Vendor: D3S MFF CUNI
 Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: cz.cuni.mff.d3s.jdeeco.edl.ui; singleton:=true
 Bundle-ActivationPolicy: lazy

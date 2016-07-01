@@ -17,6 +17,7 @@ import cz.cuni.mff.d3s.jdeeco.edl.typing.ITypeInformationProvider
 import cz.cuni.mff.d3s.jdeeco.edl.typing.DefaultTypeInformationProvider
 import cz.cuni.mff.d3s.jdeeco.edl.functions.IFunctionRegistry
 import cz.cuni.mff.d3s.jdeeco.edl.validation.IErrorReportingService
+import cz.cuni.mff.d3s.jdeeco.edl.ContextSymbols
 
 /**
  * Custom validation rules. 
@@ -111,7 +112,7 @@ class EDLValidator extends AbstractEDLValidator implements IErrorReportingServic
 				reportError("Invalid assignment - field and query types do not correspond. Field type: " + fieldType + " Query type: " + queryType, rule, EdlPackage.Literals.EXCHANGE_RULE__FIELD)
 			}
 			
-			if (queryType.equals(fieldType) && !EDLUtils.stripSet(fieldType).startsWith("set") && ensemble.roles.exists[it.cardinalityMax != 1 && rule.field.toParts().get(0).equals(it.name)]) {
+			if (queryType.equals(fieldType) && !EDLUtils.stripSet(fieldType).startsWith(ContextSymbols.SET_SYMBOL) && ensemble.roles.exists[it.cardinalityMax != 1 && rule.field.toParts().get(0).equals(it.name)]) {
 				reportError("Invalid assignment - it is not allowed to change the members of a role in knowledge exchange rules." , rule, EdlPackage.Literals.EXCHANGE_RULE__FIELD)
 			}
 		}
