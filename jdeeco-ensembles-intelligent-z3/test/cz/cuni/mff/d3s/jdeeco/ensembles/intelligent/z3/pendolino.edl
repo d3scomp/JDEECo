@@ -8,6 +8,7 @@ end
 
 data contract FireFighter
 	trainId : int
+	pos : int
 end
 
 data contract Position
@@ -23,11 +24,11 @@ ensemble PendolinoEnsemble
 			rescuers [1..*] : Rescuer
 			firefighter [1..1] : FireFighter
 		
-		//constraints
-		//constraint trainId.y == 20
+		constraints
+		constraint (sum rescuers it.pos) == 60		
 		
 		fitness sum rescuers (it.pos - trainId) * (it.pos - trainId)
 		
-	//knowledge exchange
+	knowledge exchange external
 		//x := x
 end

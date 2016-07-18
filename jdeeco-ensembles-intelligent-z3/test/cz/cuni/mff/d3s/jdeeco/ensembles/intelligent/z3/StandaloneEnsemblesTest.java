@@ -60,31 +60,31 @@ public class StandaloneEnsemblesTest {
 
 		EnsembleFactory factory = new Z3IntelligentEnsembleFactory(model);
 		DataclassKnowledgeContainer container = new DataclassKnowledgeContainer();		
-		container.storeDataClass(new Rescuer("0", 100));
-		container.storeDataClass(new Rescuer("1", 800));
-		container.storeDataClass(new Rescuer("2", 60));
-		container.storeDataClass(new Rescuer("3", 400));
-		container.storeDataClass(new Rescuer("4", 20));
-		container.storeDataClass(new Rescuer("5", 0));
-		container.storeDataClass(new Rescuer("6", 10));
-		container.storeDataClass(new Rescuer("7", 30));
-		container.storeDataClass(new Rescuer("8", 50));/*
-		container.storeDataClass(new Rescuer("9", 70));
-		container.storeDataClass(new Rescuer("10", 90));
-		container.storeDataClass(new Rescuer("11", 80));
-		container.storeDataClass(new Rescuer("12", 80));
-		container.storeDataClass(new Rescuer("13", 81));
-		container.storeDataClass(new Rescuer("14", 82));*/
-		container.storeDataClass(new FireFighter("100", 10));
-		container.storeDataClass(new FireFighter("101", 20));
-		container.storeDataClass(new FireFighter("102", 40));/*
-		container.storeDataClass(new FireFighter("103", 50));/*
+		container.storeDataClass(new DataclassRescuer("0", 100));
+		container.storeDataClass(new DataclassRescuer("1", 800));
+		container.storeDataClass(new DataclassRescuer("2", 60));
+		container.storeDataClass(new DataclassRescuer("3", 400));
+		container.storeDataClass(new DataclassRescuer("4", 20));
+		container.storeDataClass(new DataclassRescuer("5", 0));
+		container.storeDataClass(new DataclassRescuer("6", 10));
+		container.storeDataClass(new DataclassRescuer("7", 30));
+		container.storeDataClass(new DataclassRescuer("8", 50));/*
+		container.storeDataClass(new DataclassRescuer("9", 70));
+		container.storeDataClass(new DataclassRescuer("10", 90));
+		container.storeDataClass(new DataclassRescuer("11", 80));
+		container.storeDataClass(new DataclassRescuer("12", 80));
+		container.storeDataClass(new DataclassRescuer("13", 81));
+		container.storeDataClass(new DataclassRescuer("14", 82));*/
+		container.storeDataClass(new DataclassFireFighter("100", 10));
+		container.storeDataClass(new DataclassFireFighter("101", 20));
+		container.storeDataClass(new DataclassFireFighter("102", 40));/*
+		container.storeDataClass(new DataclassFireFighter("103", 50));/*
 		*/
 		/*
-		container.storeDataClass(new FireFighter("104", 30));*/
+		container.storeDataClass(new DataclassFireFighter("104", 30));*/
 		
-		container.storeDataClass(new Position(10, 20));
-		container.storeDataClass(new Position(50, 30));
+		container.storeDataClass(new DataclassPosition(10, 20));
+		container.storeDataClass(new DataclassPosition(50, 30));
 		
 		
 		Collection<EnsembleInstance> formed = factory.createInstances(container);

@@ -5,13 +5,6 @@ import cz.cuni.mff.d3s.jdeeco.edl.BaseDataContract;
 
 @Role
 public class Position extends BaseDataContract {
-
-	public Position(int x, int y) {
-		this.x = x;
-		this.y = y;
-		this.id = ""+x+y;
-	}
-	
-	public Integer x;	
+	public Integer x;
 	public Integer y;
 }

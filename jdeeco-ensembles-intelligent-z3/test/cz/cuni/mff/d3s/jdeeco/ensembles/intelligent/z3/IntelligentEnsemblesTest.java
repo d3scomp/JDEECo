@@ -50,23 +50,23 @@ public class IntelligentEnsemblesTest {
 		/* deploy components and ensemble factories */
 		
 		deeco.deployComponent(new RescuerComponent("0", 100));
-		deeco.deployComponent(new RescuerComponent("1", 80));
+		deeco.deployComponent(new RescuerComponent("1", 800));
 		deeco.deployComponent(new RescuerComponent("2", 60));
-		deeco.deployComponent(new RescuerComponent("3", 40));
+		deeco.deployComponent(new RescuerComponent("3", 400));
 		deeco.deployComponent(new RescuerComponent("4", 20));
 		deeco.deployComponent(new RescuerComponent("5", 0));
 		deeco.deployComponent(new RescuerComponent("6", 10));
 		deeco.deployComponent(new RescuerComponent("7", 30));
 		deeco.deployComponent(new RescuerComponent("8", 50));
-		deeco.deployComponent(new RescuerComponent("9", 70));
+		/*deeco.deployComponent(new RescuerComponent("9", 70));
 		deeco.deployComponent(new RescuerComponent("10", 90));
 		deeco.deployComponent(new RescuerComponent("11", 80));
 		deeco.deployComponent(new RescuerComponent("12", 80));
 		deeco.deployComponent(new RescuerComponent("13", 80));
-		deeco.deployComponent(new RescuerComponent("14", 80));
+		deeco.deployComponent(new RescuerComponent("14", 80));*/
 		deeco.deployComponent(new FireFighterComponent("ff0", 10));
 		deeco.deployComponent(new FireFighterComponent("ff1", 20));
-		deeco.deployComponent(new FireFighterComponent("ff2", 30));
+		deeco.deployComponent(new FireFighterComponent("ff2", 40));
 
 		EDLReader reader = new EDLReader();		
 		EdlDocument model = null;
