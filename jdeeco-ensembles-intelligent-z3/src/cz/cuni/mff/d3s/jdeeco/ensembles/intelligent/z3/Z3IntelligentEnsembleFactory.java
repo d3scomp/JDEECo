@@ -78,13 +78,12 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 				for (int r = 0; r < assignments.get(e).getRoleCount(); r++) {
 					RoleDefinition role = roles.get(r);
 					System.out.print("  - " + role.getName() + ": [");
-					String dataContractName = role.getType().toString();
-					//for (int c = 0; c < dataContainer.getNumInstances(dataContractName); c++) {
-					//	System.out.print(m.getConstInterp(assignments.get(e, r, c)).getBoolValue() + " ");
-					//}
+					
 					ComponentAssignmentResults assignmentResults = assignments.get(e, r).getResults(m);
+					String roleName = assignments.get(e, r).getRoleName();										
+					
 					for (int componentIndex : assignmentResults.getAssignedIndices()) {
-						System.out.print(componentIndex + " ");
+						System.out.print(dataContainer.getInstance(roleName, componentIndex, e).id + " ");
 					}
 				
 					System.out.println("]");

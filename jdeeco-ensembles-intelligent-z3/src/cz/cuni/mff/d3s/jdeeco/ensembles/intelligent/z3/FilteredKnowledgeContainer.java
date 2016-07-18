@@ -58,19 +58,25 @@ public class FilteredKnowledgeContainer {
 			
 			BaseDataContract[] instances = new BaseDataContract[instancesUnsorted.size()];
 			String dataContractName = contract.getName();
-			for (int i = 0; !instancesUnsorted.isEmpty(); i++) {
-				BaseDataContract minInstance = instancesUnsorted.iterator().next();
-				for (BaseDataContract instance : instancesUnsorted) {
-					if (Integer.parseInt(instance.id) < Integer.parseInt(minInstance.id)) {
-						minInstance = instance;
-					}
-				}
-				
-				instances[i] = minInstance;
-				instancesUnsorted.remove(minInstance);
-			}
 			
-			components.put(dataContractName, instances);
+//			for (int i = 0; !instancesUnsorted.isEmpty(); i++) {
+//				BaseDataContract minInstance = instancesUnsorted.iterator().next();
+//				for (BaseDataContract instance : instancesUnsorted) {
+////					if (Integer.parseInt(instance.id) < Integer.parseInt(minInstance.id)) {
+////						minInstance = instance;
+////					}
+//					
+//					if (instance.id.compareTo(minInstance.id) < 0) {
+//						minInstance = instance;
+//					}
+//				}
+//				
+//				instances[i] = minInstance;
+//				instancesUnsorted.remove(minInstance);
+//			}
+			
+			// TODO Fairly confident that the sorted property was not used anywhere - keep in mind if anything blows up though
+			components.put(dataContractName, instancesUnsorted.toArray(new BaseDataContract[0]));
 		}
 	}
 	
