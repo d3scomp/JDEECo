@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco.knowledge.container;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,6 +16,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeUpdateException;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.jdeeco.edl.BaseDataContract;
 
 /**
  * A knowledge wrapper wraps a single component knowledge manager and allows for accessing the knowledge in
@@ -44,7 +46,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 public class TrackingKnowledgeWrapper extends ReadOnlyKnowledgeWrapper {
 
 	private final KnowledgeManager knowledgeManager;
-	private List<Object> trackedInstances;
+	private Map<Class<?>, Object> trackedInstances;
 	private final RoleDisjointednessChecker roleDisjointednessChecker;
 	
 	/**
@@ -55,7 +57,7 @@ public class TrackingKnowledgeWrapper extends ReadOnlyKnowledgeWrapper {
 	public TrackingKnowledgeWrapper(KnowledgeManager km, RoleDisjointednessChecker roleDisjointednessChecker) {
 		super(km);
 		knowledgeManager = km;
-		trackedInstances = new ArrayList<Object>();
+		trackedInstances = new HashMap<Class<?>, Object>();
 		this.roleDisjointednessChecker = roleDisjointednessChecker;
 	}
 	
@@ -74,9 +76,14 @@ public class TrackingKnowledgeWrapper extends ReadOnlyKnowledgeWrapper {
 	 * @throws RoleClassException Thrown when a role is not implemented or the role class cannot be instantiated.
 	 * @throws KnowledgeAccessException Thrown when the knowledge contained in the role class cannot be acquired from the knowledge manager.
 	 */
+	@SuppressWarnings("unchecked")
 	public <TRole> TRole getTrackedRoleKnowledge(Class<TRole> roleClass) throws RoleClassException, KnowledgeAccessException {
+		if (trackedInstances.containsKey(roleClass)) {
+			return (TRole) trackedInstances.get(roleClass);
+		}
+		
 		TRole result = super.getUntrackedRoleKnowledge(roleClass);
-		trackedInstances.add(result);
+		trackedInstances.put(roleClass, result);
 		return result;
 	}
 	
@@ -102,10 +109,10 @@ public class TrackingKnowledgeWrapper extends ReadOnlyKnowledgeWrapper {
 	 * @throws RoleClassException
 	 */
 	public void commitChanges() throws KnowledgeCommitException, KnowledgeAccessException, RoleClassException {
-		List<Class<?>> trackedRoleClasses = trackedInstances.stream().map(o -> o.getClass()).collect(Collectors.toList());
+		List<Class<?>> trackedRoleClasses = trackedInstances.values().stream().map(o -> o.getClass()).collect(Collectors.toList());
 		roleDisjointednessChecker.checkRolesAreDisjoint(trackedRoleClasses);
 		
-		for (Object trackedInstance : trackedInstances) {
+		for (Object trackedInstance : trackedInstances.values()) {
 			Class<?> roleClass = trackedInstance.getClass();
 			List<Field> knowledgeFields = RoleAnnotationsHelper.getNonLocalKnowledgeFields(roleClass, false);
 			Map<Field, KnowledgePath> fieldKnowledgePaths = getFieldKnowledgePaths(knowledgeFields);
