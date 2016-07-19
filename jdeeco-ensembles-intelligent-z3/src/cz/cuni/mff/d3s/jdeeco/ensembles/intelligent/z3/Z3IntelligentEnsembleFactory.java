@@ -119,7 +119,7 @@ public class Z3IntelligentEnsembleFactory implements EnsembleFactory {
 				Class<?> idClass = Class.forName(packageName + "." + ensembleDefinition.getId().getType().toString());
 				ie = (EnsembleInstance) ensembleClass.getConstructor(idClass).newInstance(mapping.getIdClass(e));				
 			} else {
-				ie = (EnsembleInstance) ensembleClass.getConstructor(int.class).newInstance(e + 1);
+				ie = (EnsembleInstance) ensembleClass.getConstructor(Integer.class).newInstance(e + 1);
 			}
 
 			for (int r = 0; r < assignments.get(e).getRoleCount(); r++) {

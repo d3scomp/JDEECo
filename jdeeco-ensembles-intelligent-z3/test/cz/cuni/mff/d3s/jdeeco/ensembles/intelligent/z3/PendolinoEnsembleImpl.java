@@ -2,7 +2,7 @@ package cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3;
 
 public final class PendolinoEnsembleImpl extends PendolinoEnsemble {
 	
-	public PendolinoEnsembleImpl(int trainId) {
+	public PendolinoEnsembleImpl(Integer trainId) {
 		super(trainId);
 	}
 	

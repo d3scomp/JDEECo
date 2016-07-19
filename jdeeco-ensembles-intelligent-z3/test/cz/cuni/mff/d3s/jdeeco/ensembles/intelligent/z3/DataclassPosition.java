@@ -7,7 +7,4 @@ public class DataclassPosition extends Position {
 		this.y = y;
 		this.id = ""+x+y;
 	}
-	
-	public Integer x;	
-	public Integer y;
 }

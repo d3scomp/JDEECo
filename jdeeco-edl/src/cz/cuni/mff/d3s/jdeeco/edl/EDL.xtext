@@ -49,7 +49,7 @@ ChildDefinition returns ChildDefinition:
 ;
 
 RoleDefinition returns RoleDefinition:
-	(exclusive?='exclusive')?
+	//(exclusive?='exclusive')?
 	name = ID ('[' cardinalityMin=EInt '..' cardinalityMax=Cardinality ']')? ':' type = QualifiedName
 	('where' whereFilter = Constraint)?	
 ;
