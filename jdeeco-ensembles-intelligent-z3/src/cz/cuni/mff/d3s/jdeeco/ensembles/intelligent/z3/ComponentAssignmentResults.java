@@ -5,7 +5,7 @@ import com.microsoft.z3.FuncInterp.Entry;
 import com.microsoft.z3.Model;
 import com.microsoft.z3.enumerations.Z3_lbool;
 
-public class ComponentAssignmentResults {
+class ComponentAssignmentResults {
 
 	Entry[] entries;
 	int length;

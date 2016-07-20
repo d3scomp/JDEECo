@@ -10,7 +10,6 @@ import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainerException;
 import cz.cuni.mff.d3s.jdeeco.edl.BaseDataContract;
 import cz.cuni.mff.d3s.jdeeco.edl.ContextSymbols;
-import cz.cuni.mff.d3s.jdeeco.edl.PrimitiveTypes;
 import cz.cuni.mff.d3s.jdeeco.edl.functions.IFunction;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.AdditiveInverse;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.BinaryOperator;
@@ -33,7 +32,7 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.Sum;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.QueryVisitorImpl;
 import cz.cuni.mff.d3s.jdeeco.edl.typing.IDataTypeContext;
 
-public class FilteredKnowledgeContainer {
+class FilteredKnowledgeContainer {
 
 	private Map<String, BaseDataContract[]> components;
 	

@@ -6,7 +6,7 @@ import com.microsoft.z3.Context;
 import com.microsoft.z3.IntExpr;
 import com.microsoft.z3.Optimize;
 
-public class Z3Helper {
+class Z3Helper {
 
 	Context ctx;
 	Optimize opt;

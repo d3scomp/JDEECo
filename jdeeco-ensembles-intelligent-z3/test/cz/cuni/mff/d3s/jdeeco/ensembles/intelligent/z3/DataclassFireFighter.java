@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3;
 
-public class DataclassFireFighter extends FireFighter {
+class DataclassFireFighter extends FireFighter {
 	public DataclassFireFighter() {
 		
 	}

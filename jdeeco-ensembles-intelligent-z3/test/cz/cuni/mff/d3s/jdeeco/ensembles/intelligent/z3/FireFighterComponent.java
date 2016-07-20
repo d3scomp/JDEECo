@@ -10,7 +10,7 @@ import cz.cuni.mff.d3s.deeco.annotations.Process;
 
 @Component
 @PlaysRole(FireFighter.class)
-public class FireFighterComponent {
+class FireFighterComponent {
 
 	public static PrintStream outputStream = System.out;
 	
