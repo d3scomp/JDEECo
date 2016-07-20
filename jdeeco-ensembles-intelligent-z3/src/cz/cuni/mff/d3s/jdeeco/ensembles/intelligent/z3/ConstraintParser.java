@@ -14,8 +14,6 @@ import com.microsoft.z3.IntExpr;
 import com.microsoft.z3.Optimize;
 import com.microsoft.z3.Sort;
 
-import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFormationException;
-import cz.cuni.mff.d3s.deeco.runtime.InvalidOperationException;
 import cz.cuni.mff.d3s.jdeeco.edl.ContextSymbols;
 import cz.cuni.mff.d3s.jdeeco.edl.functions.IConstraintFunction;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.AdditiveInverse;

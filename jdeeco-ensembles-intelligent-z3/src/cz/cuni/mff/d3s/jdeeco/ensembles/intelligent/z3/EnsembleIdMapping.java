@@ -16,7 +16,7 @@ import cz.cuni.mff.d3s.jdeeco.edl.model.edl.QualifiedName;
 import cz.cuni.mff.d3s.jdeeco.edl.model.edl.TypeDefinition;
 import cz.cuni.mff.d3s.jdeeco.edl.typing.IDataTypeContext;
 
-public class EnsembleIdMapping {
+class EnsembleIdMapping {
 		
 	private BaseDataContract mapping[];	
 	private Class<? extends BaseDataContract> roleClass;
@@ -49,11 +49,13 @@ public class EnsembleIdMapping {
 		List<String> parts = path.toParts();
 		Class currentClass = roleClass;
 		Field field = null;
+		Object value = mapping[localEnsembleIndex];
 		
 		// First part of the path is the id name 
 		for(int i = 1; i < parts.size(); ++i) {
-			field = currentClass.getField(parts.get(i));
+			field = currentClass.getField(parts.get(i));			
 			currentClass = field.getType();			
+			value = field.get(value);
 		}
 		
 		if (field == null) {
@@ -61,7 +63,7 @@ public class EnsembleIdMapping {
 			return ctx.mkInt(localEnsembleIndex);
 		} else {
 			// TODO Infer type - might also be a Boolean
-			return ctx.mkInt((Integer)field.get(mapping[localEnsembleIndex]));
+			return ctx.mkInt((Integer)value);
 		}
 	}
 }
