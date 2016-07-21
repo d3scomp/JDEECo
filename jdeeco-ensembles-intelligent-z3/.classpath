@@ -26,6 +26,5 @@
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/cz.cuni.mff.d3s.jdeeco.edl"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/cz.cuni.mff.d3s.jdeeco.edl.model"/>
-	<classpathentry kind="src" path="/cz.cuni.mff.d3s.jdeeco.edl.tests"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
