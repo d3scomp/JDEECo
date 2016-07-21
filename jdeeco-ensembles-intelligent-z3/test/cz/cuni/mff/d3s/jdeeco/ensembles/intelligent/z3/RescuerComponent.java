@@ -10,7 +10,7 @@ import cz.cuni.mff.d3s.deeco.annotations.PlaysRole;
 
 @Component
 @PlaysRole(Rescuer.class)
-class RescuerComponent {
+public class RescuerComponent {
 
 	public static PrintStream outputStream = System.out;
 	

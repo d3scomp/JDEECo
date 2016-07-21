@@ -15,8 +15,6 @@ import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFactory;
 import cz.cuni.mff.d3s.deeco.ensembles.EnsembleInstance;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
-import cz.cuni.mff.d3s.jdeeco.edl.EDLReader;
-import cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlDocument;
 import cz.cuni.mff.d3s.jdeeco.edl.validation.EdlValidationException;
 
 public class StandaloneEnsemblesTest {
@@ -41,24 +39,20 @@ public class StandaloneEnsemblesTest {
 		} else {
 			outputStream = System.out;
 		}
-
-		EDLReader reader = new EDLReader();
 		
-		EdlDocument model = null;
+		EnsembleFactory factory = null;
 		
 		try {
-			model = (EdlDocument) reader.readDocument("test/cz/cuni/mff/d3s/jdeeco/ensembles/intelligent/z3/pendolino.edl");
+			factory = new pendolinoEdlFactory();
 		} catch (Exception e) {
 			if (!silent) {
 				System.out.println("Validation errors encountered when parsing the document. ");
 				System.out.println(e);
 				return;
 			} else
-				throw e;
-			
-		}	
-
-		EnsembleFactory factory = new Z3IntelligentEnsembleFactory(model);
+				throw e;			
+		}
+	
 		DataclassKnowledgeContainer container = new DataclassKnowledgeContainer();		
 		container.storeDataClass(new DataclassRescuer("0", 100));
 		container.storeDataClass(new DataclassRescuer("1", 800));
@@ -107,9 +101,9 @@ public class StandaloneEnsemblesTest {
 		
 		for (FireFighter fighter : container.getTrackedKnowledgeForRole(FireFighter.class)) {
 			if (fighter.trainId > 0) {
-				outputStream.printf("FireFighter %s: train %d\n", fighter.id, fighter.trainId);
+				outputStream.printf("FireFighter %s: train %d pos %d\n", fighter.id, fighter.trainId, fighter.pos);
 			} else {
-				outputStream.printf("FireFighter %s: unassigned\n", fighter.id);
+				outputStream.printf("FireFighter %s: unassigned pos %d\n", fighter.id, fighter.pos);
 			}
 		}
 		

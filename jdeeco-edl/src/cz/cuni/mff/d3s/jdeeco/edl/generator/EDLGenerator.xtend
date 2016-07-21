@@ -59,6 +59,30 @@ class EDLGenerator implements IGenerator {
 		for(EnsembleDefinition e : document.ensembles) {
 			generateEnsemble(e, fsa, path, packageString);			
 		}
+		
+		generateEnsembleFactory(resource, fsa, path, packageString);
+	}
+	
+	def generateEnsembleFactory(Resource resource, IFileSystemAccess access, String path, String packageString) {
+		val String className = resource.URI.trimFileExtension().lastSegment + "EdlFactory"
+		val String edlresourcePath = String.join("/", resource.URI.segmentsList().drop(3));		
+		
+		access.generateFile(path + className + ".java", 
+'''package «packageString»;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import cz.cuni.mff.d3s.jdeeco.edl.EDLReader;
+import cz.cuni.mff.d3s.jdeeco.edl.validation.EdlValidationException;
+import cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3.Z3IntelligentEnsembleFactory;
+
+public class «className» extends Z3IntelligentEnsembleFactory {
+
+	public «className»() throws IOException, EdlValidationException {		
+		super(new EDLReader().readDocument(new InputStreamReader(«className».class.getResourceAsStream("/«edlresourcePath»"))));		
+	}
+}''')
 	}
 	
 	def void generateEnsemble(EnsembleDefinition e, IFileSystemAccess fsa, String path, String packageString) {

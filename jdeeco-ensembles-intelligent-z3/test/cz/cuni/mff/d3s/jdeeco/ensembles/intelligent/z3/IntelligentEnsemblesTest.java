@@ -11,6 +11,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
+import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFactory;
 import cz.cuni.mff.d3s.deeco.runners.DEECoSimulation;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
@@ -68,22 +69,20 @@ public class IntelligentEnsemblesTest {
 		deeco.deployComponent(new FireFighterComponent("ff1", 20));
 		deeco.deployComponent(new FireFighterComponent("ff2", 40));
 
-		EDLReader reader = new EDLReader();		
-		EdlDocument model = null;
+		EnsembleFactory factory = null;
 		
 		try {
-			model = (EdlDocument) reader.readDocument("test/cz/cuni/mff/d3s/jdeeco/ensembles/intelligent/z3/pendolino.edl");
+			factory = new pendolinoEdlFactory();
 		} catch (Exception e) {
 			if (!silent) {
 				System.out.println("Validation errors encountered when parsing the document. ");
 				System.out.println(e);
 				return;
 			} else
-				throw e;
-			
-		}	
+				throw e;			
+		}
 
-		deeco.deployEnsembleFactory(new Z3IntelligentEnsembleFactory(model));
+		deeco.deployEnsembleFactory(factory);
 		
 		/* WHEN simulation is performed */
 		realm.start(999);

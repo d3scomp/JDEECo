@@ -40,11 +40,16 @@ public class EDLReader {
         return result.getRootASTElement();
 	}
 
-	public EdlDocument readDocument(String fileName) throws IOException, EdlValidationException {		
-		// This must be invoked before working with the model - for some reason, external model registration is done as a side-effect of accessing eInstance
+	public EdlDocument readDocument(String fileName) throws IOException, EdlValidationException {
+		return readDocument(new FileReader(fileName));
+	}
+	
+	public EdlDocument readDocument(Reader input) throws IOException, EdlValidationException {
+		// This must be invoked before working with the model - for some reason, external model registration is done as a side-effect of accessing eInstance					
 		cz.cuni.mff.d3s.jdeeco.edl.model.edl.EdlPackage.eINSTANCE.eClass();		
 		
-		EdlDocument model = (EdlDocument) parse(new FileReader(fileName));
+		EdlDocument model = (EdlDocument) parse(input);
+		
 		validator.validateDocument(model);
 		if (validator.hasValidationErrors()) {
 			throw new EdlValidationException(String.join("\n", validator.getErrors()));

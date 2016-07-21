@@ -1218,6 +1218,7 @@ public class AnnotationProcessor {
 					try {
 						changeSet.setValue(knowledgePath, f.get(knowledge));
 					} catch (IllegalAccessException e) {
+						// TODO accessing a non-public class also raises this exception, resulting in empty knowledge
 					}
 				}
 			}
