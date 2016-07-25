@@ -30,6 +30,10 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="externalKnowledgeExchange"
         lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="schedulingOffset" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="0"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="schedulingPeriod" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="1000"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="RoleDefinition" eSuperTypes="#//ChildDefinition">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="exclusive" lowerBound="1"

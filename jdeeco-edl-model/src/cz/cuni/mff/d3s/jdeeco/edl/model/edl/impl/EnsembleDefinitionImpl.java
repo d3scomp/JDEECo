@@ -39,6 +39,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.EnsembleDefinitionImpl#getExchangeRules <em>Exchange Rules</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.EnsembleDefinitionImpl#getFitness <em>Fitness</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.EnsembleDefinitionImpl#isExternalKnowledgeExchange <em>External Knowledge Exchange</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.EnsembleDefinitionImpl#getSchedulingOffset <em>Scheduling Offset</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.jdeeco.edl.model.edl.impl.EnsembleDefinitionImpl#getSchedulingPeriod <em>Scheduling Period</em>}</li>
  * </ul>
  * </p>
  *
@@ -174,6 +176,46 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	 * @ordered
 	 */
 	protected boolean externalKnowledgeExchange = EXTERNAL_KNOWLEDGE_EXCHANGE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getSchedulingOffset() <em>Scheduling Offset</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSchedulingOffset()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final int SCHEDULING_OFFSET_EDEFAULT = 0;
+
+	/**
+	 * The cached value of the '{@link #getSchedulingOffset() <em>Scheduling Offset</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSchedulingOffset()
+	 * @generated
+	 * @ordered
+	 */
+	protected int schedulingOffset = SCHEDULING_OFFSET_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getSchedulingPeriod() <em>Scheduling Period</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSchedulingPeriod()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final int SCHEDULING_PERIOD_EDEFAULT = 1000;
+
+	/**
+	 * The cached value of the '{@link #getSchedulingPeriod() <em>Scheduling Period</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSchedulingPeriod()
+	 * @generated
+	 * @ordered
+	 */
+	protected int schedulingPeriod = SCHEDULING_PERIOD_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -408,6 +450,48 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public int getSchedulingOffset() {
+		return schedulingOffset;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setSchedulingOffset(int newSchedulingOffset) {
+		int oldSchedulingOffset = schedulingOffset;
+		schedulingOffset = newSchedulingOffset;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, EdlPackage.ENSEMBLE_DEFINITION__SCHEDULING_OFFSET, oldSchedulingOffset, schedulingOffset));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public int getSchedulingPeriod() {
+		return schedulingPeriod;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setSchedulingPeriod(int newSchedulingPeriod) {
+		int oldSchedulingPeriod = schedulingPeriod;
+		schedulingPeriod = newSchedulingPeriod;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, EdlPackage.ENSEMBLE_DEFINITION__SCHEDULING_PERIOD, oldSchedulingPeriod, schedulingPeriod));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -457,6 +541,10 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 				return getFitness();
 			case EdlPackage.ENSEMBLE_DEFINITION__EXTERNAL_KNOWLEDGE_EXCHANGE:
 				return isExternalKnowledgeExchange();
+			case EdlPackage.ENSEMBLE_DEFINITION__SCHEDULING_OFFSET:
+				return getSchedulingOffset();
+			case EdlPackage.ENSEMBLE_DEFINITION__SCHEDULING_PERIOD:
+				return getSchedulingPeriod();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -505,6 +593,12 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 			case EdlPackage.ENSEMBLE_DEFINITION__EXTERNAL_KNOWLEDGE_EXCHANGE:
 				setExternalKnowledgeExchange((Boolean)newValue);
 				return;
+			case EdlPackage.ENSEMBLE_DEFINITION__SCHEDULING_OFFSET:
+				setSchedulingOffset((Integer)newValue);
+				return;
+			case EdlPackage.ENSEMBLE_DEFINITION__SCHEDULING_PERIOD:
+				setSchedulingPeriod((Integer)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -547,6 +641,12 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 			case EdlPackage.ENSEMBLE_DEFINITION__EXTERNAL_KNOWLEDGE_EXCHANGE:
 				setExternalKnowledgeExchange(EXTERNAL_KNOWLEDGE_EXCHANGE_EDEFAULT);
 				return;
+			case EdlPackage.ENSEMBLE_DEFINITION__SCHEDULING_OFFSET:
+				setSchedulingOffset(SCHEDULING_OFFSET_EDEFAULT);
+				return;
+			case EdlPackage.ENSEMBLE_DEFINITION__SCHEDULING_PERIOD:
+				setSchedulingPeriod(SCHEDULING_PERIOD_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -579,6 +679,10 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 				return fitness != null;
 			case EdlPackage.ENSEMBLE_DEFINITION__EXTERNAL_KNOWLEDGE_EXCHANGE:
 				return externalKnowledgeExchange != EXTERNAL_KNOWLEDGE_EXCHANGE_EDEFAULT;
+			case EdlPackage.ENSEMBLE_DEFINITION__SCHEDULING_OFFSET:
+				return schedulingOffset != SCHEDULING_OFFSET_EDEFAULT;
+			case EdlPackage.ENSEMBLE_DEFINITION__SCHEDULING_PERIOD:
+				return schedulingPeriod != SCHEDULING_PERIOD_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -599,6 +703,10 @@ public class EnsembleDefinitionImpl extends MinimalEObjectImpl.Container impleme
 		result.append(parentEnsemble);
 		result.append(", externalKnowledgeExchange: ");
 		result.append(externalKnowledgeExchange);
+		result.append(", schedulingOffset: ");
+		result.append(schedulingOffset);
+		result.append(", schedulingPeriod: ");
+		result.append(schedulingPeriod);
 		result.append(')');
 		return result.toString();
 	}

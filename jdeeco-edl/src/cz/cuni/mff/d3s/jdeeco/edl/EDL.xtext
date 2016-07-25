@@ -14,6 +14,10 @@ EnsembleDefinition returns EnsembleDefinition:
 	'ensemble'
 	    name=ID
 	    'id' id=IdDefinition
+	    ('scheduling' 
+	    	('offset' schedulingOffset = EInt)?
+	    	('period' schedulingPeriod = EInt)
+	    )?	   
 		//('child of' parentEnsemble=EString)?
 		//('parent of' childEnsembles+=ChildDefinition (childEnsembles+=ChildDefinition)*)?
 		('alias' aliases+=AliasDefinition (aliases+=AliasDefinition)*)?
