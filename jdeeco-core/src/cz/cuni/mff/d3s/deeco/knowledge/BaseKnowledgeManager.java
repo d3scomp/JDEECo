@@ -728,6 +728,14 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	public Collection<KnowledgePath> getLocalPaths() {
 		return localKnowledgePaths;
 	}
+	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager#getAllPaths()
+	 */
+	@Override
+	public Collection<KnowledgePath> getAllPaths() {
+		return knowledge.keySet();
+	}
 
 	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager#addSecurityTag(cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath, cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag)
@@ -824,6 +832,11 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	@Override
 	public boolean isOfSystemComponent() {
 		return component.isSystemComponent();
+	}
+
+	@Override
+	public void updateRoles(Class<?>[] newRoleClasses) {
+		this.roleClasses = newRoleClasses != null ? newRoleClasses : new Class<?>[0];
 	}
 
 }

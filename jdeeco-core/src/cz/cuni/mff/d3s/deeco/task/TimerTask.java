@@ -19,8 +19,8 @@ public class TimerTask extends Task {
 	 * @param taskListener
 	 *            Listener to be executed
 	 */
-	public TimerTask(Scheduler scheduler, TimerTaskListener taskListener) {
-		this(scheduler, taskListener, 1, 0);
+	public TimerTask(Scheduler scheduler, TimerTaskListener taskListener, String taskName) {
+		this(scheduler, taskListener, taskName, 1, 0);
 	}
 
 	/**
@@ -35,8 +35,8 @@ public class TimerTask extends Task {
 	 * @param delay
 	 *            Execution delay
 	 */
-	public TimerTask(Scheduler scheduler, TimerTaskListener taskListener, long delay) {
-		this(scheduler, taskListener, delay, 0);
+	public TimerTask(Scheduler scheduler, TimerTaskListener taskListener, String taskName, long delay) {
+		this(scheduler, taskListener, taskName, delay, 0);
 	}
 
 	/**
@@ -51,8 +51,8 @@ public class TimerTask extends Task {
 	 * @param period
 	 *            Execution period
 	 */
-	public TimerTask(Scheduler scheduler, TimerTaskListener taskListener, long delay, long period) {
-		super(scheduler);
+	public TimerTask(Scheduler scheduler, TimerTaskListener taskListener, String taskName, long delay, long period) {
+		super(scheduler, taskName);
 
 		this.trigger = new TimeTriggerExt();
 		this.trigger.setOffset(delay);

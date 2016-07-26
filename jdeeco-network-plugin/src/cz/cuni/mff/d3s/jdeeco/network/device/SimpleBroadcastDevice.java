@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
@@ -43,26 +44,37 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 	final int mtu;
 	final long delayMean;
 	final long delayDeviation;
-	final int range;
+	final double rangeM;
 	private Random random;
 
 	// Loop devices this loop-back network is registered with
-	private Set<LoopDevice> loops = new HashSet<>();
+	protected Set<LoopDevice> loops = new HashSet<>();
 
 	/**
 	 * Loop device used to provide broadcast device to layer 1
 	 */
-	private class LoopDevice extends Device {
+	public class LoopDevice extends Device {
 		final MANETBroadcastAddress address;
 		final DEECoContainer container;
 		private PositionProvider positionProvider;
-		private final Scheduler scheduler; 
+		private final Scheduler scheduler;
 
 		public LoopDevice(DEECoContainer container) {
 			this.container = container;
 			address = new MANETBroadcastAddress(getId());
 			positionProvider = container.getPluginInstance(PositionPlugin.class);
 			scheduler = container.getRuntimeFramework().getScheduler();
+
+			if (positionProvider != null) {
+				Log.i(container.getId() + ": " + LoopDevice.class.getSimpleName() + " using node position information provided by "
+						+ positionProvider.getClass().getSimpleName());
+			} else {
+				Log.i(container.getId() + ": " + LoopDevice.class.getSimpleName() + " not using node position information");
+			}
+		}
+		
+		public Scheduler getScheduler() {
+			return scheduler;
 		}
 
 		public Position getPosition() {
@@ -121,7 +133,7 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 
 		public DeliveryListener(PacketWrapper packet, Scheduler scheduler, long delayMs) {
 			this.packet = packet;
-			deliveryTask = new TimerTask(scheduler, this, delayMs);
+			deliveryTask = new TimerTask(scheduler, this, "SimpleBroadcastDevice_delivery", delayMs);
 			deliveryTask.schedule();
 		}
 
@@ -139,15 +151,15 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 	 *            Mean delay between sending and delivering the packets in milliseconds
 	 * @param delayDeviationMs
 	 *            Delay deviation between sending and delivering the packets in milliseconds
-	 * @param range
+	 * @param rangeM
 	 *            Device range in meters
 	 * @param mtu
 	 *            Device MTU in bytes
 	 */
-	public SimpleBroadcastDevice(long delayMeanMs, long delayDeviationMs, int range, int mtu) {
+	public SimpleBroadcastDevice(long delayMeanMs, long delayDeviationMs, double rangeM, int mtu) {
 		this.delayMean = delayMeanMs;
 		this.delayDeviation = delayDeviationMs;
-		this.range = range;
+		this.rangeM = rangeM;
 		this.mtu = mtu;
 	}
 
@@ -178,9 +190,9 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 				distance = srcPos.euclidDistanceTo(dstPos);
 			}
 
-			if (loop != packet.source && distance <= range) {
+			if (loop != packet.source && distance <= rangeM) {
 				// Calculates logarithmic RSSI
-				double rssi = calcRssiForDistance(range);
+				double rssi = calcRssiForDistance(rangeM);
 
 				// Receive packet on the destination node
 				MANETReceivedInfo info = new MANETReceivedInfo(packet.source.address, rssi);
@@ -188,11 +200,12 @@ public class SimpleBroadcastDevice implements DEECoPlugin {
 			}
 		}
 	}
-	
+
 	/**
 	 * Calculates approximate RSSI for given distance
 	 * 
-	 * @param distance Source to destination distance
+	 * @param distance
+	 *            Source to destination distance
 	 * 
 	 * @return Approximated RSSI value
 	 */

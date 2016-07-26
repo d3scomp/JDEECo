@@ -8,6 +8,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
+import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
+import cz.cuni.mff.d3s.deeco.modes.ModeChart;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -117,6 +119,10 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return createRatingsManagerFromString(eDataType, initialValue);
 			case RuntimeMetadataPackage.TYPE:
 				return createTypeFromString(eDataType, initialValue);
+			case RuntimeMetadataPackage.DEE_CO_MODE:
+				return createDEECoModeFromString(eDataType, initialValue);
+			case RuntimeMetadataPackage.MODE_CHART:
+				return createModeChartFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -146,6 +152,10 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 				return convertRatingsManagerToString(eDataType, instanceValue);
 			case RuntimeMetadataPackage.TYPE:
 				return convertTypeToString(eDataType, instanceValue);
+			case RuntimeMetadataPackage.DEE_CO_MODE:
+				return convertDEECoModeToString(eDataType, instanceValue);
+			case RuntimeMetadataPackage.MODE_CHART:
+				return convertModeChartToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -556,6 +566,42 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * @generated
 	 */
 	public String convertTypeToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public DEECoMode createDEECoModeFromString(EDataType eDataType, String initialValue) {
+		return (DEECoMode)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertDEECoModeToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ModeChart createModeChartFromString(EDataType eDataType, String initialValue) {
+		return (ModeChart)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertModeChartToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 

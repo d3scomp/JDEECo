@@ -135,11 +135,20 @@ public class AnnotationProcessor {
 					CommunicationBoundary.class, CoordinatorRole.class, MemberRole.class));
 
 	/**
+	 * Annotations that can appear in a field and can be handled by the main processor (this)  
+	 */
+	static final Set<Class<? extends Annotation>> KNOWN_FIELD_ANNOTATIONS = new HashSet<>(
+			Arrays.asList(Local.class));
+
+	public static final String ALL_FIELDS_TOKEN = "ALL_FIELDS_TOKEN";
+
+	/**
 	 *  Places in the parsing process where the processor's extensions are called. 
 	 */
 	enum ParsingEvent {
 		ON_COMPONENT_CREATION, ON_PROCESS_CREATION, ON_ENSEMBLE_CREATION, 
-		ON_UNKNOWN_COMPONENT_METHOD_ANNOTATION, ON_UNKNOWN_ENSEMBLE_METHOD_ANNOTATION
+		ON_UNKNOWN_COMPONENT_METHOD_ANNOTATION, ON_UNKNOWN_ENSEMBLE_METHOD_ANNOTATION,
+		ON_KNOWLEDGE_CREATION
 	}
 	
 	/**
@@ -415,6 +424,8 @@ public class AnnotationProcessor {
 		ComponentInstance componentInstance = factory.createComponentInstance();
 		componentInstance.setName(clazz.getCanonicalName());
 		
+		callExtensions(ParsingEvent.ON_COMPONENT_CREATION, componentInstance, getUnknownAnnotations(clazz));
+		
 		try {		
 			ChangeSet initialK = extractInitialKnowledge(obj, false);			
 			ChangeSet initialLocalK = extractInitialKnowledge(obj, true);
@@ -494,8 +505,6 @@ public class AnnotationProcessor {
 			if (!compromitationErrors.isEmpty()) {
 				throw new AnnotationProcessorException("Running component " + componentInstance.getName() + " would result into data compromise: " + compromitationErrors.stream().collect(Collectors.joining(", ")));
 			}
-			
-			callExtensions(ParsingEvent.ON_COMPONENT_CREATION, componentInstance, getUnknownAnnotations(clazz));
 			
 		} catch (KnowledgeUpdateException | AnnotationProcessorException
 				| ParseException | NoSuchFieldException e) {
@@ -783,6 +792,13 @@ public class AnnotationProcessor {
 		EnsembleDefinition ensembleDefinition = factory.createEnsembleDefinition();
 		ensembleDefinition.setName(clazz.getCanonicalName());
 		
+		// Set enableLogging
+		Ensemble ensembleAnnotations[] = clazz.getAnnotationsByType(Ensemble.class);
+		if(ensembleAnnotations.length != 1) {
+			throw new AnnotationProcessorException("One @Ensemble annotation required for the class " + clazz.getName());
+		}
+		ensembleDefinition.setLoggingEnabled(ensembleAnnotations[0].enableLogging());
+		
 		try {
 
 			Method[] allMethods = clazz.getMethods();
@@ -1052,6 +1068,11 @@ public class AnnotationProcessor {
 			Annotation directionAnnotation = getKindAnnotation(parameterAnnotations);
 			parameter.setKind(parameterAnnotationsToParameterKinds.get(directionAnnotation.annotationType()));
 			String path = getKindAnnotationValue(directionAnnotation);
+			if (path.equals("member.*")) {
+				path = "member." + ALL_FIELDS_TOKEN;
+			} else if (path.equals("coord.*")) {
+				path = "coord." + ALL_FIELDS_TOKEN;
+			}
 			parameter.setKnowledgePath(KnowledgePathHelper.createKnowledgePath(path,pathOrigin));
 			parameter.setType(type);
 			parameter.setGenericType(genericType);
@@ -1200,7 +1221,7 @@ public class AnnotationProcessor {
 				break;
 			}
 		}
-		for (Field f : knowledge.getClass().getFields())
+		for (Field f : knowledge.getClass().getFields()) {
 			if (!Modifier.isStatic(f.getModifiers())) {
 				Allow[] allowAnnotations = f.getAnnotationsByType(Allow.class);
 				if (allowAnnotations.length > 0 && local && isAnnotatedAsLocal(f)) {
@@ -1213,8 +1234,12 @@ public class AnnotationProcessor {
 							.createKnowledgePath();
 					PathNodeField pathNodeField = this.factory
 							.createPathNodeField();
-					pathNodeField.setName(new String(f.getName()));
+					String fieldName = new String(f.getName());
+					pathNodeField.setName(fieldName);
 					knowledgePath.getNodes().add(pathNodeField);
+					
+					callExtensions(ParsingEvent.ON_KNOWLEDGE_CREATION, fieldName, getUnknownAnnotations(f));
+					
 					try {
 						changeSet.setValue(knowledgePath, f.get(knowledge));
 					} catch (IllegalAccessException e) {
@@ -1222,6 +1247,8 @@ public class AnnotationProcessor {
 					}
 				}
 			}
+		}
+		
 		return changeSet;
 	}
 	
@@ -1262,6 +1289,12 @@ public class AnnotationProcessor {
 						extension.onComponentInstanceCreation((ComponentInstance) object, a); 
 					}
 					break;  
+				case ON_KNOWLEDGE_CREATION:					
+					extension.onComponentKnowledgeCreation((String) object, unknownAnnotations); 
+					for (Annotation a: unknownAnnotations) {
+						extension.onComponentKnowledgeCreation((String) object, a); 
+					}
+					break;
 				case ON_PROCESS_CREATION: 
 					extension.onComponentProcessCreation((ComponentProcess) object, unknownAnnotations); 
 					for (Annotation a: unknownAnnotations) {
@@ -1311,6 +1344,19 @@ public class AnnotationProcessor {
 		List<Annotation> unknownAnnotations = new ArrayList<>();
 		for (Annotation a: m.getAnnotations()) {
 			if (!KNOWN_METHOD_ANNOTATIONS.contains(a.getClass())) {
+				unknownAnnotations.add(a);
+			}
+		}
+		return unknownAnnotations;
+	}
+	
+	/**
+	 * Go through the annotations of a field and get the ones that are not handled by this processor. 
+	 */
+	List<Annotation> getUnknownAnnotations(Field f) {
+		List<Annotation> unknownAnnotations = new ArrayList<>();
+		for (Annotation a: f.getAnnotations()) {
+			if (!KNOWN_FIELD_ANNOTATIONS.contains(a.getClass())) {
 				unknownAnnotations.add(a);
 			}
 		}

@@ -12,30 +12,35 @@ public class OMNeTNative {
 	public static final String LIB_PATH = "omnet";
 
 	static {
+		String libPrefix = "";
 		// Load windows dependencies (order matters)
 		if (System.getProperty("os.name").contains("Windows")) {
-			System.loadLibrary("libwinpthread-1");
-			System.loadLibrary("libgcc_s_seh-1");
-			System.loadLibrary("libstdc++-6");
+			libPrefix = "lib";
+			System.loadLibrary(libPrefix + "winpthread-1");
+			System.loadLibrary(libPrefix + "gcc_s_seh-1");
+			System.loadLibrary(libPrefix + "stdc++-6");
+		} else if(System.getProperty("os.name").contains("Linux")) {
+			// Assuming Linux has its base libraries in place 
 		} else {
 			throw new UnsupportedOperationException("Unsupported OS " + System.getProperty("os.name"));
 		}
 		
 		// Load shared dependencies (order matters)
 		// TODO: What about release flavor?
-		System.loadLibrary("liboppcommond");
-		System.loadLibrary("liboppnedxmld");
-		System.loadLibrary("liboppeventlogd");
-		System.loadLibrary("liboppscaved");
-		System.loadLibrary("libopplayoutd");
-		System.loadLibrary("liboppsimd");
-		System.loadLibrary("liboppenvird");
-		System.loadLibrary("libopptkenvd");
-		System.loadLibrary("liboppcmdenvd");
+		System.err.println("Loading debug libraries");
+		System.loadLibrary(libPrefix + "oppcommond");
+		System.loadLibrary(libPrefix + "oppnedxmld");
+		System.loadLibrary(libPrefix + "oppeventlogd");
+		System.loadLibrary(libPrefix + "oppscaved");
+		System.loadLibrary(libPrefix + "opplayoutd");
+		System.loadLibrary(libPrefix + "oppsimd");
+		System.loadLibrary(libPrefix + "oppenvird");
+//		System.loadLibrary(libPrefix + "opptkenvd");
+		System.loadLibrary(libPrefix + "oppcmdenvd");
 		
 		// Load plug-ins (order matters)
-		System.loadLibrary("libinet");
-		System.loadLibrary("libmixim");
+		System.loadLibrary(libPrefix + "inet");
+		System.loadLibrary(libPrefix + "mixim");
 
 		// Load native library when the class is used for first time
 		System.loadLibrary("jdeeco-omnetpp");

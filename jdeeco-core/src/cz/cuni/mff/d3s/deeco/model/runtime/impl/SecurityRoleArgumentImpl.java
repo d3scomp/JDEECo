@@ -15,10 +15,10 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.SecurityRoleArgumentImpl#getName <em>Name</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

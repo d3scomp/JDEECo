@@ -161,7 +161,7 @@ public abstract class SchedulerTest  {
 	 */
 	private Task createTriggeredTask() {
 		
-		Task t = new Task(tested) {	
+		Task t = new Task(tested, "triggered_test_task") {	
 			@Override
 			public TimeTrigger getTimeTrigger() {
 				return null;

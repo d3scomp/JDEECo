@@ -52,8 +52,24 @@ public class InstantSchedulerMock implements Scheduler {
 			}
 
 			@Override
-			public void notifyAt(long time, TimerEventListener listener, DEECoContainer node) {
+			public void notifyAt(long time, TimerEventListener listener, String eventName, DEECoContainer node) {
 				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public void interruptionEvent(TimerEventListener listener, String eventName,
+					DEECoContainer node) {
+				throw new UnsupportedOperationException("Fake timer does not support interruptionEvent");
+			}
+
+			@Override
+			public void addShutdownListener(ShutdownListener listener) {
+				throw new UnsupportedOperationException("Fake timer does not support shutdown");
+			}
+
+			@Override
+			public void addStartupListener(StartupListener listener) {
+				throw new UnsupportedOperationException("Fake timer does not support startup");
 			}
 		};
 	}
@@ -66,5 +82,15 @@ public class InstantSchedulerMock implements Scheduler {
 		} catch (TaskInvocationException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void hibernateTask(Task task) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void deHibernateTask(Task task) {
+		throw new UnsupportedOperationException();
 	}
 }

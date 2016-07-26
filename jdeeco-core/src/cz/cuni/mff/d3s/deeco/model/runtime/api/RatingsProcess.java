@@ -11,10 +11,10 @@ package cz.cuni.mff.d3s.deeco.model.runtime.api;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess#getComponentInstance <em>Component Instance</em>}</li>
  * </ul>
- * </p>
  *
  * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getRatingsProcess()
  * @model

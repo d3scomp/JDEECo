@@ -4,6 +4,8 @@ package cz.cuni.mff.d3s.deeco.model.runtime.api;
 
 import org.eclipse.emf.common.util.EList;
 
+import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
+
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Component Process</b></em>'.
@@ -11,13 +13,14 @@ import org.eclipse.emf.common.util.EList;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getName <em>Name</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getComponentInstance <em>Component Instance</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#isActive <em>Active</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getTriggers <em>Triggers</em>}</li>
+ *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getModes <em>Modes</em>}</li>
  * </ul>
- * </p>
  *
  * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess()
  * @model
@@ -120,5 +123,21 @@ public interface ComponentProcess extends Invocable {
 	 * @generated
 	 */
 	EList<Trigger> getTriggers();
+
+	/**
+	 * Returns the value of the '<em><b>Modes</b></em>' attribute list.
+	 * The list contents are of type {@link cz.cuni.mff.d3s.deeco.modes.DEECoMode}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Modes</em>' attribute list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Modes</em>' attribute list.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentProcess_Modes()
+	 * @model dataType="cz.cuni.mff.d3s.deeco.model.runtime.api.DEECoMode"
+	 * @generated
+	 */
+	EList<DEECoMode> getModes();
 
 } // ComponentProcess

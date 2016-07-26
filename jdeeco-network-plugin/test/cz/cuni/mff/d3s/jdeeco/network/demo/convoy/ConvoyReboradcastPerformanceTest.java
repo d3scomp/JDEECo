@@ -2,13 +2,14 @@ package cz.cuni.mff.d3s.jdeeco.network.demo.convoy;
 
 import java.util.Random;
 
+import cz.cuni.mff.d3s.deeco.demo.convoy.ConvoyEnsemble;
+import cz.cuni.mff.d3s.deeco.demo.convoy.Follower;
+import cz.cuni.mff.d3s.deeco.demo.convoy.Leader;
 import cz.cuni.mff.d3s.deeco.runners.DEECoSimulation;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
+import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogWritersMock;
 import cz.cuni.mff.d3s.deeco.timer.DiscreteEventTimer;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
-import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.ConvoyEnsemble;
-import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.Follower;
-import cz.cuni.mff.d3s.jdeeco.core.demo.convoy.Leader;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.device.SimpleBroadcastDevice;
 import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
@@ -17,6 +18,7 @@ import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
 
 public class ConvoyReboradcastPerformanceTest {
+	
 	/**
 	 * Tests the performance of the rebroadcast system
 	 * 
@@ -28,6 +30,9 @@ public class ConvoyReboradcastPerformanceTest {
 	 * 
 	 */
 	public static void main(String[] args) throws Exception {
+
+		RuntimeLogWritersMock runtimeLogWriters = new RuntimeLogWritersMock();
+			
 		final long SIMULATION_DURATION_MS = 120000;
 		
 		// Create main application container
@@ -46,7 +51,7 @@ public class ConvoyReboradcastPerformanceTest {
 
 		for (int i = 0; i < NODES; ++i) {
 			// Create DEECo node 1 - leader
-			DEECoNode deeco = realm.createNode(new PositionPlugin(rand.nextInt(PLAYGROUND_WIDTH), rand
+			DEECoNode deeco = realm.createNode(runtimeLogWriters, new PositionPlugin(rand.nextInt(PLAYGROUND_WIDTH), rand
 					.nextInt(PLAYGROUND_HEIGHT)));
 
 			if (rand.nextBoolean()) {

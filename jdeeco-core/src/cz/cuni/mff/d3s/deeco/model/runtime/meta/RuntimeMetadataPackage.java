@@ -464,13 +464,22 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPONENT_INSTANCE__RATINGS_PROCESS = 8;
 
 	/**
+	 * The feature id for the '<em><b>Mode Chart</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT_INSTANCE__MODE_CHART = 9;
+
+	/**
 	 * The number of structural features of the '<em>Component Instance</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_INSTANCE_FEATURE_COUNT = 9;
+	int COMPONENT_INSTANCE_FEATURE_COUNT = 10;
 
 	/**
 	 * The number of operations of the '<em>Component Instance</em>' class.
@@ -564,13 +573,22 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int ENSEMBLE_DEFINITION__MEMBER_ROLE = 7;
 
 	/**
+	 * The feature id for the '<em><b>Logging Enabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ENSEMBLE_DEFINITION__LOGGING_ENABLED = 8;
+
+	/**
 	 * The number of structural features of the '<em>Ensemble Definition</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ENSEMBLE_DEFINITION_FEATURE_COUNT = 8;
+	int ENSEMBLE_DEFINITION_FEATURE_COUNT = 9;
 
 	/**
 	 * The number of operations of the '<em>Ensemble Definition</em>' class.
@@ -820,13 +838,22 @@ public interface RuntimeMetadataPackage extends EPackage {
 	int COMPONENT_PROCESS__TRIGGERS = INVOCABLE_FEATURE_COUNT + 3;
 
 	/**
+	 * The feature id for the '<em><b>Modes</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT_PROCESS__MODES = INVOCABLE_FEATURE_COUNT + 4;
+
+	/**
 	 * The number of structural features of the '<em>Component Process</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_PROCESS_FEATURE_COUNT = INVOCABLE_FEATURE_COUNT + 4;
+	int COMPONENT_PROCESS_FEATURE_COUNT = INVOCABLE_FEATURE_COUNT + 5;
 
 	/**
 	 * The number of operations of the '<em>Component Process</em>' class.
@@ -1566,6 +1593,27 @@ public interface RuntimeMetadataPackage extends EPackage {
 
 
 	/**
+	 * The meta object id for the '<em>DEE Co Mode</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.modes.DEECoMode
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getDEECoMode()
+	 * @generated
+	 */
+	int DEE_CO_MODE = 37;
+
+	/**
+	 * The meta object id for the '<em>Mode Chart</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see cz.cuni.mff.d3s.deeco.modes.ModeChart
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getModeChart()
+	 * @generated
+	 */
+	int MODE_CHART = 38;
+
+
+	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.TimeTrigger <em>Time Trigger</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1865,6 +1913,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EReference getComponentInstance_RatingsProcess();
 
 	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getModeChart <em>Mode Chart</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Mode Chart</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getModeChart()
+	 * @see #getComponentInstance()
+	 * @generated
+	 */
+	EAttribute getComponentInstance_ModeChart();
+
+	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition <em>Ensemble Definition</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1963,6 +2022,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EAttribute getEnsembleDefinition_MemberRole();
 
 	/**
+	 * Returns the meta object for the attribute '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#isLoggingEnabled <em>Logging Enabled</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Logging Enabled</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition#isLoggingEnabled()
+	 * @see #getEnsembleDefinition()
+	 * @generated
+	 */
+	EAttribute getEnsembleDefinition_LoggingEnabled();
+
+	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Condition <em>Condition</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2035,6 +2105,17 @@ public interface RuntimeMetadataPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getComponentProcess_Triggers();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getModes <em>Modes</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Modes</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess#getModes()
+	 * @see #getComponentProcess()
+	 * @generated
+	 */
+	EAttribute getComponentProcess_Modes();
 
 	/**
 	 * Returns the meta object for class '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.Parameter <em>Parameter</em>}'.
@@ -2527,6 +2608,28 @@ public interface RuntimeMetadataPackage extends EPackage {
 	EDataType getType();
 
 	/**
+	 * Returns the meta object for data type '{@link cz.cuni.mff.d3s.deeco.modes.DEECoMode <em>DEE Co Mode</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>DEE Co Mode</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.modes.DEECoMode
+	 * @model instanceClass="cz.cuni.mff.d3s.deeco.modes.DEECoMode"
+	 * @generated
+	 */
+	EDataType getDEECoMode();
+
+	/**
+	 * Returns the meta object for data type '{@link cz.cuni.mff.d3s.deeco.modes.ModeChart <em>Mode Chart</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Mode Chart</em>'.
+	 * @see cz.cuni.mff.d3s.deeco.modes.ModeChart
+	 * @model instanceClass="cz.cuni.mff.d3s.deeco.modes.ModeChart"
+	 * @generated
+	 */
+	EDataType getModeChart();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2792,6 +2895,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EReference COMPONENT_INSTANCE__RATINGS_PROCESS = eINSTANCE.getComponentInstance_RatingsProcess();
 
 		/**
+		 * The meta object literal for the '<em><b>Mode Chart</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute COMPONENT_INSTANCE__MODE_CHART = eINSTANCE.getComponentInstance_ModeChart();
+
+		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.EnsembleDefinitionImpl <em>Ensemble Definition</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2866,6 +2977,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 		EAttribute ENSEMBLE_DEFINITION__MEMBER_ROLE = eINSTANCE.getEnsembleDefinition_MemberRole();
 
 		/**
+		 * The meta object literal for the '<em><b>Logging Enabled</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ENSEMBLE_DEFINITION__LOGGING_ENABLED = eINSTANCE.getEnsembleDefinition_LoggingEnabled();
+
+		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ConditionImpl <em>Condition</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2926,6 +3045,14 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EReference COMPONENT_PROCESS__TRIGGERS = eINSTANCE.getComponentProcess_Triggers();
+
+		/**
+		 * The meta object literal for the '<em><b>Modes</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute COMPONENT_PROCESS__MODES = eINSTANCE.getComponentProcess_Modes();
 
 		/**
 		 * The meta object literal for the '{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.ParameterImpl <em>Parameter</em>}' class.
@@ -3342,6 +3469,26 @@ public interface RuntimeMetadataPackage extends EPackage {
 		 * @generated
 		 */
 		EDataType TYPE = eINSTANCE.getType();
+
+		/**
+		 * The meta object literal for the '<em>DEE Co Mode</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.modes.DEECoMode
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getDEECoMode()
+		 * @generated
+		 */
+		EDataType DEE_CO_MODE = eINSTANCE.getDEECoMode();
+
+		/**
+		 * The meta object literal for the '<em>Mode Chart</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see cz.cuni.mff.d3s.deeco.modes.ModeChart
+		 * @see cz.cuni.mff.d3s.deeco.model.runtime.impl.RuntimeMetadataPackageImpl#getModeChart()
+		 * @generated
+		 */
+		EDataType MODE_CHART = eINSTANCE.getModeChart();
 
 	}
 

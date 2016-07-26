@@ -36,6 +36,7 @@ import cz.cuni.mff.d3s.deeco.model.architecture.api.Architecture;
 import cz.cuni.mff.d3s.deeco.model.runtime.RuntimeModelHelper;
 import cz.cuni.mff.d3s.deeco.model.runtime.SampleRuntimeModel;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 
 /**
@@ -56,7 +57,9 @@ public class ProcessTaskTest {
 	private Scheduler scheduler;
 	@Mock
 	private Architecture architecture;
-		
+	@Mock
+	private RuntimeLogger runtimeLogger;
+	
 	private RatingsManager ratingsManager;
 	
 	private Task task;
@@ -67,6 +70,8 @@ public class ProcessTaskTest {
 	
 	private ParamHolder<Integer> expectedInOutValue;
 	private ParamHolder<Integer> expectedOutValue;
+
+
 
 	@Before
 	public void setUp() throws Exception {
@@ -90,6 +95,7 @@ public class ProcessTaskTest {
 		when(knowledgeManager.getAuthor(eq(RuntimeModelHelper.createKnowledgePath("level1", "rating")))).thenReturn(model.componentInstance.getName());
 		
 		when(knowledgeManager.get(anyCollectionOf(KnowledgePath.class))).then(new Answer<ValueSet>() {
+			@SuppressWarnings("unchecked")
 			public ValueSet answer(InvocationOnMock invocation) {
 				ValueSet result = new ValueSet();
 				
@@ -108,7 +114,7 @@ public class ProcessTaskTest {
 		
 		model.setKnowledgeManager(knowledgeManager);
 		
-		this.task = new ProcessTask(model.process, scheduler, architecture, ratingsManager);
+		this.task = new ProcessTask(model.process, scheduler, architecture, runtimeLogger, ratingsManager);
 	}
 	
 	@After

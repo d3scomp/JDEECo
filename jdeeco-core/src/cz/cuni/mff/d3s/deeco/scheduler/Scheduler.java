@@ -53,7 +53,29 @@ public interface Scheduler extends ExecutionListener, TimerEventListener {
 	 */
 	public void removeTask( Task task );
 	
+	/**
+	 * Keeps a task to the scheduler's queue, only changes its state to {@link SchedulerEvent.RUNNING}.
+	 * This way, process executions are not skipped any more.  
+	 * <p> 
+	 * To be used when switching "active" flag of a ComponentProcess or EnsembleController on.   
+	 * 
+	 * @param 	task the task to be de-hibernated
+	 * @see 	{@link Task}
+	 * @see 	{@link SchedulerEvent}
+	 */
+	public void deHibernateTask( Task task );
 	
+	/**
+	 * Keeps a task to the scheduler's queue, only changes its state to {@link SchedulerEvent.HIBERNATED}.
+	 * This way, process executions can be skipped.
+	 * <p> 
+	 * To be used when switching "active" flag of a ComponentProcess or EnsembleController off.   
+	 * 
+	 * @param 	task the task to be hibernated
+	 * @see 	{@link Task}
+	 * @see 	{@link SchedulerEvent}
+	 */
+	public void hibernateTask( Task task );
 	
 	/**
 	 * Associates an {@link Executor <code>Executor</code>} instance with this scheduler.

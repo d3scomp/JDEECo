@@ -5,14 +5,17 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.runners.DEECoSimulation;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
+import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogWritersMock;
 import cz.cuni.mff.d3s.deeco.timer.DiscreteEventTimer;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
@@ -23,6 +26,13 @@ import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
 
 public class BoardingTest {
 
+	RuntimeLogWritersMock runtimeLogWriters;
+	
+	@Before
+	public void setUp() throws IOException{
+		runtimeLogWriters = new RuntimeLogWritersMock();
+	}
+	
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, DEECoException, AnnotationProcessorException {
 		new BoardingTest().testBoarding(false);
 	}
@@ -51,28 +61,28 @@ public class BoardingTest {
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
 		
 		/* create one and only deeco node (centralized deployment) */
-		DEECoNode node1 = realm.createNode(0);
+		DEECoNode node1 = realm.createNode(0, runtimeLogWriters);
 		node1.deployComponent(new Car("Audi A4", 4));
 		node1.deployEnsemble(BoardingEnsemble.class);
-		DEECoNode node2 = realm.createNode(1);
+		DEECoNode node2 = realm.createNode(1, runtimeLogWriters);
 		node2.deployComponent(new Car("Skoda Felicia", 0));
 		node2.deployEnsemble(BoardingEnsemble.class);
-		DEECoNode node3 = realm.createNode(2);
+		DEECoNode node3 = realm.createNode(2, runtimeLogWriters);
 		node3.deployComponent(new Car("Seat Ibiza", 1));
 		node3.deployEnsemble(BoardingEnsemble.class);
-		DEECoNode node4 = realm.createNode(3);
+		DEECoNode node4 = realm.createNode(3, runtimeLogWriters);
 		node4.deployComponent(new Bus("142", 42));
 		node4.deployEnsemble(BoardingEnsemble.class);
-		DEECoNode node5 = realm.createNode(4);
+		DEECoNode node5 = realm.createNode(4, runtimeLogWriters);
 		node5.deployComponent(new Bus("119", 0));
 		node5.deployEnsemble(BoardingEnsemble.class);
-		DEECoNode node6 = realm.createNode(5);
+		DEECoNode node6 = realm.createNode(5, runtimeLogWriters);
 		node6.deployComponent(new Building("Valdstejnsky palac", 150));
 		node6.deployEnsemble(BoardingEnsemble.class);
-		DEECoNode node7 = realm.createNode(6);
+		DEECoNode node7 = realm.createNode(6, runtimeLogWriters);
 		node7.deployComponent(new Person("Chuck", "Norris", 1));
 		node7.deployEnsemble(BoardingEnsemble.class);
-		DEECoNode node8 = realm.createNode(7);
+		DEECoNode node8 = realm.createNode(7, runtimeLogWriters);
 		node8.deployComponent(new Person("Milos", "Zeman", 2)); // Milos Zeman requires two seats
 		node8.deployEnsemble(BoardingEnsemble.class);
 		

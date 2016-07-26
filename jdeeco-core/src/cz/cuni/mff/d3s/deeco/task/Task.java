@@ -15,11 +15,17 @@ import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 public abstract class Task {
 	protected TaskTriggerListener listener;
 	protected Scheduler scheduler;
+	protected final String taskName;
 	
-	public Task(Scheduler scheduler) {
+	public Task(Scheduler scheduler, String taskName) {
 		this.scheduler = scheduler;
+		this.taskName = taskName;
 	}
 
+	public String getName(){
+		return taskName;
+	}
+	
 	/**
 	 * Invokes the task.
 	 * 

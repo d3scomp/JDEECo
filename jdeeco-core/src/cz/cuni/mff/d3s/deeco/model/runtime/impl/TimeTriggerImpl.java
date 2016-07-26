@@ -18,13 +18,13 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TimeTriggerImpl#getPeriod <em>Period</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TimeTriggerImpl#getOffset <em>Offset</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TimeTriggerImpl#getOrder <em>Order</em>}</li>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.TimeTriggerImpl#getWcet <em>Wcet</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

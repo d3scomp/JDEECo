@@ -34,7 +34,7 @@ public class EnsembleFormationTask extends Task {
 	 * @param componentInstance
 	 */
 	public EnsembleFormationTask(Scheduler scheduler, EnsembleFactory factory, ComponentInstance componentInstance) {
-		super(scheduler);		
+		super(scheduler, "Ensemble formation");		
 		this.factory = factory;
 		this.componentInstance = componentInstance;
 		this.trigger = new TimeTriggerExt();

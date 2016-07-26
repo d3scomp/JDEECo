@@ -1,6 +1,5 @@
 package cz.cuni.mff.d3s.jdeeco.publishing;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -180,6 +179,6 @@ public class DefaultKnowledgePublisher implements DEECoPlugin, TimerTaskListener
 		// Start publishing task
 		Scheduler scheduler = container.getRuntimeFramework().getScheduler();
 		long offset = new Random(container.getId()).nextInt(publishingPeriod);
-		new TimerTask(scheduler, this, offset, publishingPeriod).schedule();
+		new TimerTask(scheduler, this, "DefaultKnowledgePublisher_publish", offset, publishingPeriod).schedule();
 	}
 }

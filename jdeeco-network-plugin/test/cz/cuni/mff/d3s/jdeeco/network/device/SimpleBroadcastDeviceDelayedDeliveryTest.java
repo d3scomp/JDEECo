@@ -1,11 +1,15 @@
 package cz.cuni.mff.d3s.jdeeco.network.device;
 
+import java.io.IOException;
+
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import cz.cuni.mff.d3s.deeco.runners.DEECoSimulation;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoException;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
+import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogWritersMock;
 import cz.cuni.mff.d3s.deeco.timer.CurrentTimeProvider;
 import cz.cuni.mff.d3s.deeco.timer.DiscreteEventTimer;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
@@ -24,6 +28,13 @@ public class SimpleBroadcastDeviceDelayedDeliveryTest {
 	final static long TEST_DELAY_MS = 5000;
 	final static long TEST_DELAY_ALLOWED_INACCURACY_MS = 200;
 
+	RuntimeLogWritersMock runtimeLogWriters;
+	
+	@Before
+	public void setUp() throws IOException{
+		runtimeLogWriters = new RuntimeLogWritersMock();
+	}
+
 	@Test
 	public void testDelayedDelivery() throws InstantiationException, IllegalAccessException, DEECoException {
 		// Setup simulation
@@ -33,8 +44,8 @@ public class SimpleBroadcastDeviceDelayedDeliveryTest {
 		realm.addPlugin(Network.class);
 
 		// Setup two nodes
-		DEECoNode node0 = realm.createNode();
-		DEECoNode node1 = realm.createNode();
+		DEECoNode node0 = realm.createNode(runtimeLogWriters);
+		DEECoNode node1 = realm.createNode(runtimeLogWriters);
 
 		// Register strategy for received packets to obtain received time
 		Network node0Net = node0.getPluginInstance(Network.class);

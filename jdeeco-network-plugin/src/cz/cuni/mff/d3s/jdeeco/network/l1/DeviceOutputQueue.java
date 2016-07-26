@@ -86,7 +86,7 @@ public class DeviceOutputQueue {
 			// Remove previously set send delayed task as we postpone send deadline by adding to this packet
 			removeDelayedSendTask();
 			// Schedule delayed send of packet
-			delayedTask = new TimerTask(scheduler, delayedListener, timeout);
+			delayedTask = new TimerTask(scheduler, delayedListener, "DeviceOutputQueue_delayed_send", timeout);
 			delayedTask.schedule();
 		}
 	}

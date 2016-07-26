@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,42 +27,39 @@ import cz.cuni.mff.d3s.jdeeco.network.l2.L2ReceivedInfo;
  * @author Michal Kit <kit@d3s.mff.cuni.cz>
  *
  */
-public class Layer1 implements L2PacketSender, L1StrategyManager {
+public class Layer1 implements L2PacketProcessor, L1StrategyManager {
 	protected final static long COLLECTOR_LIFETIME_MS = 5000;
 	protected final static int MINIMUM_PAYLOAD = 1;
 	protected final static int MINIMUM_DATA_TRANSMISSION_SIZE = MINIMUM_PAYLOAD + L1Packet.HEADER_SIZE;
 
 	private final Scheduler scheduler;
-	private final Set<L1Strategy> strategies; // registered strategies
-	private final byte nodeId; // node ID
-	private final DataIDSource dataIdSource; // data ID source
-	private final Set<Device> devices; // registered devices
-	private final Map<Address, DeviceOutputQueue> outputQueues;
-	private final Map<CollectorKey, Collector> collectors; // collectors that store incoming L1 packets. Grouped by data
-															// ID and Node ID
-	private L1DataProcessor l1DataProcessor; // reference to the upper layer
+	private final Set<L1Strategy> strategies = new LinkedHashSet<>(); // registered strategies
+	private final byte nodeId;
+	private final DataIDSource dataIdSource;
+	private final Set<Device> devices = new HashSet<Device>(); // registered devices
+	private final Map<Address, DeviceOutputQueue> outputQueues = new HashMap<Address, DeviceOutputQueue>();
+	// collectors that store incoming L1 packets. Grouped by data
+	private final Map<CollectorKey, Collector> collectors = new HashMap<CollectorKey, Collector>();
+	// ID and Node ID
+	private final Collection<L1DataProcessor> l1DataProcessors = new LinkedHashSet<>(); // reference to the upper layer
 
 	public Layer1(byte nodeId, DataIDSource dataIdSource, Scheduler scheduler) {
-		this.outputQueues = new HashMap<Address, DeviceOutputQueue>();
-		this.strategies = new HashSet<L1Strategy>();
-		this.collectors = new HashMap<CollectorKey, Collector>();
-		this.devices = new HashSet<Device>();
 		this.nodeId = nodeId;
 		this.dataIdSource = dataIdSource;
 		this.scheduler = scheduler;
 
 		// Start collector removal task
-		new TimerTask(scheduler, new CollectorCleaner(), 0, COLLECTOR_LIFETIME_MS).schedule();
+		new TimerTask(scheduler, new CollectorCleaner(), "CollectorCleaner_l1", 0, COLLECTOR_LIFETIME_MS).schedule();
 	}
 
 	/**
-	 * Sets L1 Data processor
+	 * Sets L1 Packet processor
 	 * 
-	 * @param l1DataProcessor
-	 *            L1 data processor to be used by L1 to process received L2 packets
+	 * @param l1PacketProcessor
+	 *            L1 packet processor to be used by L1 to process received L2 packets
 	 */
-	public void setL1DataProcessor(L1DataProcessor l1DataProcessor) {
-		this.l1DataProcessor = l1DataProcessor;
+	public void addL1PacketProcessor(L1DataProcessor l1DataProcessor) {
+		this.l1DataProcessors.add(l1DataProcessor);
 	}
 
 	/*
@@ -90,9 +88,8 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * cz.cuni.mff.d3s.jdeeco.network.L1StrategyManager#unregisterL1Strategy(cz.cuni.mff.d3s.jdeeco.network.l1.L1Strategy
-	 * )
+	 * @see cz.cuni.mff.d3s.jdeeco.network.L1StrategyManager#unregisterL1Strategy(cz.cuni.mff.d3s.jdeeco.network.l1.
+	 * L1Strategy )
 	 */
 	@Override
 	public boolean unregisterL1Strategy(L1Strategy strategy) {
@@ -121,7 +118,7 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 	 * @see cz.cuni.mff.d3s.jdeeco.network.L2PacketSender#sendL2Packet(cz.cuni.mff.d3s.jdeeco.network.l2.L2Packet,
 	 * cz.cuni.mff.d3s.jdeeco.network.Address)
 	 */
-	public boolean sendL2Packet(L2Packet l2Packet, Address address) {
+	public boolean processL2Packet(L2Packet l2Packet, Address address) {
 		if (l2Packet != null && l2Packet.getData().length > 0) {
 			DeviceOutputQueue outputQueue = getDeviceOutputQueue(address);
 			if (outputQueue == null) {
@@ -188,7 +185,7 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 	 * @param device
 	 *            device that received this L0 packet
 	 * @param receivedInfo
-	 *            additional information on packet receival
+	 *            additional information on packet reception
 	 */
 	public void processL0Packet(byte[] l0Packet, Device device, ReceivedInfo receivedInfo) {
 		L1Packet l1Packet;
@@ -210,9 +207,11 @@ public class Layer1 implements L2PacketSender, L1StrategyManager {
 			processL1PacketByStrategies(l1Packet);
 			collector.addL1Packet(l1Packet);
 			if (collector.isComplete()) {
-				// FIX header is unknown at this level
-				l1DataProcessor.processL2Packet(new L2Packet(collector.getMarshalledData(), collector
-						.getL2ReceivedInfo()));
+				for (L1DataProcessor processor : l1DataProcessors) {
+					// FIX: header is unknown at this level
+					L2Packet packet = new L2Packet(collector.getMarshalledData(), collector.getL2ReceivedInfo());
+					processor.processL2Packet(packet);
+				}
 				collectors.remove(key);
 			}
 			position += l1Packet.payloadSize + L1Packet.HEADER_SIZE;

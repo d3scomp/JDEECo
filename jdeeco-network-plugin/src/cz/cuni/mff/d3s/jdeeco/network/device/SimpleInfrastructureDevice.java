@@ -92,7 +92,7 @@ public class SimpleInfrastructureDevice implements DEECoPlugin {
 
 		public DeliveryListener(PacketWrapper packet, Scheduler scheduler) {
 			this.packet = packet;
-			deliveryTask = new TimerTask(scheduler, this);
+			deliveryTask = new TimerTask(scheduler, this, "SimpleInfrastructureDevice_delivery");
 			deliveryTask.schedule();
 		}
 

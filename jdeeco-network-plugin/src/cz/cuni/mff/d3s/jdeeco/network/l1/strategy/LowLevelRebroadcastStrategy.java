@@ -111,7 +111,7 @@ public class LowLevelRebroadcastStrategy implements DEECoPlugin, L1Strategy {
 	private void scheduleRebroadcast(L1Packet packet, long delayMs) {
 		// Schedule delayed rebroadcast
 		makeKnown(packet);
-		new TimerTask(scheduler, new Rebroadcast(packet), delayMs).schedule();
+		new TimerTask(scheduler, new Rebroadcast(packet), "delayed_rebroadcast_l1", delayMs).schedule();
 	}
 
 	/**

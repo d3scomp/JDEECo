@@ -27,10 +27,10 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link cz.cuni.mff.d3s.deeco.model.runtime.impl.KnowledgePathImpl#getNodes <em>Nodes</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

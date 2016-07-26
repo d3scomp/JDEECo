@@ -11,17 +11,18 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNeTNative;
 import cz.cuni.mff.d3s.deeco.simulation.omnet.OMNeTNativeListener;
+import cz.cuni.mff.d3s.deeco.timer.BaseTimer;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.deeco.timer.TimerEventListener;
 import cz.cuni.mff.d3s.jdeeco.network.address.IPAddress;
 import cz.cuni.mff.d3s.jdeeco.position.Position;
 
 public class OMNeTSimulation implements IOMNeTSimulation {
-	public class Timer implements SimulationTimer {
+	public class Timer extends BaseTimer implements SimulationTimer {
 		private long duration;
 
 		@Override
-		public void notifyAt(long time, TimerEventListener listener, DEECoContainer container) {
+		public void notifyAt(long time, TimerEventListener listener, String eventName, DEECoContainer container) {
 			hosts.get(container.getId()).setEventListener(time, listener);
 		}
 
@@ -37,17 +38,25 @@ public class OMNeTSimulation implements IOMNeTSimulation {
 		@Override
 		public void start(long duration) {
 			this.duration = duration;
-
+			
+			runStartupListeners();
 			try {
 				File config = OMNeTSimulation.this.getOmnetConfig(duration);
 				OMNeTNative.nativeRun("Cmdenv", config.getAbsolutePath());
 			} catch (IOException e) {
 				System.err.println("Failed to start simulation: " + e.getMessage());
+			} finally {
+				runShutdownListeners();
 			}
 		}
 
 		public long getDuration() {
 			return duration;
+		}
+
+		@Override
+		public void interruptionEvent(TimerEventListener listener, String eventName, DEECoContainer node) {
+			throw new UnsupportedOperationException("OMNeTSimualtion down not support interruption events, yet?"); 			
 		}
 	}
 
@@ -85,6 +94,7 @@ public class OMNeTSimulation implements IOMNeTSimulation {
 		}
 
 		public void sendBroadcastPacket(byte[] packet) {
+			updatePositions();
 			OMNeTNative.nativeSendPacket(getId(), packet, "");
 		}
 
@@ -112,22 +122,31 @@ public class OMNeTSimulation implements IOMNeTSimulation {
 		}
 
 		@Override
-		public void packetReceived(byte[] packet, double rssi) {
+		public void packetReceived(byte[] packet, double rssi, int sender) {
 			if (rssi == -1 && infrastructureDevice != null) {
-				infrastructureDevice.receivePacket(packet);
+				infrastructureDevice.receivePacket(packet, sender);
 			}
 
 			if (rssi >= 0 && broadcastDevice != null) {
-				broadcastDevice.receivePacket(packet, rssi);
+				broadcastDevice.receivePacket(packet, rssi, sender);
 			}
 		}
 	}
-
+	
 	private final Map<Integer, OMNeTHost> hosts = new HashMap<Integer, OMNeTSimulation.OMNeTHost>();
 	private Timer timeProvider = new Timer();
+	private Double txPower802154 = null;
+	
+	public void set80154txPower(double txPower_mw) {
+		txPower802154 = txPower_mw;
+	}
 
-	public File getOmnetConfig(long limit) throws IOException {
+	File getOmnetConfig(long limit) throws IOException {
 		OMNeTConfigGenerator generator = new OMNeTConfigGenerator(limit);
+		
+		if(txPower802154 != null) {
+			generator.set802154TxPower(txPower802154);
+		}
 
 		for (OMNeTHost host : hosts.values()) {
 			generator.addNode(host);

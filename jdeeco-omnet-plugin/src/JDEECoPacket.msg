@@ -14,4 +14,5 @@
 //
 packet JDEECoPacket {
      unsigned char data [];
+     unsigned int sender;
 }

@@ -6,10 +6,10 @@ MIXIM_DIR ?= ${OMNETPP_ROOT}/../mixim
 CONFIGFILE = $(shell opp_configfilepath)
 include $(CONFIGFILE)
 
-all: checkmakefiles
+all: checkmakefiles header
 	cd src && $(MAKE)
 
-clean: checkmakefiles header
+clean: checkmakefiles
 	cd src && $(MAKE) clean
 
 cleanall: checkmakefiles
@@ -18,7 +18,7 @@ cleanall: checkmakefiles
 	rm -rf out/
 	
 header:
-	$(JDK_HOME)/bin/javah -d src -classpath ../jdeeco-simulation/src cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulation
+	$(JDK_HOME)/bin/javah -o src/OMNeTJDEECoAPI.h -classpath ../jdeeco-simulation/src cz.cuni.mff.d3s.deeco.simulation.omnet.OMNetSimulation
 	
 install:
 	mkdir -p libs/debug

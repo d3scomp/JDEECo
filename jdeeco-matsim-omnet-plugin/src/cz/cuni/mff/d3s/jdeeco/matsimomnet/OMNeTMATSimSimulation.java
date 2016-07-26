@@ -15,6 +15,7 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.TimerTaskListener;
+import cz.cuni.mff.d3s.deeco.timer.BaseTimer;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.deeco.timer.TimerEventListener;
 import cz.cuni.mff.d3s.jdeeco.matsim.dataaccess.MATSimDataProviderReceiver;
@@ -47,7 +48,7 @@ public class OMNeTMATSimSimulation implements IMATSimSimulaton, IOMNeTSimulation
 	}
 
 	/**
-	 * Gets MATSim and OMNet dependencies 
+	 * Gets MATSim and OMNet dependencies
 	 */
 	@Override
 	public List<Class<? extends DEECoPlugin>> getDependencies() {
@@ -87,10 +88,10 @@ public class OMNeTMATSimSimulation implements IMATSimSimulaton, IOMNeTSimulation
 	 * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
 	 *
 	 */
-	class Timer implements SimulationTimer {
+	class Timer extends BaseTimer implements SimulationTimer {
 		@Override
-		public void notifyAt(long time, TimerEventListener listener, DEECoContainer node) {
-			omnet.getTimer().notifyAt(time, listener, node);
+		public void notifyAt(long time, TimerEventListener listener, String eventName, DEECoContainer node) {
+			omnet.getTimer().notifyAt(time, listener, eventName, node);
 		}
 
 		@Override
@@ -100,8 +101,15 @@ public class OMNeTMATSimSimulation implements IMATSimSimulaton, IOMNeTSimulation
 
 		@Override
 		public void start(long duration) {
+			runStartupListeners();
 			OMNeTMATSimSimulation.this.runMATSim(duration);
 			omnet.getTimer().start(duration);
+			runShutdownListeners();
+		}
+
+		@Override
+		public void interruptionEvent(TimerEventListener listener, String eventName, DEECoContainer node) {
+			throw new UnsupportedOperationException("Interruption events are not supported");			
 		}
 	}
 	

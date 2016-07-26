@@ -9,22 +9,31 @@
 package cz.cuni.mff.d3s.jdeeco.network.l2.strategy;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import cz.cuni.mff.d3s.deeco.runners.DEECoSimulation;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
+import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogWritersMock;
 import cz.cuni.mff.d3s.deeco.timer.DiscreteEventTimer;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.jdeeco.network.Network;
 import cz.cuni.mff.d3s.jdeeco.network.device.SimpleBroadcastDevice;
-import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.KnowledgeInsertingStrategy;
-import cz.cuni.mff.d3s.jdeeco.network.l2.strategy.RebroadcastStrategy;
 import cz.cuni.mff.d3s.jdeeco.position.PositionPlugin;
 import cz.cuni.mff.d3s.jdeeco.publishing.DefaultKnowledgePublisher;
 
 public class L2RebroadcastWithBoundaryIntegrationTest {
+
+	RuntimeLogWritersMock runtimeLogWriters;
+	
+	@Before
+	public void setUp() throws IOException{
+		runtimeLogWriters = new RuntimeLogWritersMock();
+	}
+	
 	@Test
 	public void testBoundedRebroadcast() throws Exception {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -40,22 +49,22 @@ public class L2RebroadcastWithBoundaryIntegrationTest {
 		realm.addPlugin(DefaultKnowledgePublisher.class);
 		
 		// Create DEECo node 1 - leader
-		DEECoNode deeco0 = realm.createNode(new PositionPlugin(0, 0));
+		DEECoNode deeco0 = realm.createNode(runtimeLogWriters, new PositionPlugin(0, 0));
 		deeco0.deployComponent(new DataSource("Src0"));
 		deeco0.deployEnsemble(DataExchange.class);
 	
 		// Create DEECo node 2 - follower (in range of leader)
-		DEECoNode deeco1 = realm.createNode(new PositionPlugin(0, SimpleBroadcastDevice.DEFAULT_RANGE * 2/3));
+		DEECoNode deeco1 = realm.createNode(runtimeLogWriters, new PositionPlugin(0, SimpleBroadcastDevice.DEFAULT_RANGE * 2/3));
 		deeco1.deployComponent(new DataSink("Sink0", outputStream));
 		deeco1.deployEnsemble(DataExchange.class);
 		
 		// Create DEECo node 3 - follower (out of range of leader)
-		DEECoNode deeco2 = realm.createNode(new PositionPlugin(0, SimpleBroadcastDevice.DEFAULT_RANGE * 4/3));
+		DEECoNode deeco2 = realm.createNode(runtimeLogWriters, new PositionPlugin(0, SimpleBroadcastDevice.DEFAULT_RANGE * 4/3));
 		deeco2.deployComponent(new DataSink("Sink1", outputStream));
 		deeco2.deployEnsemble(DataExchange.class);
 		
 		// Create DEECo node 4 - follower (out of range of leader and Sink0, and shielded by boundary condition)
-		DEECoNode deeco3 = realm.createNode(new PositionPlugin(0, SimpleBroadcastDevice.DEFAULT_RANGE * 6/3));
+		DEECoNode deeco3 = realm.createNode(runtimeLogWriters, new PositionPlugin(0, SimpleBroadcastDevice.DEFAULT_RANGE * 6/3));
 		deeco3.deployComponent(new DataSink("Sink2", outputStream));
 		deeco3.deployEnsemble(DataExchange.class);
 		

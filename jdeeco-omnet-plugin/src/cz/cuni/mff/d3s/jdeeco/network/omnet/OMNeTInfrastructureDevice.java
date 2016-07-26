@@ -43,7 +43,8 @@ public class OMNeTInfrastructureDevice extends OMNeTDevice {
 		host.setInfrastructureDevice(this);
 	}
 	
-	public void receivePacket(byte[] data) {
+	public void receivePacket(byte[] data, int sender) {
+		// TODO: Get real IP address from OMNeT++ instead of just sender id 
 		System.out.println("Received infrastructure packet");
 		network.getL1().processL0Packet(data, this, new ReceivedInfo(new IPAddress("UNKNOWN")));
 	}

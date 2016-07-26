@@ -25,6 +25,7 @@ import org.matsim.withinday.trafficmonitoring.TravelTimeCollectorFactory;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
+import cz.cuni.mff.d3s.deeco.timer.BaseTimer;
 import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
 import cz.cuni.mff.d3s.deeco.timer.TimerEventListener;
 import cz.cuni.mff.d3s.jdeeco.matsim.dataaccess.MATSimDataProviderReceiver;
@@ -41,7 +42,7 @@ import cz.cuni.mff.d3s.jdeeco.matsim.simulation.MATSimExtractor;
 import cz.cuni.mff.d3s.jdeeco.matsim.simulation.MATSimPreloadingControler;
 import cz.cuni.mff.d3s.jdeeco.matsim.simulation.MATSimRouter;
 import cz.cuni.mff.d3s.jdeeco.matsim.simulation.MATSimSimulationStepListener;
-import cz.cuni.mff.d3s.jdeeco.matsim.simulation.Simulation;
+import cz.cuni.mff.d3s.jdeeco.matsim.simulation.SimulationUtils;
 
 /**
  * Plug-in providing MATSim simulation
@@ -120,8 +121,8 @@ public class MATSimSimulation implements IMATSimSimulaton {
 			}
 		}
 
-		simulationStep = Timer.secondsToMilliseconds(step);
-		currentMilliseconds = Timer.secondsToMilliseconds(controler.getConfig().getQSimConfigGroup().getStartTime());
+		simulationStep = SimulationUtils.secondsToMilliseconds(step);
+		currentMilliseconds = SimulationUtils.secondsToMilliseconds(controler.getConfig().getQSimConfigGroup().getStartTime());
 
 		router = new MATSimRouter(controler, travelTime, 10 /* TODO: FAKE VALUE */);
 	}
@@ -179,14 +180,20 @@ public class MATSimSimulation implements IMATSimSimulaton {
 	 * @author Vladimir Matena <matena@d3s.mff.cuni.cz>
 	 *
 	 */
-	public class Timer extends Simulation implements SimulationTimer, MATSimSimulationStepListener {
+	public class Timer extends BaseTimer implements SimulationUtils, SimulationTimer, MATSimSimulationStepListener {
 		private final TreeSet<Callback> callbacks = new TreeSet<>();
 		private final Map<Integer, Callback> hostIdToCallback = new HashMap<>();
 		
 		@Override
-		public void notifyAt(long time, TimerEventListener listener, DEECoContainer node) {
+		public void notifyAt(long time, TimerEventListener listener, String eventName, DEECoContainer node) {
 			callAt(time, node.getId());
 			MATSimSimulation.this.getHost(node.getId()).listener = listener;
+		}
+		
+		@Override
+		public void interruptionEvent(TimerEventListener listener, String eventName,
+				DEECoContainer node) {
+			throw new UnsupportedOperationException("The Timer for MATSim simulation does not support interruptionEvent");			
 		}
 
 		@Override
@@ -207,13 +214,15 @@ public class MATSimSimulation implements IMATSimSimulaton {
 
 		@Override
 		public void start(long duration) {
+			runStartupListeners();
 			MATSimSimulation.this.run(duration);
+			runShutdownListeners();
 		}
 
 		@Override
 		public void at(double seconds, Mobsim mobsim) {
 			// Exchange data with MATSim
-			long milliseconds = secondsToMilliseconds(seconds);
+			long milliseconds = SimulationUtils.secondsToMilliseconds(seconds);
 			matSimReceiver.setMATSimData(extractor.extractFromMATSim(listener.getAllJDEECoAgents(), mobsim));
 			listener.updateJDEECoAgents(matSimProvider.getMATSimData());
 			// Add callback for the MATSim step
@@ -229,7 +238,7 @@ public class MATSimSimulation implements IMATSimSimulaton {
 				currentMilliseconds = callback.getAbsoluteTime();
 				// System.out.println("At: " + currentMilliseconds);
 				host = hosts.get(callback.hostId);
-				host.at(millisecondsToSeconds(currentMilliseconds));
+				host.at(SimulationUtils.millisecondsToSeconds(currentMilliseconds));
 			}
 		}
 	}

@@ -38,6 +38,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityTag;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
+import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.task.EnsembleFormationTask;
 import cz.cuni.mff.d3s.deeco.task.EnsembleTask;
@@ -100,6 +101,11 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 	 * The KM container used by the runtime.
 	 */
 	protected final KnowledgeManagerContainer kmContainer;
+	
+	/**
+	 * The runtime logger used by the runtime.
+	 */
+	protected final RuntimeLogger runtimeLogger;
 	
 	/**
 	 * The manager of knowledge ratings
@@ -168,7 +174,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 	 * @throws IllegalArgumentException if either of the arguments is null.
 	 */
 	public RuntimeFrameworkImpl(RuntimeMetadata model, Scheduler scheduler,
-			Executor executor, KnowledgeManagerContainer kmContainer, RatingsManager ratingsManager) {
+			Executor executor, KnowledgeManagerContainer kmContainer, RuntimeLogger runtimeLogger, RatingsManager ratingsManager) {
 		if (model == null)
 			throw new IllegalArgumentException("Model cannot be null");
 		if (scheduler == null)
@@ -183,7 +189,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 		this.model = model;
 		this.executor = executor;
 		this.kmContainer = kmContainer;
-		
+		this.runtimeLogger = runtimeLogger;
 		// register listener to replicas on the kmContainer - necessary for IRM
 		this.kmContainer.registerReplicaListener(this);
 		
@@ -429,10 +435,10 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 			return;
 		}
 		
-		final Task newTask = new ProcessTask(process, scheduler, architecture, ratingsManager);
+		final Task newTask = new ProcessTask(process, scheduler, architecture, runtimeLogger, ratingsManager);
 		cir.getProcessTasks().put(process, newTask);
 		
-		componentProcessActiveChanged(instance, process, process.isActive());
+		componentProcessActiveChanged(instance, process, process.isActive(), false);
 		
 		// register adapters to listen for model changes
 		// listen to change in ComponentProcess.isActive
@@ -441,7 +447,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 				super.notifyChanged(notification);
 				if ((notification.getFeatureID(ComponentProcess.class) == RuntimeMetadataPackage.COMPONENT_PROCESS__ACTIVE)
 						&& (notification.getEventType() == Notification.SET)){
-					componentProcessActiveChanged(instance, process, notification.getNewBooleanValue());
+					componentProcessActiveChanged(instance, process, notification.getNewBooleanValue(), true);
 				}
 			}
 		};
@@ -484,7 +490,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 		((EnsembleTask) task).init(deecoContainer);
 		cir.getEnsembleTasks().put(controller, task);
 		
-		ensembleControllerActiveChanged(instance, controller, controller.isActive());
+		ensembleControllerActiveChanged(instance, controller, controller.isActive(), false);
 
 		// register adapters to listen for model changes
 		// listen to change in EnsembleController.isActive
@@ -493,7 +499,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 				super.notifyChanged(notification);
 				if ((notification.getFeatureID(EnsembleController.class) == RuntimeMetadataPackage.ENSEMBLE_CONTROLLER__ACTIVE)
 						&& (notification.getEventType() == Notification.SET)) {
-					ensembleControllerActiveChanged(instance, controller, notification.getNewBooleanValue());
+					ensembleControllerActiveChanged(instance, controller, notification.getNewBooleanValue(), true);
 				}
 			}
 		};
@@ -599,7 +605,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 			componentProcessAdapters.remove(process);
 		}	
 		
-		componentProcessActiveChanged(instance, process, false);
+		componentProcessActiveChanged(instance, process, false, false);
 		
 		cir.getProcessTasks().remove(process);		
 	}
@@ -642,7 +648,7 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 			ensembleControllerAdapters.remove(controller);
 		}	
 		
-		ensembleControllerActiveChanged(instance, controller, false);
+		ensembleControllerActiveChanged(instance, controller, false, false);
 		
 		cir.getEnsembleTasks().remove(controller);	
 	}
@@ -656,12 +662,17 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 	 * <p>
 	 * Logs errors but does not throw any exceptions.
 	 * </p>
+	 * @param instance
+	 * @param process
+	 * @param active
+	 * @param hibernateMode whether to hibernate/dehibernate or remove/add the process from the scheduler 
 	 * 
 	 * @see Scheduler#addTask(Task)
-	 * @see Scheduler#removeTask(Task) 
-	 * 
+ 	 * @see Scheduler#removeTask(Task)
+	 * @see Scheduler#hibernateTask(Task) 
+	 * @see Scheduler#deHibernateTask(Task)
 	 */
-	void componentProcessActiveChanged(ComponentInstance instance, ComponentProcess process, boolean active) {		
+	void componentProcessActiveChanged(ComponentInstance instance, ComponentProcess process, boolean active, boolean hibernateMode) {		
 		if (process == null) {
 			Log.w("Attempting to to change the activity of a null process.");
 			return;
@@ -677,11 +688,19 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 		Task t = componentRecords.get(instance).getProcessTasks().get(process);
 		
 		Log.d(String.format("Changing the activity of task %s corresponding to process %s to %s.", t, process, active));
-		
+
 		if (active) {
-			scheduler.addTask(t);
+			if (hibernateMode) {
+				scheduler.deHibernateTask(t);
+			} else {
+				scheduler.addTask(t);
+			}
 		} else {
-			scheduler.removeTask(t);
+			if (hibernateMode) {
+				scheduler.hibernateTask(t);
+			} else {
+				scheduler.removeTask(t);
+			}
 		}
 	}
 
@@ -694,12 +713,17 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 	 * <p>
 	 * Logs errors but does not throw any exceptions.
 	 * </p>
-	 * @param instance 
+	 * @param instance
+	 * @param controller
+	 * @param active
+	 * @param hibernateMode whether to hibernate/dehibernate or remove/add the process from the scheduler 
 	 * 
 	 * @see Scheduler#addTask(Task)
-	 * @see Scheduler#removeTask(Task) 
+ 	 * @see Scheduler#removeTask(Task)
+	 * @see Scheduler#hibernateTask(Task)
+ 	 * @see Scheduler#deHibernateTask(Task) 
 	 */
-	void ensembleControllerActiveChanged(ComponentInstance instance, EnsembleController controller, boolean active) {
+	void ensembleControllerActiveChanged(ComponentInstance instance, EnsembleController controller, boolean active, boolean hibernateMode) {
 		if (controller == null) {
 			Log.w("Attempting to to change the activity of a null ensemble controller.");
 			return;
@@ -717,9 +741,17 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 		Log.i(String.format("Changing the activity of ensemble task %s corresponding to ensemble definition %s to %s.", t, controller.getEnsembleDefinition(), active));
 		
 		if (active) {
-			scheduler.addTask(t);
+			if (hibernateMode) {
+				scheduler.deHibernateTask(t);
+			} else {
+				scheduler.addTask(t);				
+			}
 		} else {
-			scheduler.removeTask(t);
+			if (hibernateMode) {
+				scheduler.hibernateTask(t);				
+			} else {
+				scheduler.removeTask(t);
+			}
 		}		
 	}
 	

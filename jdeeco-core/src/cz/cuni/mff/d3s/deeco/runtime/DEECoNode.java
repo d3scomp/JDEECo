@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -17,10 +18,12 @@ import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerFactory;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleDefinition;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
+import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogWriters;
 import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
 import cz.cuni.mff.d3s.deeco.scheduler.SingleThreadedScheduler;
@@ -64,9 +67,19 @@ public class DEECoNode implements DEECoContainer {
 	KnowledgeManagerFactory knowledgeManagerFactory;
 	
 	/**
-	 * Contains the initialized plugins for this deeco object.
+	 * Contains the initialized plugins for this DEECo object.
 	 */
 	Set<DEECoPlugin> pluginsSet;
+	
+	/**
+	 * Contains node shutdown handlers
+	 */
+	List<DEECoContainer.ShutdownListener> shutdownListeners = new LinkedList<>();
+	
+	/**
+	 * Contains node start handlers
+	 */
+	List<DEECoContainer.StartupListener> startupListeners = new LinkedList<>();
 	
 	/**
 	 * Creates new instance of {@link DEECoNode}.
@@ -79,67 +92,62 @@ public class DEECoNode implements DEECoContainer {
 		this(id, timer, new CloningKnowledgeManagerFactory(), plugins);
 	}
 	
+	public DEECoNode(int id, Timer timer, String logPath, DEECoPlugin... plugins) throws DEECoException {
+		this(id, timer, new CloningKnowledgeManagerFactory(), plugins);
+	}
+	
 	public DEECoNode(int id, Timer timer, KnowledgeManagerFactory factory, DEECoPlugin... plugins) throws DEECoException {
 		this.nodeId = id;
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		knowledgeManagerFactory = factory;
 		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, knowledgeManagerFactory);
-		runtimeLogger = new RuntimeLogger();
 		
-		initializeRuntime(timer);
-		initializeRuntimeLogger(timer);
+		initializeRuntime(timer, null);
 		initializePlugins(plugins);
 	}
 	
+	public DEECoNode(int id, Timer timer, KnowledgeManagerFactory factory, RuntimeLogWriters runtimeLogWriters, DEECoPlugin... plugins) throws DEECoException {
+		this.nodeId = id;
+		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
+		knowledgeManagerFactory = factory;
+		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, knowledgeManagerFactory);
+				
+		initializeRuntime(timer, runtimeLogWriters);
+		initializePlugins(plugins);
+	}
 
 	/**
 	 * Creates new instance of {@link DEECoNode} with the specified instance of {@link RuntimeLogger}.
 	 * Make sure that the {@link RuntimeLogger#init} method is called after this constructor returns.
 	 * @param timer is the {@link Timer} that will be used in the created {@link DEECoNode} instance.
-	 * @param runtimeLogger is the {@link RuntimeLogger} specifically provided for the instance
-	 * of {@link DEECoNode} being created. Make sure that the {@link RuntimeLogger#init}
-	 * method is called after this constructor returns.
+	 * @param runtimeLogWriters is the {@link RuntimeLogWriters} specifically provided for the instance
+	 * of {@link DEECoNode} being created.
 	 * @param plugins are the plugins that will be loaded into the {@link DEECoNode} instance.
 	 * @throws DEECoException Thrown if the construction of {@link DEECoNode} fails. In such case
 	 * please see the error output and log file for further information about the failure.
 	 */
-	public DEECoNode(int id, Timer timer, RuntimeLogger runtimeLogger, DEECoPlugin... plugins) throws DEECoException {
+	public DEECoNode(int id, Timer timer, RuntimeLogWriters runtimeLogWriters, DEECoPlugin... plugins) throws DEECoException {
 		this.nodeId = id;
 		model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 		knowledgeManagerFactory = new CloningKnowledgeManagerFactory();
 		processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, knowledgeManagerFactory);
 		
-		initializeRuntime(timer);
-		this.runtimeLogger = runtimeLogger;
+		initializeRuntime(timer, runtimeLogWriters);		
 		initializePlugins(plugins);
 	}
 	
 	/**
 	 * Internal constructor with dependency injection for testing purposes. 
 	 */
-	DEECoNode(int id, Timer timer, RuntimeMetadata model, KnowledgeManagerFactory factory, AnnotationProcessor processor, DEECoPlugin... plugins) throws DEECoException {
+	DEECoNode(int id, Timer timer, RuntimeMetadata model,
+			KnowledgeManagerFactory factory, AnnotationProcessor processor,
+			RuntimeLogWriters runtimeLogWriters, DEECoPlugin... plugins) throws DEECoException {
 		this.nodeId = id;
 		this.model = model;
 		this.knowledgeManagerFactory = factory;
 		this.processor = processor;
 
-		initializeRuntime(timer);
-		initializeRuntimeLogger(timer);
-		initializePlugins(plugins);
-	}
-	
-	/**
-	 * Internal constructor with dependency injection for testing purposes. 
-	 * Make sure that the {@link RuntimeLogger#init} method is called after this constructor returns.
-	 */
-	DEECoNode(int id, Timer timer, RuntimeMetadata model, KnowledgeManagerFactory factory, AnnotationProcessor processor, RuntimeLogger runtimeLogger, DEECoPlugin... plugins) throws DEECoException {
-		this.nodeId = id;
-		this.model = model;
-		this.knowledgeManagerFactory = factory;
-		this.processor = processor;
-
-		initializeRuntime(timer);
-		this.runtimeLogger = runtimeLogger;
+		initializeRuntime(timer, runtimeLogWriters);
 		initializePlugins(plugins);
 	}
 	
@@ -150,30 +158,46 @@ public class DEECoNode implements DEECoContainer {
 	 * @throws DEECoException Thrown if the construction of {@link DEECoNode} fails. In such case
 	 * please see the error output and log file for further information about the failure.
 	 */
-	private void initializeRuntime(Timer timer) throws DEECoException {
+	private void initializeRuntime(Timer timer, RuntimeLogWriters writers) throws DEECoException {
 		Executor executor = new SameThreadExecutor();
 		Scheduler scheduler = new SingleThreadedScheduler(executor, timer, this);
+		try {
+			if(writers != null){
+				runtimeLogger = new RuntimeLogger(timer, scheduler, writers);
+			} else {
+				runtimeLogger = new RuntimeLogger(timer, scheduler);
+			}
+		} catch (IOException e) {
+			throw new DEECoException(e);
+		}
 		KnowledgeManagerContainer kmContainer = new KnowledgeManagerContainer(knowledgeManagerFactory, model);
 		scheduler.setExecutor(executor);
 		executor.setExecutionListener(scheduler);
-		runtime = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, null);
+		runtime = new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, runtimeLogger, null);
 		runtime.init(this);
+		timer.addStartupListener(new Timer.StartupListener() {
+			@Override
+			public void onStartup() {
+				startupPlugins();
+			}
+		});
+		timer.addShutdownListener(new Timer.ShutdownListener() {
+			@Override
+			public void onShutdown() {
+				shutdownPlugins();
+			}
+		});
 	}
 	
 	/**
-	 * Initialize the {@link RuntimeLogger} contained in the instance of {@link DEECoNode}.
-	 * @param timer is the {@link Timer} that will be used by the {@link RuntimeLogger}
-	 * specific to the instance of {@link DEECoNode}. 
-	 * @throws DEECoException Thrown if the construction of {@link DEECoNode} fails. In such case
-	 * please see the error output and log file for further information about the failure.
+	 * After the simulation finish the {@link RuntimeLogger} needs to be closed.
 	 */
-	private void initializeRuntimeLogger(Timer timer) throws DEECoException {
-
+	public void finalize(){
 		try {
-			runtimeLogger = new RuntimeLogger();
-			runtimeLogger.init(timer, runtime.getScheduler());
+			runtimeLogger.close();
 		} catch (IOException e) {
-			throw new DEECoException(e);
+			Log.e("Unable to close Runtime logger.");
+			e.printStackTrace();
 		}
 	}
 
@@ -183,7 +207,7 @@ public class DEECoNode implements DEECoContainer {
 	 * @throws DEECoException Thrown if the construction of {@link DEECoNode} fails. In such case
 	 * please see the error output and log file for further information about the failure.
 	 */
-	void initializePlugins(DEECoPlugin[] plugins) throws PluginDependencyException {
+	void initializePlugins(DEECoPlugin[] plugins) throws PluginDependencyException, PluginInitFailedException {
 		pluginsSet = new HashSet<>();
 		
 		List<DependencyNode> nodes = constructDependencyNodes(plugins);
@@ -211,6 +235,28 @@ public class DEECoNode implements DEECoContainer {
 				throw new CycleDetectedException();
 			}
 		}	
+	}
+	
+	/**
+	 * Shutdowns all plugins once simulation is over
+	 */
+	private void shutdownPlugins() {
+		for(ShutdownListener listener: shutdownListeners) {
+			listener.onShutdown();
+		}
+	}
+	
+	/**
+	 * Startup all plugins before simulation starts
+	 */
+	private void startupPlugins() {
+		for(StartupListener listener: startupListeners) {
+			try {
+				listener.onStartup();
+			} catch (PluginStartupFailedException e) {
+				throw new DEECoRuntimeException("Plugin startup listener failed with exception", e);	
+			}
+		}
 	}
 	
 	@Override
@@ -327,5 +373,15 @@ public class DEECoNode implements DEECoContainer {
 		}
 		
 		return dependencyNodes;
-	}		
+	}
+
+	@Override
+	public void addShutdownListener(ShutdownListener listener) {
+		shutdownListeners.add(listener);
+	}
+
+	@Override
+	public void addStartupListener(StartupListener listener) {
+		startupListeners.add(listener);
+	}
 }

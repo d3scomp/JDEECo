@@ -14,12 +14,14 @@ public interface OMNeTNativeListener {
 	 *            Simulation time in seconds
 	 */
 	public void at(double absoluteTime);
-	
+
 	/**
-	 * Called when packet is received from network  
+	 * Called when packet is received from network
 	 * 
-	 * @param packet Packet data
-	 * @param rssi Packet rssi
+	 * @param packet
+	 *            Packet data
+	 * @param rssi
+	 *            Packet rssi
 	 */
-	public void packetReceived(byte[] packet, double rssi);
+	public void packetReceived(byte[] packet, double rssi, int sender);
 }

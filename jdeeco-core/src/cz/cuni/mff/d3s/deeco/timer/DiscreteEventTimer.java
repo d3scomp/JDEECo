@@ -7,14 +7,24 @@ import java.util.Queue;
 
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 
-public class DiscreteEventTimer implements SimulationTimer {
+public class DiscreteEventTimer extends BaseTimer implements SimulationTimer {
 
+	private static final String TERMINATION_EVENT_NAME = "termination_event";
+	
 	Queue<EventTime> eventTimes;
 	Map<DEECoContainer, EventTime> containerEvents;
 	long currentTime;
 
 	public DiscreteEventTimer() {
-		currentTime = 0;
+		this(0);
+	}
+	
+	/**
+	 * Create new {@link DiscreteEventTimer} with defined time to start from.
+	 * @param startTime The time from which the timer starts.
+	 */
+	public DiscreteEventTimer(long startTime) {
+		currentTime = startTime;
 		eventTimes = new PriorityQueue<>();
 		containerEvents = new HashMap<>();
 	}
@@ -26,19 +36,22 @@ public class DiscreteEventTimer implements SimulationTimer {
 
 	@Override
 	public void start(long duration) {
+		runStartupListeners();
 
 		eventTimes.add(new EventTime(duration, new TimerEventListener() {
 			@Override
 			public void at(long time) {
 				// termination time reached, do nothing
 			}
-		}, true));
+		}, TERMINATION_EVENT_NAME, true));
 
 		while (!tryToTerminate()) {
 			EventTime eventTime = eventTimes.remove();
 			currentTime = eventTime.getTimePoint();
 			eventTime.getListener().at(currentTime);
 		}
+		
+		runShutdownListeners();
 	}
 
 	/**
@@ -47,8 +60,8 @@ public class DiscreteEventTimer implements SimulationTimer {
 	 * NOTE: Only one event per container is registered
 	 */
 	@Override
-	public void notifyAt(long time, TimerEventListener listener, DEECoContainer container) {
-		EventTime eventTime = new EventTime(time, listener, false);
+	public void notifyAt(long time, TimerEventListener listener, String eventName, DEECoContainer container) {
+		EventTime eventTime = new EventTime(time, listener, eventName, false);
 		if (!eventTimes.contains(eventTime)) {
 			// Replace old event for container by the new one
 			eventTimes.add(eventTime);
@@ -58,6 +71,12 @@ public class DiscreteEventTimer implements SimulationTimer {
 			}
 			containerEvents.put(container, eventTime);
 		}
+	}
+
+	@Override
+	public void interruptionEvent(TimerEventListener listener, String eventName, DEECoContainer container){
+		throw new UnsupportedOperationException();
+		// If you are about to implement this method remember to use synchronization
 	}
 
 	boolean tryToTerminate() {

@@ -28,6 +28,10 @@ public abstract class AnnotationProcessorExtensionPoint {
 	public void onComponentInstanceCreation(ComponentInstance componentInstance, List<Annotation> unknownAnnotations) {
 		
 	}
+	
+	public void onComponentKnowledgeCreation(String fieldName, List<Annotation> unknownAnnotations) {
+		
+	}
 
 	public void onComponentProcessCreation(ComponentProcess componentProcess, List<Annotation> unknownAnnotations) {
 		
@@ -42,6 +46,10 @@ public abstract class AnnotationProcessorExtensionPoint {
 	}
 
 	public void onComponentInstanceCreation(ComponentInstance componentInstance, Annotation unknownAnnotation) {
+		
+	}
+	
+	public void onComponentKnowledgeCreation(String fieldName, Annotation unknownAnnotation) {
 		
 	}
 
