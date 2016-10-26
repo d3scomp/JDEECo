@@ -54,7 +54,7 @@
  		<repository>
 			<id>d3s</id>
 			<name>D3S maven repository</name>
-			<url>https://gitlab.d3s.mff.cuni.cz:8443/nexus/content/repositories/releases</url>
+			<url>https://gitlab.d3s.mff.cuni.cz:8443/repository/releases</url>
 		</repository>
 	</distributionManagement>
 </project>
