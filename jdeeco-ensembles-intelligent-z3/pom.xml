@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3</groupId>
   <artifactId>cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3</artifactId>
-  <version>3.0.2</version>
+  <version>3.0.3</version>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <testSourceDirectory>test</testSourceDirectory>
