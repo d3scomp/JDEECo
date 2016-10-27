@@ -11,6 +11,7 @@ import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 
+import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFactory;
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.integrity.RatingsManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ChangeSet;
@@ -39,6 +40,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
+import cz.cuni.mff.d3s.deeco.task.EnsembleFormationTask;
 import cz.cuni.mff.d3s.deeco.task.EnsembleTask;
 import cz.cuni.mff.d3s.deeco.task.ProcessTask;
 import cz.cuni.mff.d3s.deeco.task.Task;
@@ -144,6 +146,11 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 	 * The {@link DEECoContainer} that contains the instance of {@link RuntimeFramework}.
 	 */
 	protected DEECoContainer deecoContainer;
+	
+	/**
+	 * Keeps track of all {@link EnsembleFactory} implementors registered in the runtime. 
+	 */
+	protected List<EnsembleFactory> registeredEnsembleFactories = new ArrayList<EnsembleFactory>();
 
 	/**
 	 * Initializes the runtime with the given internal services and prepares the
@@ -275,6 +282,12 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 		for (final EnsembleController ec: instance.getEnsembleControllers()) {
 			ensembleControllerAdded(instance, ec);
 		}
+		
+		for (EnsembleFactory factory : registeredEnsembleFactories) {
+			EnsembleFormationTask formationTask = new EnsembleFormationTask(scheduler, factory, instance);
+			ciRecord.getEnsembleFormationTasks().add(formationTask);
+			scheduler.addTask(formationTask);
+		}
 						
 		// listen to ADD/REMOVE in ComponentInstance.getComponentProcesses()
 		Adapter componentProcessAdapter = new AdapterImpl() {
@@ -314,6 +327,27 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 		instance.eAdapters().add(ensembleControllerAdapter);	
 		componentInstanceAdapters.put(instance, ensembleControllerAdapter);
 		
+	}	
+	
+	/**
+	 * Registers the provided factory with this runtime instance. An {@link EnsembleFormationTask} is immediately created 
+	 * for each existing component and associated with it. The factory is stored in the runtime, and an additional task
+	 * is created whenever a new component is added.
+	 */
+	@Override
+	public void registerEnsembleFactory(EnsembleFactory factory) {
+		if (factory == null)
+			throw new IllegalArgumentException("Attempted to pass a null factory argument.");
+		if (registeredEnsembleFactories.contains(factory))
+			throw new IllegalStateException("Cannot register the same factory object twice");
+		
+		for(ComponentInstance instance : componentRecords.keySet()) {
+			EnsembleFormationTask newTask = new EnsembleFormationTask(scheduler, factory, instance);
+			componentRecords.get(instance).getEnsembleFormationTasks().add(newTask);
+			scheduler.addTask(newTask);
+		}		
+		
+		registeredEnsembleFactories.add(factory);
 	}
 	
 	/** 
@@ -513,6 +547,10 @@ public class RuntimeFrameworkImpl implements RuntimeFramework, ReplicaListener {
 		for (Task t: ciRecord.getEnsembleTasks().values()) {
 			scheduler.removeTask(t);
 		}
+		
+		for (EnsembleFormationTask formationTask : ciRecord.getEnsembleFormationTasks()) {
+			scheduler.removeTask(formationTask);
+		}		
 		
 		componentRecords.remove(instance);
 		

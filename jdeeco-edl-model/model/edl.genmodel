@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/cz.cuni.mff.d3s.jdeeco.edl.model/src" modelPluginID="cz.cuni.mff.d3s.jdeeco.edl.model"
+    modelName="Edl" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="8.0" copyrightFields="false"
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>edl.ecore</foreignModel>
+  <genPackages prefix="Edl" basePackage="cz.cuni.mff.d3s.jdeeco.edl.model" disposableProviderFactory="true"
+      ecorePackage="edl.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="edl.ecore#//BoolOperatorType">
+      <genEnumLiterals ecoreEnumLiteral="edl.ecore#//BoolOperatorType/And"/>
+      <genEnumLiterals ecoreEnumLiteral="edl.ecore#//BoolOperatorType/Or"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="edl.ecore#//BinaryOperatorType">
+      <genEnumLiterals ecoreEnumLiteral="edl.ecore#//BinaryOperatorType/Addition"/>
+      <genEnumLiterals ecoreEnumLiteral="edl.ecore#//BinaryOperatorType/Subtraction"/>
+      <genEnumLiterals ecoreEnumLiteral="edl.ecore#//BinaryOperatorType/Multiplication"/>
+      <genEnumLiterals ecoreEnumLiteral="edl.ecore#//BinaryOperatorType/Division"/>
+    </genEnums>
+    <genClasses ecoreClass="edl.ecore#//EdlDocument">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference edl.ecore#//EdlDocument/ensembles"/>
+    </genClasses>
+    <genClasses ecoreClass="edl.ecore#//EnsembleDefinition">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute edl.ecore#//EnsembleDefinition/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference edl.ecore#//EnsembleDefinition/roles"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference edl.ecore#//EnsembleDefinition/aliases"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference edl.ecore#//EnsembleDefinition/constraints"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference edl.ecore#//EnsembleDefinition/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute edl.ecore#//EnsembleDefinition/parentEnsemble"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference edl.ecore#//EnsembleDefinition/childEnsembles"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference edl.ecore#//EnsembleDefinition/exchangeRules"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference edl.ecore#//EnsembleDefinition/fitness"/>
+    </genClasses>
+    <genClasses ecoreClass="edl.ecore#//RoleDefinition">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute edl.ecore#//RoleDefinition/exclusive"/>
+    </genClasses>
+    <genClasses ecoreClass="edl.ecore#//AliasDefinition">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute edl.ecore#//AliasDefinition/aliasId"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference edl.ecore#//AliasDefinition/aliasValue"/>
+    </genClasses>
+    <genClasses ecoreClass="edl.ecore#//IdDefinition">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute edl.ecore#//IdDefinition/isAssigned"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute edl.ecore#//IdDefinition/fieldName"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference edl.ecore#//IdDefinition/value"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference edl.ecore#//IdDefinition/type"/>
+    </genClasses>
+    <genClasses ecoreClass="edl.ecore#//ChildDefinition">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute edl.ecore#//ChildDefinition/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute edl.ecore#//ChildDefinition/cardinalityMax"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute edl.ecore#//ChildDefinition/cardinalityMin"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference edl.ecore#//ChildDefinition/type"/>
+    </genClasses>
+    <genClasses ecoreClass="edl.ecore#//ExchangeRule">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference edl.ecore#//ExchangeRule/field"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference edl.ecore#//ExchangeRule/query"/>
+    </genClasses>
+    <genClasses ecoreClass="edl.ecore#//QualifiedName">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute edl.ecore#//QualifiedName/prefix"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute edl.ecore#//QualifiedName/name"/>
+    </genClasses>
+    <genClasses ecoreClass="edl.ecore#//FunctionCall">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute edl.ecore#//FunctionCall/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference edl.ecore#//FunctionCall/parameters"/>
+    </genClasses>
+    <genClasses ecoreClass="edl.ecore#//KnowledgeVariable">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference edl.ecore#//KnowledgeVariable/path"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="edl.ecore#//BinaryOperator">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference edl.ecore#//BinaryOperator/left"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference edl.ecore#//BinaryOperator/right"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute edl.ecore#//BinaryOperator/operatorType"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="edl.ecore#//Query"/>
+    <genClasses ecoreClass="edl.ecore#//NumericLiteral">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute edl.ecore#//NumericLiteral/value"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="edl.ecore#//EquitableQuery"/>
+    <genClasses ecoreClass="edl.ecore#//BoolLiteral">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute edl.ecore#//BoolLiteral/value"/>
+    </genClasses>
+    <genClasses ecoreClass="edl.ecore#//RelationOperator">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference edl.ecore#//RelationOperator/left"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference edl.ecore#//RelationOperator/right"/>
+    </genClasses>
+    <genClasses ecoreClass="edl.ecore#//LogicalOperator">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference edl.ecore#//LogicalOperator/left"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference edl.ecore#//LogicalOperator/right"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute edl.ecore#//LogicalOperator/type"/>
+    </genClasses>
+    <genClasses ecoreClass="edl.ecore#//Negation">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference edl.ecore#//Negation/nested"/>
+    </genClasses>
+    <genClasses ecoreClass="edl.ecore#//StringLiteral">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute edl.ecore#//StringLiteral/value"/>
+    </genClasses>
+    <genClasses ecoreClass="edl.ecore#//FloatLiteral">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute edl.ecore#//FloatLiteral/value"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="edl.ecore#//ComparableQuery"/>
+    <genClasses ecoreClass="edl.ecore#//AdditiveOperator"/>
+    <genClasses ecoreClass="edl.ecore#//MultiplicativeOperator"/>
+    <genClasses ecoreClass="edl.ecore#//AdditiveInverse">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference edl.ecore#//AdditiveInverse/nested"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

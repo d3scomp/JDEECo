@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="edl" nsURI="http://www.cuni.cz/mff/d3s/jdeeco/edl/EDL" nsPrefix="cz.cuni.mff.d3s.jdeeco.edl.model">
+  <eClassifiers xsi:type="ecore:EClass" name="EdlDocument">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ensembles" upperBound="-1"
+        eType="#//EnsembleDefinition" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="dataContracts" upperBound="-1"
+        eType="#//DataContractDefinition" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="package" lowerBound="1"
+        eType="#//QualifiedName" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="knowledgeTypes" upperBound="-1"
+        eType="#//TypeDefinition" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EnsembleDefinition">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="roles" lowerBound="1" upperBound="-1"
+        eType="#//RoleDefinition" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="aliases" upperBound="-1"
+        eType="#//AliasDefinition" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="constraints" upperBound="-1"
+        eType="#//EquitableQuery" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="id" lowerBound="1" eType="#//IdDefinition"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentEnsemble" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="childEnsembles" upperBound="-1"
+        eType="#//ChildDefinition" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="exchangeRules" upperBound="-1"
+        eType="#//ExchangeRule" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="fitness" eType="#//Query"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="externalKnowledgeExchange"
+        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="schedulingOffset" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="0"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="schedulingPeriod" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="1000"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="RoleDefinition" eSuperTypes="#//ChildDefinition">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="exclusive" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean" defaultValueLiteral="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="whereFilter" eType="#//EquitableQuery"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AliasDefinition">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="aliasId" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="aliasValue" lowerBound="1"
+        eType="#//Query" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IdDefinition">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isAssigned" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fieldName" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//Query"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1" eType="#//QualifiedName"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ChildDefinition">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cardinalityMax" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="1"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cardinalityMin" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="1"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1" eType="#//QualifiedName"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ExchangeRule">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="field" lowerBound="1" eType="#//QualifiedName"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="query" lowerBound="1" eType="#//Query"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="QualifiedName">
+    <eOperations name="toString" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eOperations name="toParts" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="prefix" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FunctionCall" eSuperTypes="#//ComparableQuery">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
+        eType="#//Query" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="KnowledgeVariable" eSuperTypes="#//ComparableQuery">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="path" lowerBound="1" eType="#//QualifiedName"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BinaryOperator" abstract="true" eSuperTypes="#//ComparableQuery">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="left" lowerBound="1" eType="#//Query"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="right" lowerBound="1" eType="#//Query"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="operatorType" eType="#//BinaryOperatorType"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Query" abstract="true" interface="true">
+    <eOperations name="accept">
+      <eGenericType eTypeParameter="#//Query/accept/T"/>
+      <eTypeParameters name="T"/>
+      <eParameters name="visitor">
+        <eGenericType eClassifier="#//QueryVisitor">
+          <eTypeArguments eTypeParameter="#//Query/accept/T"/>
+        </eGenericType>
+      </eParameters>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NumericLiteral" eSuperTypes="#//ComparableQuery">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EquitableQuery" abstract="true" interface="true"
+      eSuperTypes="#//Query"/>
+  <eClassifiers xsi:type="ecore:EClass" name="BoolLiteral" eSuperTypes="#//EquitableQuery">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="RelationOperator" eSuperTypes="#//EquitableQuery">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="left" lowerBound="1" eType="#//EquitableQuery"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="right" lowerBound="1" eType="#//EquitableQuery"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1" eType="#//RelationOperatorType"
+        defaultValueLiteral="=="/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LogicalOperator" eSuperTypes="#//EquitableQuery">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="left" lowerBound="1" eType="#//EquitableQuery"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="right" lowerBound="1" eType="#//EquitableQuery"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1" eType="#//BoolOperatorType"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="BoolOperatorType">
+    <eLiterals name="And" literal="&amp;&amp;"/>
+    <eLiterals name="Or" value="1" literal="||"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Negation" eSuperTypes="#//EquitableQuery">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nested" lowerBound="1"
+        eType="#//EquitableQuery" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StringLiteral" eSuperTypes="#//EquitableQuery">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FloatLiteral" eSuperTypes="#//ComparableQuery">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ComparableQuery" abstract="true" interface="true"
+      eSuperTypes="#//EquitableQuery"/>
+  <eClassifiers xsi:type="ecore:EClass" name="AdditiveOperator" eSuperTypes="#//BinaryOperator"/>
+  <eClassifiers xsi:type="ecore:EClass" name="MultiplicativeOperator" eSuperTypes="#//BinaryOperator"/>
+  <eClassifiers xsi:type="ecore:EClass" name="AdditiveInverse" eSuperTypes="#//ComparableQuery">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nested" lowerBound="1"
+        eType="#//Query" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="BinaryOperatorType">
+    <eLiterals name="Addition" literal="+"/>
+    <eLiterals name="Subtraction" value="1" literal="-"/>
+    <eLiterals name="Multiplication" value="2" literal="*"/>
+    <eLiterals name="Division" value="3" literal="/"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="RelationOperatorType">
+    <eLiterals name="Equality" literal="=="/>
+    <eLiterals name="NonEquality" value="1" literal="!="/>
+    <eLiterals name="GreaterThan" value="2" literal=">"/>
+    <eLiterals name="LessThan" value="3" literal="&lt;"/>
+    <eLiterals name="GreaterOrEqual" value="4" literal=">="/>
+    <eLiterals name="LessOrEqual" value="5" literal="&lt;="/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DataContractDefinition" eSuperTypes="#//TypeDefinition"/>
+  <eClassifiers xsi:type="ecore:EClass" name="FieldDeclaration">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1" eType="#//QualifiedName"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TypeDefinition">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="fields" upperBound="-1"
+        eType="#//FieldDeclaration" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="QueryVisitor" abstract="true">
+    <eTypeParameters name="T"/>
+    <eOperations name="visit">
+      <eGenericType eTypeParameter="#//QueryVisitor/T"/>
+      <eParameters name="query" eType="#//AdditiveInverse"/>
+    </eOperations>
+    <eOperations name="visit">
+      <eGenericType eTypeParameter="#//QueryVisitor/T"/>
+      <eParameters name="query" eType="#//BinaryOperator"/>
+    </eOperations>
+    <eOperations name="visit">
+      <eGenericType eTypeParameter="#//QueryVisitor/T"/>
+      <eParameters name="query" eType="#//BoolLiteral"/>
+    </eOperations>
+    <eOperations name="visit">
+      <eGenericType eTypeParameter="#//QueryVisitor/T"/>
+      <eParameters name="query" eType="#//FloatLiteral"/>
+    </eOperations>
+    <eOperations name="visit">
+      <eGenericType eTypeParameter="#//QueryVisitor/T"/>
+      <eParameters name="query" eType="#//FunctionCall"/>
+    </eOperations>
+    <eOperations name="visit">
+      <eGenericType eTypeParameter="#//QueryVisitor/T"/>
+      <eParameters name="query" eType="#//KnowledgeVariable"/>
+    </eOperations>
+    <eOperations name="visit">
+      <eGenericType eTypeParameter="#//QueryVisitor/T"/>
+      <eParameters name="query" eType="#//LogicalOperator"/>
+    </eOperations>
+    <eOperations name="visit">
+      <eGenericType eTypeParameter="#//QueryVisitor/T"/>
+      <eParameters name="query" eType="#//Negation"/>
+    </eOperations>
+    <eOperations name="visit">
+      <eGenericType eTypeParameter="#//QueryVisitor/T"/>
+      <eParameters name="query" eType="#//NumericLiteral"/>
+    </eOperations>
+    <eOperations name="visit">
+      <eGenericType eTypeParameter="#//QueryVisitor/T"/>
+      <eParameters name="query" eType="#//RelationOperator"/>
+    </eOperations>
+    <eOperations name="visit">
+      <eGenericType eTypeParameter="#//QueryVisitor/T"/>
+      <eParameters name="query" eType="#//StringLiteral"/>
+    </eOperations>
+    <eOperations name="visit">
+      <eGenericType eTypeParameter="#//QueryVisitor/T"/>
+      <eParameters name="query" eType="#//Sum"/>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Aggregation" abstract="true" eSuperTypes="#//ComparableQuery">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="collection" lowerBound="1"
+        eType="#//QualifiedName" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Sum" eSuperTypes="#//Aggregation">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="item" lowerBound="1" eType="#//Query"
+        containment="true"/>
+  </eClassifiers>
+</ecore:EPackage>

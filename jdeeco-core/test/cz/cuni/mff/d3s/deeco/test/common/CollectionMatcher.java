@@ -1,11 +1,11 @@
-package cz.cuni.mff.d3s.deeco.knowledge.container;
+package cz.cuni.mff.d3s.deeco.test.common;
 
 import java.util.Arrays;
 import java.util.Collection;
 
 import org.mockito.ArgumentMatcher;
 
-class CollectionMatcher<T> extends ArgumentMatcher<Collection<T>> {
+public class CollectionMatcher<T> extends ArgumentMatcher<Collection<T>> {
 
 	protected Collection<T> expected;
 	

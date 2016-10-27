@@ -12,6 +12,7 @@ import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
+import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFactory;
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.executor.SameThreadExecutor;
 import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerFactory;
@@ -261,8 +262,9 @@ public class DEECoNode implements DEECoContainer {
 	@Override
 	public int getId() {
 		return nodeId;
-	}
+	}	
 	
+	@Override
 	public ComponentInstance deployComponent(Object component) throws AnnotationProcessorException {
 		return processor.processComponent(component);
 	}
@@ -270,10 +272,16 @@ public class DEECoNode implements DEECoContainer {
 	@SuppressWarnings("rawtypes")
 	public EnsembleDefinition deployEnsemble(Class ensemble) throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		return processor.processEnsemble(ensemble);
-	}
+	}	
 	
+	@Override
 	public void undeployEnsemble(String ensembleName) throws AnnotationProcessorException, DuplicateEnsembleDefinitionException {
 		processor.removeEnsemble(ensembleName);
+	}
+	
+	@Override
+	public void deployEnsembleFactory(EnsembleFactory factory) {
+		runtime.registerEnsembleFactory(factory);
 	}
 	
 	@Override

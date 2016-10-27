@@ -16,6 +16,7 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFactory;
 import cz.cuni.mff.d3s.deeco.executor.Executor;
 import cz.cuni.mff.d3s.deeco.integrity.RatingsManager;
 import cz.cuni.mff.d3s.deeco.knowledge.BaseKnowledgeManager;
@@ -34,6 +35,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.runtimelog.RuntimeLogger;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
+import cz.cuni.mff.d3s.deeco.task.EnsembleFormationTask;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
 /**
@@ -388,6 +390,84 @@ public class RuntimeFrameworkImplTest {
 		// AND no errors were printed
 		assertTrue(log.getLog().isEmpty());
 	}
+	
+	/* ************************************************************************
+	 * registerEnsembleFactory
+	 * ***********************************************************************/
+	
+	
+	@Test (expected=IllegalArgumentException.class)	
+	public void testRegisterEnsembleFactoryNullFactory() {
+		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, runtimeLogger, ratingsManager));
+		
+		tested.registerEnsembleFactory(null);
+	}
+	
+	@Test (expected=IllegalStateException.class)	
+	public void testRegisterEnsembleFactoryRepeatedCall() {
+		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, runtimeLogger, ratingsManager));
+		
+		EnsembleFactory f = mock(EnsembleFactory.class);
+		
+		tested.registerEnsembleFactory(f);
+		tested.registerEnsembleFactory(f);
+	}
+	
+	@Test
+	public void testFormationTasksAddedForExistingComponents() {
+		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, runtimeLogger, ratingsManager));
+		
+		// Add some components before registering the factory
+		tested.componentInstanceAdded((EcoreUtil.copy(component)));
+		tested.componentInstanceAdded((EcoreUtil.copy(component)));
+		
+		EnsembleFactory factory = mock(EnsembleFactory.class);		
+		
+		tested.registerEnsembleFactory(factory);
+		
+		// Verify that all recorded components have a task for this factory
+		for (ComponentInstanceRecord record : tested.componentRecords.values()) {
+			assertTrue(record.getEnsembleFormationTasks().stream().anyMatch(t -> t.getFactory().equals(factory)));			
+		}		
+	}	
+	
+	@Test
+	public void testFormationTaskAddedForNewComponent() {
+		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, runtimeLogger, ratingsManager));
+		
+		// First register a factory and then add a component
+		EnsembleFactory factory = mock(EnsembleFactory.class);
+		tested.registerEnsembleFactory(factory);
+		
+		tested.componentInstanceAdded(EcoreUtil.copy(component));
+		
+		// Verify that all recorded components have a task for this factory
+		for (ComponentInstanceRecord record : tested.componentRecords.values()) {
+			assertTrue(record.getEnsembleFormationTasks().stream().anyMatch(t -> t.getFactory().equals(factory)));			
+		}		
+	}
+	
+	@Test
+	public void testFormationTaskAdditionAndRemoval() {		
+		Scheduler scheduler = mock(Scheduler.class);	
+		RuntimeFrameworkImpl tested = spy(new RuntimeFrameworkImpl(model, scheduler, executor, kmContainer, runtimeLogger, ratingsManager));
+		
+		EnsembleFactory factory = mock(EnsembleFactory.class);
+		
+		ComponentInstance c = EcoreUtil.copy(component);
+		
+		tested.componentInstanceAdded(c);
+		tested.componentInstanceAdded(EcoreUtil.copy(component));
+		tested.registerEnsembleFactory(factory);
+		tested.componentInstanceAdded(EcoreUtil.copy(component));	
+		
+		verify(scheduler, times(3)).addTask(isA(EnsembleFormationTask.class));
+		verify(scheduler, times(0)).removeTask(any());
+		
+		tested.componentInstanceRemoved(c);
+		verify(scheduler, times(1)).removeTask(isA(EnsembleFormationTask.class));		
+	}
+	
 	
 	/* ************************************************************************
 	 * componentInstanceRemoved
