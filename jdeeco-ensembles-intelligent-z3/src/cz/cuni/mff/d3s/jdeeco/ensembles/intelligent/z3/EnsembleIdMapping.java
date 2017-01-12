@@ -62,8 +62,15 @@ class EnsembleIdMapping {
 			// The id class itself is used, use its index
 			return ctx.mkInt(localEnsembleIndex);
 		} else {
-			// TODO Infer type - might also be a Boolean
-			return ctx.mkInt((Integer)value);
+			if (value == null)
+				throw new FieldNotSetException(path.toString());
+			
+			if (field.getType().equals(Boolean.class)) {
+				return ctx.mkBool((Boolean)value);
+			} else {
+				// Must be an integer
+				return ctx.mkInt((Integer)value);
+			}
 		}
 	}
 }

@@ -46,13 +46,13 @@ class EDLGenerator implements IGenerator {
 		
 		for(TypeDefinition d : document.knowledgeTypes) {
 			generateType(d, fsa, path, packageString)
-			generateThriftType(d, fsa, path, packageString)
+			//generateThriftType(d, fsa, path, packageString)
 			dataTypes.put(d.name, d);
 		}
 		
 		for(DataContractDefinition d : document.dataContracts) {
 			generateDataContract(d, fsa, path, packageString)
-			generateThriftType(d, fsa, path, packageString)
+			//generateThriftType(d, fsa, path, packageString)
 			dataTypes.put(d.name, d);
 		}
 		

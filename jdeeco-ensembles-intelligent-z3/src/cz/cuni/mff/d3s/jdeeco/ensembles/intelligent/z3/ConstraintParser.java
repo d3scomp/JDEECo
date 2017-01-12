@@ -122,6 +122,9 @@ class ConstraintParser extends QueryVisitorImpl<Expr> {
 			paramExprs[i] = query.getParameters().get(i).accept(this);
 		}
 		
+		if (func == null)
+			throw new FunctionNotFoundException(query.getName());
+		
 		return func.generateFormula(ctx, paramExprs);
 	}
 
@@ -134,9 +137,10 @@ class ConstraintParser extends QueryVisitorImpl<Expr> {
 			if (Extensions.hasDataContractBoundId(assignmentMatrix.getEnsembleDefinition())) {
 				try {
 					return idMapping.getFieldExpression(ctx, ensembleIndex, query.getPath());
-				} catch (Exception e) {				
-					// TODO Rethrow?				
-				}
+				} catch (SecurityException | ReflectiveOperationException e) {
+					// TODO Rethrow?
+					e.printStackTrace();
+				}				
 			} else {
 				return ctx.mkInt(assignmentMatrix.getEnsembleIndex());				
 			}

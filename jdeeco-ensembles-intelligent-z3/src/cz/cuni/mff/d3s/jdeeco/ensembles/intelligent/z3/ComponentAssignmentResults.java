@@ -1,6 +1,8 @@
 package cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3;
 
 import com.microsoft.z3.Expr;
+import com.microsoft.z3.FuncDecl;
+import com.microsoft.z3.FuncInterp;
 import com.microsoft.z3.FuncInterp.Entry;
 import com.microsoft.z3.Model;
 import com.microsoft.z3.enumerations.Z3_lbool;
@@ -11,8 +13,17 @@ class ComponentAssignmentResults {
 	int length;
 	
 	public ComponentAssignmentResults(Model m, ComponentAssignmentSet assignments) {
-		entries = m.getFuncInterp(assignments.getAssignedSet().getFuncDecl()).getEntries();
 		length = assignments.getLength();
+		
+		FuncDecl decl = assignments.getAssignedSet().getFuncDecl();
+		FuncInterp interp = m.getFuncInterp(decl);
+		
+		// TODO: Check whether this is indeed the best behavior we can offer
+		if (interp == null || length == 0) {
+			entries = new Entry[0];
+		} else {
+			entries = m.getFuncInterp(decl).getEntries();
+		}
 	}
 	
 	public int getLength() {
