@@ -20,8 +20,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metric.DifferenceMetric;
-import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metric.Metric;
+import cz.cuni.mff.d3s.metaadaptation.correlation.metric.DifferenceMetric;
+import cz.cuni.mff.d3s.metaadaptation.correlation.metric.Metric;
 
 /**
  * Used to mark a knowledge field to be considered in correlation process.

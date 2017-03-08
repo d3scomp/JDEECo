@@ -19,8 +19,8 @@ import java.lang.annotation.Annotation;
 
 import cz.cuni.mff.d3s.deeco.annotations.CorrelationData;
 import cz.cuni.mff.d3s.deeco.logging.Log;
-import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.KnowledgeMetadataHolder;
-import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metric.Metric;
+import cz.cuni.mff.d3s.metaadaptation.correlation.KnowledgeMetadataHolder;
+import cz.cuni.mff.d3s.metaadaptation.correlation.metric.Metric;
 
 /**
  * Processes the annotations related to the correlation plugin.

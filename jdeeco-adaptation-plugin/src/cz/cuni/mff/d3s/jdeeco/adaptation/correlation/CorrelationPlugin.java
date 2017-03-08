@@ -1,16 +1,15 @@
 package cz.cuni.mff.d3s.jdeeco.adaptation.correlation;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorExtensionPoint;
 import cz.cuni.mff.d3s.deeco.annotations.processor.CorrelationAwareAnnotationProcessorExtension;
-import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
-import cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException;
 import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationPlugin;
 
 /**
@@ -80,6 +79,14 @@ public class CorrelationPlugin implements DEECoPlugin {
 	public void init(DEECoContainer container) {
 		AnnotationProcessorExtensionPoint correlationAwareAnnotationProcessorExtension = new CorrelationAwareAnnotationProcessorExtension();
 		container.getProcessor().addExtension(correlationAwareAnnotationProcessorExtension);
+		
+		List<ComponentImpl> components = new ArrayList<>();
+		for(DEECoNode node : deecoNodes){
+			for(ComponentInstance c : node.getRuntimeMetadata().getComponentInstances()){
+				c.getName()
+			}
+			components.add(new ComponentImpl(node.));
+		}
 		
 		try {
 			final CorrelationManager manager = new CorrelationManager(deecoNodes);

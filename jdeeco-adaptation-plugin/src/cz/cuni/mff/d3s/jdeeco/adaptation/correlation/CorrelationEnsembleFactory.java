@@ -1,9 +1,7 @@
 package cz.cuni.mff.d3s.jdeeco.adaptation.correlation;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
 import cz.cuni.mff.d3s.deeco.annotations.In;
@@ -12,9 +10,10 @@ import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
-import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationLevel;
-import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper;
-import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.KnowledgeMetadataHolder;
+import cz.cuni.mff.d3s.metaadaptation.correlation.CorrelationLevel;
+import cz.cuni.mff.d3s.metaadaptation.correlation.CorrelationMetadataWrapper;
+import cz.cuni.mff.d3s.metaadaptation.correlation.EnsembleFactoryHelper;
+import cz.cuni.mff.d3s.metaadaptation.correlation.KnowledgeMetadataHolder;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
@@ -36,9 +35,7 @@ import javassist.bytecode.annotation.StringMemberValue;
  *
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  */
-@Ensemble
-@PeriodicScheduling(period = 1000)
-public class CorrelationEnsembleFactory {
+public class CorrelationEnsembleFactory implements cz.cuni.mff.d3s.metaadaptation.correlation.EnsembleFactory {
 
 	/**
 	 * The output directory for generated classes.
@@ -46,44 +43,19 @@ public class CorrelationEnsembleFactory {
 	static final String CLASS_DIRECTORY = "target/correlation-classes" + System.currentTimeMillis();
 	
 	/**
-	 * Once a new class is created it is stored here ready for further retrieval.
-	 */
-	private static Map<String, Class<?>> bufferedClasses = new HashMap<>();
-
-	/**
 	 * The period at which the ensemble is planned.
 	 */
 	private static final long schedulingPeriod = 250;
-
-	/**
-	 * Provides the ensemble definition for the knowledge fields of given name.
-	 * The correlation of knowledge denoted by correlationSubject depends on the
-	 * data filtering by the knowledge denoted by correlationFilter.
-	 * @param correlationFilter Name of the knowledge field used for data filtering when calculating correlation.
-	 * 		In our example this refers to "position".
-	 * @param correlationSubject Name of the knowledge field used for the calculation of data correlation after
-	 * 		the values has been filtered. In our example this refers to "temperature".
-	 * @param enableLogging Specifies whether the generated ensemble will be logged in the runtime log.
-	 * @return A class that defines an ensemble for data exchange given by the specified knowledge fields.
-	 * @throws Exception If there is a problem creating the ensemble class.
-	 */
-	public static Class<?> getEnsembleDefinition(String correlationFilter, String correlationSubject, boolean enableLogging) throws Exception {
-		String className = composeClassName(correlationFilter, correlationSubject);
-		Class<?> requestedClass;
-		if(!bufferedClasses.containsKey(className)){
-			requestedClass = createEnsembleDefinition(correlationFilter, correlationSubject, enableLogging);
-			bufferedClasses.put(className, requestedClass);
-		}
-		else {
-			requestedClass = bufferedClasses.get(className);
-		}
-
-		return requestedClass;
+	
+	private final EnsembleFactoryHelper ensembleFactoryHelper;
+	
+	public CorrelationEnsembleFactory(EnsembleFactoryHelper ensembleFactoryHelper){
+		this.ensembleFactoryHelper = ensembleFactoryHelper;
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static void setEnsembleMembershipBoundary(String correlationFilter, String correlationSubject, double boundary, boolean enableLogging) throws Exception {
-		Class<?> requestedClass = CorrelationEnsembleFactory.getEnsembleDefinition(correlationFilter, correlationSubject, enableLogging);
+	public Class setEnsembleMembershipBoundary(String correlationFilter, String correlationSubject, double boundary, boolean enableLogging) throws Exception {
+		Class<?> requestedClass = ensembleFactoryHelper.getEnsembleDefinition(correlationFilter, correlationSubject, enableLogging);
 		String className = requestedClass.getName();
 
 		ClassPool classPool = ClassPool.getDefault();
@@ -150,26 +122,10 @@ public class CorrelationEnsembleFactory {
 		// Add the method into the ensemble class
 		ensembleClass.addMethod(membershipMethod);
 
-		// Buffer the modified class
-		if(bufferedClasses.containsKey(className)){
-			bufferedClasses.remove(className);
-		}
 		ensembleClass.writeFile(CLASS_DIRECTORY);
 		CorrelationClassLoader loader = new CorrelationClassLoader(CorrelationClassLoader.class.getClassLoader());
 		Class loadedClass = loader.loadClass(className);
-		bufferedClasses.put(className, loadedClass);
-	}
-
-	/**
-	 * Compose the name of the ensemble class for the defined knowledge fields.
-	 * @param correlationFilter Name of the knowledge field used for data filtering when calculating correlation.
-	 * 		In our example this refers to "position".
-	 * @param correlationSubject Name of the knowledge field used for the calculation of data correlation after
-	 * 		the values has been filtered. In our example this refers to "temperature".
-	 * @return The name of the ensemble class for the defined knowledge fields.
-	 */
-	public static String composeClassName(String correlationFilter, String correlationSubject){
-		return String.format("Correlation_%s2%s", correlationFilter, correlationSubject);
+		return loadedClass;
 	}
 
 	/**
@@ -184,11 +140,12 @@ public class CorrelationEnsembleFactory {
 	 * @throws Exception If there is a problem creating the ensemble class.
 	 */
 	@SuppressWarnings("rawtypes")
-	private static Class createEnsembleDefinition(String correlationFilter, String correlationSubject, boolean enableLogging) throws Exception {
+	public Class createEnsembleDefinition(String correlationFilter, String correlationSubject, boolean enableLogging) throws Exception {
 
 		// Create the class defining the ensemble
 		ClassPool classPool = ClassPool.getDefault();
-		CtClass ensembleClass = classPool.makeClass(composeClassName(correlationFilter, correlationSubject));
+		CtClass ensembleClass = classPool.makeClass(
+				ensembleFactoryHelper.composeClassName(correlationFilter, correlationSubject));
 
 		ClassFile classFile = ensembleClass.getClassFile();
 		ConstPool constPool = classFile.getConstPool();

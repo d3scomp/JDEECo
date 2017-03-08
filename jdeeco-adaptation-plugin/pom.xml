@@ -30,6 +30,11 @@
 			<version>1.0.0</version>
 		</dependency>
 		<dependency>
+			<groupId>cz.cuni.mff.d3s</groupId>
+			<artifactId>meta-adaptation-manager</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>org.javassist</groupId>
 			<artifactId>javassist</artifactId>
 			<version>3.19.0-GA</version>

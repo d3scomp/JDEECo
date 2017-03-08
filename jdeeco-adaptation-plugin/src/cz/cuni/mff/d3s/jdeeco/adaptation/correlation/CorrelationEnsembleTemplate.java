@@ -8,9 +8,9 @@ import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
-import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.KnowledgeMetadataHolder;
-import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper;
-import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationLevel.DistanceClass;
+import cz.cuni.mff.d3s.metaadaptation.correlation.KnowledgeMetadataHolder;
+import cz.cuni.mff.d3s.metaadaptation.correlation.CorrelationMetadataWrapper;
+import cz.cuni.mff.d3s.metaadaptation.correlation.CorrelationLevel.DistanceClass;
 
 // This class is not used. It only illustrates what is being created inside the CorrelationEnsembleFactory
 @Ensemble(enableLogging=false)
