@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.deeco.runtime;
 
+import cz.cuni.mff.d3s.deeco.ensembles.EnsembleFactory;
 import cz.cuni.mff.d3s.deeco.integrity.RatingsManager;
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManagerContainer;
 import cz.cuni.mff.d3s.deeco.scheduler.Scheduler;
@@ -17,4 +18,5 @@ public interface RuntimeFramework extends DEECoPlugin {
 	Scheduler getScheduler();
 	KnowledgeManagerContainer getContainer();
 	RatingsManager getRatingsManager();
+	void registerEnsembleFactory(EnsembleFactory factory);
 }

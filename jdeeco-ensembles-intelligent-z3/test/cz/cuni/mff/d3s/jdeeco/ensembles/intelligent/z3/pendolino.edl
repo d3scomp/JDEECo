@@ -1,0 +1,34 @@
+package cz.cuni.mff.d3s.jdeeco.ensembles.intelligent.z3
+
+data contract Rescuer
+	pos : int
+	isLeader : bool
+	trainId : int
+end
+
+data contract FireFighter
+	trainId : int
+	pos : int
+end
+
+data contract Position
+	x : int
+	y : int
+end
+
+ensemble PendolinoEnsemble
+	id trainId : int
+	membership
+		roles
+			leader [1..1] : Rescuer
+			rescuers [1..*] : Rescuer
+			firefighter [1..1] : FireFighter
+		
+		constraints
+		constraint (sum rescuers it.pos) == 60		
+		
+		fitness sum rescuers (it.pos - trainId) * (it.pos - trainId)
+		
+	knowledge exchange external
+		//x := x
+end

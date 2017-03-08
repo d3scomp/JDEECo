@@ -32,7 +32,7 @@
 		<dependency>
 			<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
 			<artifactId>cz.cuni.mff.d3s.jdeeco.core</artifactId>
-			<version>3.0.2</version>
+			<version>3.0.3</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -44,7 +44,7 @@
 	<repositories>
 		<repository>
 			<id>d3s</id>
-			<url>https://gitlab.d3s.mff.cuni.cz:8443/nexus/content/groups/public/</url>
+			<url>https://gitlab.d3s.mff.cuni.cz:8443/repository/releases/</url>
 		</repository>
 	</repositories>
 </project>

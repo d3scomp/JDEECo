@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-Ant-Version: Apache Ant 1.8.4
-Created-By: 1.7.0_06-b24 (Oracle Corporation)
-Export-Package: cz.cuni.mff.d3s.deeco.demo.cloud

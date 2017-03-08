@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
 		<artifactId>cz.cuni.mff.d3s.jdeeco</artifactId>
-		<version>3.0.2</version>
+		<version>3.0.3</version>
 		<relativePath>../jdeeco-parent/pom.xml</relativePath>
 	</parent>
 
@@ -68,7 +68,7 @@
 	<repositories>
 		<repository>
 			<id>d3s</id>
-			<url>https://gitlab.d3s.mff.cuni.cz:8443/nexus/content/groups/public/</url>
+			<url>https://gitlab.d3s.mff.cuni.cz:8443/repository/releases/</url>
 		</repository>
 	</repositories>
 </project>
