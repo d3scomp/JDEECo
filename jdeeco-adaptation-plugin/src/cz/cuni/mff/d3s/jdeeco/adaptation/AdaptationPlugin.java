@@ -27,6 +27,8 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.runtime.PluginInitFailedException;
+import cz.cuni.mff.d3s.metaadaptation.MAPEAdaptation;
+import cz.cuni.mff.d3s.metaadaptation.MetaAdaptationManager;
 
 /**
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
@@ -36,14 +38,13 @@ public class AdaptationPlugin implements DEECoPlugin {
 
 	private long period = 10000;
 	
-	private AdaptationManager adaptationManager;
+	private MetaAdaptationManager adaptationManager;
 	
 	/** Plugin dependencies. */
 	static private final List<Class<? extends DEECoPlugin>> DEPENDENCIES =
 			Collections.emptyList();
 	
 	public AdaptationPlugin withVerbosity(boolean verbosity){
-		AdaptationManager.verbose = verbosity;
 		return this;
 	}
 	
@@ -77,11 +78,11 @@ public class AdaptationPlugin implements DEECoPlugin {
 	@Override
 	public void init(DEECoContainer container) throws PluginInitFailedException {
 		try {
-			adaptationManager = new AdaptationManager();
-			container.deployComponent(adaptationManager);
+			adaptationManager = new MetaAdaptationManager();
+			container.deployComponent(new AdaptationComponent(adaptationManager));
 			
 			for (ComponentInstance c : container.getRuntimeMetadata().getComponentInstances()) {
-				if (c.getName().equals(AdaptationManager.class.getName())) {
+				if (c.getName().equals(MetaAdaptationManager.class.getName())) {
 					// Adjust non-deterministic mode switching manager periods
 					for (ComponentProcess p: c.getComponentProcesses()) {
 						if(p.getName().equals("reason")){

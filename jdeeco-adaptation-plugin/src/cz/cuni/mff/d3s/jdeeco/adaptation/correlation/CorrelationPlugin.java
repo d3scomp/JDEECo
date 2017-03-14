@@ -1,16 +1,22 @@
 package cz.cuni.mff.d3s.jdeeco.adaptation.correlation;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorException;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorExtensionPoint;
 import cz.cuni.mff.d3s.deeco.annotations.processor.CorrelationAwareAnnotationProcessorExtension;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
+import cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException;
 import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationPlugin;
+import cz.cuni.mff.d3s.metaadaptation.correlation.Component;
+import cz.cuni.mff.d3s.metaadaptation.correlation.CorrelationManager;
 
 /**
  * Correlation plugin deploys a component that monitors and correlates data
@@ -28,21 +34,35 @@ public class CorrelationPlugin implements DEECoPlugin {
 
 	private boolean verbose;
 	private boolean dumpValues;
-	private boolean logGeneratedEnsembles;
+	
+	private final EnsembleManagerImpl ensembleManager;
+	private final CorrelationManager manager;
 	
 	/** Plugin dependencies. */
 	@SuppressWarnings("unchecked")
 	static private final List<Class<? extends DEECoPlugin>> DEPENDENCIES =
 			Arrays.asList(new Class[]{AdaptationPlugin.class});;
 
-	private final List<DEECoNode> deecoNodes;
 
-	public CorrelationPlugin(List<DEECoNode> nodesInRealm){
-		deecoNodes = nodesInRealm;
-		
+	public CorrelationPlugin(){		
 		verbose = false;
 		dumpValues = false;
-		logGeneratedEnsembles = false;
+		
+		ensembleManager = new EnsembleManagerImpl();
+		manager = new CorrelationManager(ensembleManager, 
+				new CorrelationEnsembleFactory());
+	}
+	
+	public void setDEECoNodes(Set<DEECoNode> nodes){
+		ensembleManager.setNodes(nodes);
+		
+		Set<Component> components = new HashSet<>();
+		for(DEECoNode node : nodes){
+			for(ComponentInstance ci : node.getRuntimeMetadata().getComponentInstances()){
+				components.add(new ComponentImpl(ci.getKnowledgeManager().getId(), ci));
+			}
+		}
+		manager.setComponents(components);
 	}
 	
 	/**
@@ -52,6 +72,7 @@ public class CorrelationPlugin implements DEECoPlugin {
 	 */
 	public CorrelationPlugin withVerbosity(boolean verbose){
 		this.verbose = verbose;
+		CorrelationManager.verbose = verbose;
 		return this;
 	}
 
@@ -62,11 +83,7 @@ public class CorrelationPlugin implements DEECoPlugin {
 	 */
 	public CorrelationPlugin withDumping(boolean dumpValues){
 		this.dumpValues = dumpValues;
-		return this;
-	}
-	
-	public CorrelationPlugin withGeneratedEnsemblesLogging(boolean enableLogging){
-		this.logGeneratedEnsembles = enableLogging;
+		CorrelationManager.dumpValues = dumpValues;
 		return this;
 	}
 
@@ -80,25 +97,16 @@ public class CorrelationPlugin implements DEECoPlugin {
 		AnnotationProcessorExtensionPoint correlationAwareAnnotationProcessorExtension = new CorrelationAwareAnnotationProcessorExtension();
 		container.getProcessor().addExtension(correlationAwareAnnotationProcessorExtension);
 		
-		List<ComponentImpl> components = new ArrayList<>();
-		for(DEECoNode node : deecoNodes){
-			for(ComponentInstance c : node.getRuntimeMetadata().getComponentInstances()){
-				c.getName()
-			}
-			components.add(new ComponentImpl(node.));
-		}
-		
 		try {
-			final CorrelationManager manager = new CorrelationManager(deecoNodes);
 			CorrelationManager.verbose = verbose;
 			CorrelationManager.dumpValues = dumpValues;
-			CorrelationManager.logGeneratedEnsembles = logGeneratedEnsembles;
 			
-			container.deployComponent(manager);
+			container.deployComponent(new CorrelationKnowledgeData());
 			container.deployEnsemble(CorrelationDataAggregation.class);
 			
 			AdaptationPlugin adaptationPlugin = container.getPluginInstance(AdaptationPlugin.class);
 			adaptationPlugin.registerAdaptation(manager);
+			
 		} catch (AnnotationProcessorException | DuplicateEnsembleDefinitionException e) {
 			Log.e("Error while trying to deploy AdaptationManager", e);
 		}

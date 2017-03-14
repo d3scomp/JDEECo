@@ -15,10 +15,12 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.adaptation.correlation;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.Local;
+import cz.cuni.mff.d3s.deeco.annotations.PlaysRole;
 import cz.cuni.mff.d3s.deeco.annotations.SystemComponent;
 import cz.cuni.mff.d3s.metaadaptation.correlation.CorrelationMetadataWrapper;
 
@@ -29,6 +31,7 @@ import cz.cuni.mff.d3s.metaadaptation.correlation.CorrelationMetadataWrapper;
 
 @Component
 @SystemComponent
+@PlaysRole(CorrelationKnowledgeRole.class)
 public class CorrelationKnowledgeData {
 	/**
 	 * Specify whether to print the values being processed by the correlation computation.
@@ -52,6 +55,5 @@ public class CorrelationKnowledgeData {
 	 * String - Label of a knowledge field of the component
 	 * MetadataWrapper - knowledge field value together with its meta data
 	 */
-	@Local
-	public Map<String, Map<String, CorrelationMetadataWrapper<? extends Object>>> knowledgeOfAllComponents;
+	public Map<String, Map<String, CorrelationMetadataWrapper<? extends Object>>> knowledgeOfAllComponents = new HashMap<>();
 }

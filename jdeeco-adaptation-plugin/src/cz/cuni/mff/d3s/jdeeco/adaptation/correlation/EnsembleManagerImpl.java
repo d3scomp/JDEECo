@@ -15,7 +15,9 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.adaptation.correlation;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.annotations.Local;
 import cz.cuni.mff.d3s.deeco.logging.Log;
@@ -25,17 +27,32 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public class ConnectorsImpl implements cz.cuni.mff.d3s.metaadaptation.correlation.Connectors {
+public class EnsembleManagerImpl implements cz.cuni.mff.d3s.metaadaptation.correlation.EnsembleManager {
 
 	/**
 	 * The list of the other DEECo nodes that exists in the system. Except the
 	 * node on which the CorrelaitonManager component is deployed.
 	 */
 	@Local
-	public final List<DEECoNode> nodes;
+	private final List<DEECoNode> nodes;
 
-	public ConnectorsImpl(List<DEECoNode> nodes) {
-		this.nodes = nodes;
+	public EnsembleManagerImpl() {
+		this.nodes = new ArrayList<>();
+	}
+	
+	public void addNode(DEECoNode node){
+		nodes.add(node);
+	}
+	
+	public void removeNode(DEECoNode node){
+		nodes.remove(node);
+	}
+	
+	public void setNodes(Set<DEECoNode> nodes){
+		this.nodes.clear();
+		for(DEECoNode node : nodes){
+			this.nodes.add(node);
+		}
 	}
 
 	/*

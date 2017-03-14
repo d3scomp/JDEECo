@@ -32,11 +32,11 @@ import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
 import cz.cuni.mff.d3s.deeco.modes.ModeChart;
 import cz.cuni.mff.d3s.deeco.search.StateSpaceSearch;
 import cz.cuni.mff.d3s.deeco.task.ProcessContext;
-import cz.cuni.mff.d3s.jdeeco.adaptation.MAPEAdaptation;
 import cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching.runtimelog.NonDetModeTransitionLogger;
 import cz.cuni.mff.d3s.jdeeco.modes.ModeChartImpl;
 import cz.cuni.mff.d3s.jdeeco.modes.ModeSuccessor;
 import cz.cuni.mff.d3s.jdeeco.modes.TrueGuard;
+import cz.cuni.mff.d3s.metaadaptation.MAPEAdaptation;
 
 /**
  * Adapts the annotated components in the same DEECo node by adding

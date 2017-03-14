@@ -5,8 +5,8 @@ import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +41,7 @@ public class CorrelationTest {
 	@Test
 	public void acceptanceTest() throws DEECoException, AnnotationProcessorException, InstantiationException, IllegalAccessException {
 
-		List<DEECoNode> nodesInRealm = new ArrayList<DEECoNode>();
+		Set<DEECoNode> nodesInRealm = new HashSet<>();
 
 		SimulationTimer simulationTimer = new DiscreteEventTimer();
 		DEECoSimulation realm = new DEECoSimulation(simulationTimer);
@@ -50,24 +50,26 @@ public class CorrelationTest {
 		realm.addPlugin(DefaultKnowledgePublisher.class);
 		realm.addPlugin(KnowledgeInsertingStrategy.class);
 		realm.addPlugin(new PositionPlugin(0.0,0.0));
-		realm.addPlugin(AdaptationPlugin.class);
 
 		DEECoNode deeco1 = realm.createNode(1, runtimeLogWriters);
 		nodesInRealm.add(deeco1);
-		deeco1.deployComponent(new GroupMember("1"));
+		deeco1.deployComponent(new GroupMember("GM1"));
 
 		DEECoNode deeco2 = realm.createNode(2, runtimeLogWriters);
 		nodesInRealm.add(deeco2);
-		deeco2.deployComponent(new GroupMember("2"));
+		deeco2.deployComponent(new GroupMember("GM2"));
 
 		DEECoNode deeco3 = realm.createNode(3, runtimeLogWriters);
 		nodesInRealm.add(deeco3);
-		deeco3.deployComponent(new GroupLeader("3"));
+		deeco3.deployComponent(new GroupLeader("GM3"));
 
+		CorrelationPlugin correlationPlugin = new CorrelationPlugin(); 
 		/* Create node that holds the correlation component */
 		DEECoNode deeco4 = realm.createNode(4, runtimeLogWriters,
-				new CorrelationPlugin(nodesInRealm));
+				new AdaptationPlugin(), correlationPlugin);
 		nodesInRealm.add(deeco4);
+		
+		correlationPlugin.setDEECoNodes(nodesInRealm);
 
 		/* WHEN simulation is performed */
 	

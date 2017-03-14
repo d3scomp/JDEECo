@@ -15,8 +15,17 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.adaptation.correlation;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
+
+import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer;
+import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainerException;
+import cz.cuni.mff.d3s.deeco.knowledge.container.TrackingKnowledgeContainer;
+import cz.cuni.mff.d3s.deeco.logging.Log;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.metaadaptation.correlation.CorrelationMetadataWrapper;
 
 /**
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
@@ -25,24 +34,24 @@ import java.util.Set;
 public class ComponentImpl implements cz.cuni.mff.d3s.metaadaptation.correlation.Component {
 
 	private final String componentName;
-	
-	private final CorrelationKnowledgeData correlationData; // FIXME: this is wrong
-	
-	public ComponentImpl(String componentName, CorrelationKnowledgeData correlationData){
-		if(correlationData == null){
-			throw new IllegalArgumentException(String.format("The %s argument is null.",
-					"correlationData"));
+
+	private final ComponentInstance componentInstance;
+
+	public ComponentImpl(String componentName, ComponentInstance componentInstance) {
+		if (componentName == null || componentName.isEmpty()) {
+			throw new IllegalArgumentException(String.format("The %s argument is null or empty.", "componentName"));
 		}
-		if(componentName == null || componentName.isEmpty()){
-			throw new IllegalArgumentException(String.format("The %s argument is null or empty.",
-					"componentName"));
+		if (componentInstance == null) {
+			throw new IllegalArgumentException(String.format("The %s argument is null.", "componentInstance"));
 		}
-		
+
 		this.componentName = componentName;
-		this.correlationData = correlationData;
+		this.componentInstance = componentInstance;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see cz.cuni.mff.d3s.metaadaptation.correlation.Component#getId()
 	 */
 	@Override
@@ -50,35 +59,70 @@ public class ComponentImpl implements cz.cuni.mff.d3s.metaadaptation.correlation
 		return componentName;
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.correlation.Component#getKnowledgeFields()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.metaadaptation.correlation.Component#getKnowledgeFields()
 	 */
 	@Override
 	public Set<String> getKnowledgeFields() {
-		if(correlationData.knowledgeOfAllComponents.containsKey(componentName)){
-			return correlationData.knowledgeOfAllComponents.get(componentName)
-					.keySet();
-		} else {
-			return Collections.emptySet();
+		try {
+			Map<String, Map<String, CorrelationMetadataWrapper<? extends Object>>> knowledgeOfAllComponents = getKnowledgeOfAllComponents();
+
+			if (knowledgeOfAllComponents.containsKey(componentName)) {
+				return knowledgeOfAllComponents.get(componentName).keySet();
+			}
+		} catch (KnowledgeContainerException e) {
+			Log.e(e.getMessage());
+			e.printStackTrace();
 		}
+		return Collections.emptySet();
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.correlation.Component#getKnowledgeValue(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * cz.cuni.mff.d3s.metaadaptation.correlation.Component#getKnowledgeValue(
+	 * java.lang.String)
 	 */
 	@Override
 	public Object getKnowledgeValue(String knowlegeField) {
-		if(correlationData.knowledgeOfAllComponents.containsKey(componentName)){
-			if(correlationData.knowledgeOfAllComponents.get(componentName)
-					.containsKey(knowlegeField)){
-				return correlationData.knowledgeOfAllComponents.get(componentName)
-						.get(knowlegeField);
-			} else {
-				return null;
+		try {
+			Map<String, Map<String, CorrelationMetadataWrapper<? extends Object>>> knowledgeOfAllComponents = getKnowledgeOfAllComponents();
+
+			if (knowledgeOfAllComponents.containsKey(componentName)) {
+				if (knowledgeOfAllComponents.get(componentName).containsKey(knowlegeField)) {
+					return knowledgeOfAllComponents.get(componentName).get(knowlegeField);
+				}
 			}
-		} else {
-			return null;
+		} catch (KnowledgeContainerException e) {
+			Log.e(e.getMessage());
+			e.printStackTrace();
 		}
+		return null;
+	}
+
+	private Map<String, Map<String, CorrelationMetadataWrapper<? extends Object>>> getKnowledgeOfAllComponents()
+			throws KnowledgeContainerException {
+		KnowledgeContainer kc = TrackingKnowledgeContainer.createFromKnowledgeManagers(
+				componentInstance.getKnowledgeManager(),
+				componentInstance.getShadowKnowledgeManagerRegistry().getShadowKnowledgeManagers());
+		Collection<CorrelationKnowledgeRole> knowledge = kc
+				.getUntrackedKnowledgeForRole(CorrelationKnowledgeRole.class);
+
+		if(knowledge.isEmpty()){
+			return Collections.emptyMap();
+		}
+		CorrelationKnowledgeRole correlationKnowledge =
+				knowledge.toArray(new CorrelationKnowledgeRole[] {})[0];
+		if(correlationKnowledge.knowledgeOfAllComponents == null){
+			return Collections.emptyMap();
+		}
+		
+		return correlationKnowledge.knowledgeOfAllComponents;
+
 	}
 
 }

@@ -15,15 +15,14 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.adaptation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.Local;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.annotations.SystemComponent;
+import cz.cuni.mff.d3s.metaadaptation.MAPEAdaptation;
+import cz.cuni.mff.d3s.metaadaptation.MetaAdaptationManager;
 
 /**
  * Adapts the annotated components in the same DEECo node by adding
@@ -34,10 +33,7 @@ import cz.cuni.mff.d3s.deeco.annotations.SystemComponent;
  */
 @Component
 @SystemComponent
-public class AdaptationManager {
-
-	@Local
-	static boolean verbose = false;
+public class AdaptationComponent {
 	
 	/**
 	 * Mandatory knowledge field - id of the component.
@@ -45,14 +41,10 @@ public class AdaptationManager {
 	public String id = "AdaptationManager";
 	
 	@Local
-	public List<MAPEAdaptation> adaptations;
+	public MetaAdaptationManager adaptations;
 	
-	public AdaptationManager(){
-		adaptations = new ArrayList<>();
-	}
-	
-	public void addAdaptation(MAPEAdaptation adaptation){
-		adaptations.add(adaptation);
+	public AdaptationComponent(MetaAdaptationManager manager){
+		adaptations = manager;
 	}
 	
 	/**
@@ -64,16 +56,8 @@ public class AdaptationManager {
 	@Process
 	@PeriodicScheduling(period = 1000)
 	public static void reason(@In("id") String id,
-			@In("adaptations") List<MAPEAdaptation> adaptations) {
-		for(MAPEAdaptation adaptation : adaptations){
-			adaptation.monitor();
-			boolean isApplicable = adaptation.analyze();
-			if(isApplicable){
-				adaptation.plan();
-				adaptation.execute();
-			}
-		}
-		
+			@In("adaptations") MetaAdaptationManager adaptations) {
+		adaptations.reason();
 	}
 	
 }

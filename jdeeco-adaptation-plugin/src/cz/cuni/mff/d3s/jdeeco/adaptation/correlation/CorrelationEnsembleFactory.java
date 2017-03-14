@@ -47,15 +47,24 @@ public class CorrelationEnsembleFactory implements cz.cuni.mff.d3s.metaadaptatio
 	 */
 	private static final long schedulingPeriod = 250;
 	
+	private boolean verbose = false;
+	
 	private final EnsembleFactoryHelper ensembleFactoryHelper;
 	
-	public CorrelationEnsembleFactory(EnsembleFactoryHelper ensembleFactoryHelper){
-		this.ensembleFactoryHelper = ensembleFactoryHelper;
+	public CorrelationEnsembleFactory(){
+		ensembleFactoryHelper = new EnsembleFactoryHelper();
+		ensembleFactoryHelper.setEnsembleFactory(this);
+	}
+	
+	public CorrelationEnsembleFactory withVerbosity(boolean verbosity){
+		verbose = verbosity;
+		ensembleFactoryHelper.withVerbosity(verbosity);
+		return this;
 	}
 
 	@SuppressWarnings("rawtypes")
-	public Class setEnsembleMembershipBoundary(String correlationFilter, String correlationSubject, double boundary, boolean enableLogging) throws Exception {
-		Class<?> requestedClass = ensembleFactoryHelper.getEnsembleDefinition(correlationFilter, correlationSubject, enableLogging);
+	public Class setEnsembleMembershipBoundary(String correlationFilter, String correlationSubject, double boundary) throws Exception {
+		Class<?> requestedClass = ensembleFactoryHelper.getEnsembleDefinition(correlationFilter, correlationSubject);
 		String className = requestedClass.getName();
 
 		ClassPool classPool = ClassPool.getDefault();
@@ -88,7 +97,9 @@ public class CorrelationEnsembleFactory implements cz.cuni.mff.d3s.metaadaptatio
 				+ "			\"%1$s\", member%1$s.getValue(), coord%1$s.getValue()) < %1$s_bound);}",
 					correlationFilter, correlationSubject, boundary);
 
-//		System.out.println(methodBody);
+		if(verbose){
+			System.out.println(methodBody);
+		}
 
 		final String membershipClass = Membership.class.getCanonicalName();
 		final String inClass = In.class.getCanonicalName();
@@ -140,7 +151,7 @@ public class CorrelationEnsembleFactory implements cz.cuni.mff.d3s.metaadaptatio
 	 * @throws Exception If there is a problem creating the ensemble class.
 	 */
 	@SuppressWarnings("rawtypes")
-	public Class createEnsembleDefinition(String correlationFilter, String correlationSubject, boolean enableLogging) throws Exception {
+	public Class createEnsembleDefinition(String correlationFilter, String correlationSubject) throws Exception {
 
 		// Create the class defining the ensemble
 		ClassPool classPool = ClassPool.getDefault();
@@ -155,7 +166,7 @@ public class CorrelationEnsembleFactory implements cz.cuni.mff.d3s.metaadaptatio
 		
 		// Ensemble annotation for the class
 		Annotation ensembleAnnotation = new Annotation(ensembleClassName, constPool);
-		ensembleAnnotation.addMemberValue("enableLogging", new BooleanMemberValue (enableLogging, constPool));
+		ensembleAnnotation.addMemberValue("enableLogging", new BooleanMemberValue (verbose, constPool));
 				
 		AnnotationsAttribute ensembleAttribute = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
 		ensembleAttribute.addAnnotation(ensembleAnnotation);
@@ -263,6 +274,14 @@ public class CorrelationEnsembleFactory implements cz.cuni.mff.d3s.metaadaptatio
 		ensembleClass.writeFile(CLASS_DIRECTORY);
 		CorrelationClassLoader loader = new CorrelationClassLoader(CorrelationClassLoader.class.getClassLoader());
 		return loader.loadClass(ensembleClass.getName());
+	}
+
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.metaadaptation.correlation.EnsembleFactory#getHelper()
+	 */
+	@Override
+	public EnsembleFactoryHelper getHelper() {
+		return ensembleFactoryHelper;
 	}
 
 }

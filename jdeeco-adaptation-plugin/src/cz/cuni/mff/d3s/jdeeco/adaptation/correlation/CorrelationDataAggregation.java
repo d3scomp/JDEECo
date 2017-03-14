@@ -37,9 +37,9 @@ import cz.cuni.mff.d3s.metaadaptation.correlation.CorrelationMetadataWrapper;
 public class CorrelationDataAggregation {
 
 	@Membership
-	public static boolean membership(@In("member.id") String memberId,
-			@In("coord.knowledgeHistoryOfAllComponents")
-				Map<String, Map<String, CorrelationMetadataWrapper<?>>> knowledgefAllComponents,
+	public static boolean membership(@In("coord.id") String coordId,
+			@In("coord.knowledgeOfAllComponents")
+				Map<String, Map<String, CorrelationMetadataWrapper<? extends Object>>> knowledgefAllComponents,
 			@In("member.*") Object... fields) {
 		
 		return true;
@@ -47,10 +47,11 @@ public class CorrelationDataAggregation {
 
 	@KnowledgeExchange
 	public static void map(@In("member.id") String memberId,
-			@InOut("coord.knowledgeHistoryOfAllComponents") 
-				ParamHolder<Map<String, Map<String, CorrelationMetadataWrapper<?>>>> knowledgeOfAllComponents,
+			@InOut("coord.knowledgeOfAllComponents") 
+				ParamHolder<Map<String, Map<String, CorrelationMetadataWrapper<? extends Object>>>> knowledgeOfAllComponents,
 			@In("member.*") Object... fields)
 				throws KnowledgeNotFoundException {
+		System.out.println("@KnowledgeExchange " + memberId);
 		
 		Map<String, CorrelationMetadataWrapper<?>> memberKnowledge = 
 				knowledgeOfAllComponents.value.get(memberId);

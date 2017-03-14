@@ -11,8 +11,8 @@ import cz.cuni.mff.d3s.deeco.annotations.Process;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ProcessContext;
 import cz.cuni.mff.d3s.jdeeco.adaptation.CorrelationTest.Variances;
-import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metadata.CorrelationMetadataWrapper;
-import cz.cuni.mff.d3s.jdeeco.adaptation.correlation.metric.DifferenceMetric;
+import cz.cuni.mff.d3s.metaadaptation.correlation.CorrelationMetadataWrapper;
+import cz.cuni.mff.d3s.metaadaptation.correlation.metric.DifferenceMetric;
 
 @Component
 public class GroupMember {
