@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2016 Charles University in Prague
+ * Copyright 2017 Charles University in Prague
  *  
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,17 +13,32 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *******************************************************************************/
-package cz.cuni.mff.d3s.deeco.search;
+package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
+
+import cz.cuni.mff.d3s.deeco.timer.SimulationTimer;
+import cz.cuni.mff.d3s.metaadaptation.search.annealing.TimeProgress;
 
 /**
- * Represents a search engine able to search a state space.
- * 
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public interface StateSpaceSearch {
+public class TimeProgressImpl implements TimeProgress {
+
+	private SimulationTimer timer;
 	
-	void processParameters(SearchParameters parameters);
-	SearchState getNextState(SearchState currentState);
-	boolean isFinished(SearchState currentState);
+	public TimeProgressImpl(SimulationTimer timer){
+		if(timer == null){
+			throw new IllegalArgumentException(String.format("The %s argument is null.", "timer"));
+		}
+		this.timer = timer;
+	}
+	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.metaadaptation.search.annealing.TimeProgress#getTime()
+	 */
+	@Override
+	public long getTime() {
+		return timer.getCurrentMilliseconds();
+	}
+
 }

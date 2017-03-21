@@ -18,7 +18,8 @@ package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
 import java.util.ArrayList;
 import java.util.List;
 
-import cz.cuni.mff.d3s.jdeeco.adaptation.search.annealing.AnnealingState;
+import cz.cuni.mff.d3s.metaadaptation.modeswitch.NonDeterministicModeSwitchingManager;
+import cz.cuni.mff.d3s.metaadaptation.search.annealing.AnnealingState;
 
 /**
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>

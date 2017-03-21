@@ -20,9 +20,10 @@ import java.lang.annotation.Annotation;
 import cz.cuni.mff.d3s.deeco.annotations.NonDeterministicModeSwitching;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.modes.ModeChart;
-import cz.cuni.mff.d3s.deeco.search.SearchParameters;
-import cz.cuni.mff.d3s.deeco.search.StateSpaceSearch;
+import cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching.NonDeterministicModeSwitchingPlugin;
 import cz.cuni.mff.d3s.jdeeco.annotations.ComponentModeChart;
+import cz.cuni.mff.d3s.metaadaptation.search.SearchParameters;
+import cz.cuni.mff.d3s.metaadaptation.search.StateSpaceSearch;
 
 /**
  * Processes annotations related to non-deterministic mode switching.
@@ -49,8 +50,7 @@ public class NonDetModeSwitchAwareAnnotationProcessorExtension extends Annotatio
 				}
 				StateSpaceSearch sss = searchEngine.newInstance();
 				sss.processParameters(searchParameters.newInstance());
-				modeChart.setStateSpaceSearch(sss);
-				
+				NonDeterministicModeSwitchingPlugin.storeStateSpaceSearch(componentInstance, sss);
 			} catch (InstantiationException | IllegalAccessException e) {
 				e.printStackTrace();
 			}

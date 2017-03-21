@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2016 Charles University in Prague
+ * Copyright 2017 Charles University in Prague
  *  
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,35 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *******************************************************************************/
-package cz.cuni.mff.d3s.deeco.search;
-
-import java.util.HashMap;
-import java.util.Map;
+package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
 
 /**
- * A class that holds parameters for the state space search engine.
- * 
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public abstract class SearchParameters {
-	
-	protected Map<String, Object> parameters;
-	
-	public SearchParameters(){
-		parameters = new HashMap<>();
-	}
-	
-	/**
-	 * Provides the value of the specified parameter if present.
-	 * 
-	 * @param name the name of the required parameter.
-	 * @return The value of the specified parameter if present,
-	 * null otherwise.
-	 */
-	public Object getParameter(String name){
-		return parameters.containsKey(name)
-			? parameters.get(name)
-			: null;
-	}
+public interface ModeSwitchFitness {
+	public String[] getKnowledgeNames();
+	public double getFitness(long currentTime, Object[] knowledgeValues);
+	public void restart();
 }

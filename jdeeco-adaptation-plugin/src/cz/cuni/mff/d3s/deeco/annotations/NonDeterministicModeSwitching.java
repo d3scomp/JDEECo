@@ -20,9 +20,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import cz.cuni.mff.d3s.deeco.search.EmptyParameters;
-import cz.cuni.mff.d3s.deeco.search.SearchParameters;
-import cz.cuni.mff.d3s.deeco.search.StateSpaceSearch;
+import cz.cuni.mff.d3s.metaadaptation.search.EmptyParameters;
+import cz.cuni.mff.d3s.metaadaptation.search.SearchParameters;
+import cz.cuni.mff.d3s.metaadaptation.search.StateSpaceSearch;
 
 /**
  * Used to mark the component to be adapted by non-deterministic mode switching.

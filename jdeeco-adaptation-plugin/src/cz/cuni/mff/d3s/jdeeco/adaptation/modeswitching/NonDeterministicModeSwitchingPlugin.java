@@ -16,7 +16,9 @@
 package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorExtensionPoint;
 import cz.cuni.mff.d3s.deeco.annotations.processor.NonDetModeSwitchAwareAnnotationProcessorExtension;
@@ -28,9 +30,11 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer.StartupListener;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.runtime.PluginInitFailedException;
 import cz.cuni.mff.d3s.deeco.runtime.PluginStartupFailedException;
-import cz.cuni.mff.d3s.deeco.search.StateSpaceSearch;
 import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationPlugin;
 import cz.cuni.mff.d3s.jdeeco.modes.ModeSwitchingPlugin;
+import cz.cuni.mff.d3s.metaadaptation.modeswitch.NonDeterministicModeSwitchingManager;
+import cz.cuni.mff.d3s.metaadaptation.search.StateSpaceSearch;
+import cz.cuni.mff.d3s.metaadaptation.search.annealing.TimeProgress;
 
 /**
  * Non-Deterministic Mode Switching plugin deploys a adaptation strategy,
@@ -44,11 +48,18 @@ import cz.cuni.mff.d3s.jdeeco.modes.ModeSwitchingPlugin;
  */
 public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, StartupListener {
 
+	private static Map<ComponentInstance, StateSpaceSearch> sssMap = new HashMap<>();
+	
+	public static void storeStateSpaceSearch(ComponentInstance ci, StateSpaceSearch sss){
+		sssMap.put(ci, sss);
+	}
+	
 	private long startTime = 0;
-	private Class<? extends NonDetModeSwitchFitness> evalClass = null;
+	private Class<? extends ModeSwitchFitness> evalClass = null;
 	private double startingNondeterminism = 0.0001;
 	private DEECoContainer container = null;
 	AdaptationPlugin adaptationPlugin= null;
+	private final TimeProgress timer;
 	
 	private boolean verbose = false;
 	
@@ -59,8 +70,10 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 					AdaptationPlugin.class,
 					ModeSwitchingPlugin.class});
 	
-	public NonDeterministicModeSwitchingPlugin(Class<? extends NonDetModeSwitchFitness> evalClass){
+	public NonDeterministicModeSwitchingPlugin(Class<? extends ModeSwitchFitness> evalClass,
+			TimeProgress timer){
 		this.evalClass = evalClass;
+		this.timer = timer;
 	}
 	
 	public NonDeterministicModeSwitchingPlugin startAt(long startTime) {
@@ -127,8 +140,7 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 		for (ComponentInstance c : container.getRuntimeMetadata().getComponentInstances()) {
 			ModeChart modeChart = c.getModeChart();
 			if (modeChart != null) {
-				StateSpaceSearch sss = modeChart.getStateSpaceSearch();
-				if(sss != null)	{
+				if(sssMap.containsKey(c)){
 					// Check if modes are of correct type
 					for(Class<? extends DEECoMode> mode : modeChart.getModes()){
 						if(!NonDetModeSwitchMode.class.isAssignableFrom(mode)){
@@ -140,9 +152,10 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 
 					// Create non-deterministic mode switching manager of the component
 					NonDeterministicModeSwitchingManager manager;
+					ComponentImpl componentImpl = new ComponentImpl(c, sssMap.get(c));
 					try {
 						manager = new NonDeterministicModeSwitchingManager(startTime,
-								evalClass, c);
+								new NonDetModeSwitchFitnessImpl(evalClass.newInstance()), timer, componentImpl);
 					} catch (InstantiationException | IllegalAccessException e) {
 						throw new PluginStartupFailedException(e);
 					}	

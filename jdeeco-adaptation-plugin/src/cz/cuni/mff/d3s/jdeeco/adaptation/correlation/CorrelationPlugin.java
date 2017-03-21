@@ -53,7 +53,7 @@ public class CorrelationPlugin implements DEECoPlugin {
 				new CorrelationEnsembleFactory());
 	}
 	
-	public void setDEECoNodes(Set<DEECoNode> nodes){
+	public void setDEECoNodes(Set<DEECoNode> nodes){ // TODO: change to onStartup()
 		ensembleManager.setNodes(nodes);
 		
 		Set<Component> components = new HashSet<>();

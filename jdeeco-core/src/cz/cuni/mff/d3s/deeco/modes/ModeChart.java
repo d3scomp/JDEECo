@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
-import cz.cuni.mff.d3s.deeco.search.StateSpaceSearch;
 
 /**
  * To be extended by class(es) belonging to the ModeSwitching plugin.
@@ -22,10 +21,6 @@ public abstract class ModeChart {
 	protected Class<? extends DEECoMode> currentMode;
 	protected Map<Class<? extends DEECoMode>, Map<Class<? extends DEECoMode>,
 				List<ModeTransitionListener>>> transitionListeners;
-	/**
-	 * Unless set to null this search engine enables non-deterministic mode switching.
-	 */
-	protected StateSpaceSearch stateSpaceSearch = null;
 		
 	public ComponentInstance getComponent() {
 		return component;
@@ -37,14 +32,6 @@ public abstract class ModeChart {
 
 	public Class<? extends DEECoMode> getCurrentMode(){
 		return currentMode;
-	}
-	
-	public void setStateSpaceSearch(StateSpaceSearch stateSpaceSearch){
-		this.stateSpaceSearch = stateSpaceSearch;
-	}
-	
-	public StateSpaceSearch getStateSpaceSearch(){
-		return stateSpaceSearch;
 	}
 	
 	public void addTransitionListener(Class<? extends DEECoMode> from,
@@ -75,5 +62,7 @@ public abstract class ModeChart {
 	public abstract Set<Class<? extends DEECoMode>> getModes();
 		
 	public abstract Class<? extends DEECoMode> switchMode();
+	
+	public abstract boolean isModified();
 		
 }

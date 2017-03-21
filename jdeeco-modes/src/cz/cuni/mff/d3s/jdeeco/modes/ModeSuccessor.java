@@ -49,6 +49,10 @@ public class ModeSuccessor {
 		this.probability = probability;
 	}
 	
+	public ModeGuard getGuard(){
+		return guard;
+	}
+	
 	public String getTypeName(){
 		return successor.getTypeName();
 	}
