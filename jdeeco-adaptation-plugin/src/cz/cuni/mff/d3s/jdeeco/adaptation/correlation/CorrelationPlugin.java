@@ -14,6 +14,8 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.runtime.DuplicateEnsembleDefinitionException;
+import cz.cuni.mff.d3s.deeco.runtime.PluginStartupFailedException;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer.StartupListener;
 import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationPlugin;
 import cz.cuni.mff.d3s.metaadaptation.correlation.Component;
 import cz.cuni.mff.d3s.metaadaptation.correlation.CorrelationManager;
@@ -30,7 +32,7 @@ import cz.cuni.mff.d3s.metaadaptation.correlation.CorrelationManager;
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public class CorrelationPlugin implements DEECoPlugin {
+public class CorrelationPlugin implements DEECoPlugin, StartupListener {
 
 	private boolean verbose;
 	private boolean dumpValues;
@@ -38,33 +40,29 @@ public class CorrelationPlugin implements DEECoPlugin {
 	private final EnsembleManagerImpl ensembleManager;
 	private final CorrelationManager manager;
 	
+	private final Set<DEECoNode> nodes;
+	
 	/** Plugin dependencies. */
 	@SuppressWarnings("unchecked")
 	static private final List<Class<? extends DEECoPlugin>> DEPENDENCIES =
 			Arrays.asList(new Class[]{AdaptationPlugin.class});;
 
 
-	public CorrelationPlugin(){		
+	public CorrelationPlugin(Set<DEECoNode> nodes){
+		if(nodes == null){
+			throw new IllegalArgumentException(String.format("The %s argument is null.", "nodes"));
+		}
+		
 		verbose = false;
 		dumpValues = false;
 		
 		ensembleManager = new EnsembleManagerImpl();
 		manager = new CorrelationManager(ensembleManager, 
 				new CorrelationEnsembleFactory());
-	}
-	
-	public void setDEECoNodes(Set<DEECoNode> nodes){ // TODO: change to onStartup()
-		ensembleManager.setNodes(nodes);
 		
-		Set<Component> components = new HashSet<>();
-		for(DEECoNode node : nodes){
-			for(ComponentInstance ci : node.getRuntimeMetadata().getComponentInstances()){
-				components.add(new ComponentImpl(ci.getKnowledgeManager().getId(), ci));
-			}
-		}
-		manager.setComponents(components);
+		this.nodes = nodes;
 	}
-	
+		
 	/**
 	 * Specify the verbosity of the correlation process.
 	 * @param verbose True to be verbose, false to be still.
@@ -96,6 +94,7 @@ public class CorrelationPlugin implements DEECoPlugin {
 	public void init(DEECoContainer container) {
 		AnnotationProcessorExtensionPoint correlationAwareAnnotationProcessorExtension = new CorrelationAwareAnnotationProcessorExtension();
 		container.getProcessor().addExtension(correlationAwareAnnotationProcessorExtension);
+		container.addStartupListener(this);
 		
 		try {
 			CorrelationManager.verbose = verbose;
@@ -112,4 +111,16 @@ public class CorrelationPlugin implements DEECoPlugin {
 		}
 	}
 
+	@Override
+	public void onStartup() throws PluginStartupFailedException {
+		ensembleManager.setNodes(nodes);
+		
+		Set<Component> components = new HashSet<>();
+		for(DEECoNode node : nodes){
+			for(ComponentInstance ci : node.getRuntimeMetadata().getComponentInstances()){
+				components.add(new ComponentImpl(ci.getKnowledgeManager().getId(), ci));
+			}
+		}
+		manager.setComponents(components);
+	}
 }

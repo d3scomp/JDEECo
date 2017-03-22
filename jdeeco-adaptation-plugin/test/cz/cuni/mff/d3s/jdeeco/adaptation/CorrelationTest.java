@@ -63,13 +63,13 @@ public class CorrelationTest {
 		nodesInRealm.add(deeco3);
 		deeco3.deployComponent(new GroupLeader("GM3"));
 
-		CorrelationPlugin correlationPlugin = new CorrelationPlugin(); 
+		CorrelationPlugin correlationPlugin = new CorrelationPlugin(nodesInRealm); 
 		/* Create node that holds the correlation component */
 		DEECoNode deeco4 = realm.createNode(4, runtimeLogWriters,
 				new AdaptationPlugin(), correlationPlugin);
 		nodesInRealm.add(deeco4);
 		
-		correlationPlugin.setDEECoNodes(nodesInRealm);
+		//correlationPlugin.setDEECoNodes(nodesInRealm);
 
 		/* WHEN simulation is performed */
 	
