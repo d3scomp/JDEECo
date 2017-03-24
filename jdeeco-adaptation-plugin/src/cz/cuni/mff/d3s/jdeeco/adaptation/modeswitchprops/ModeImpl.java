@@ -13,14 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *******************************************************************************/
-package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
+package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitchprops;
+
+import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
 
 /**
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public interface ModeSwitchFitness {
-	public String[] getKnowledgeNames();
-	public double getFitness(long currentTime, Object[] knowledgeValues);
-	public void restart();
+public class ModeImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitchprops.Mode {
+
+	private final Class<? extends DEECoMode> mode;
+	
+	public ModeImpl(Class<? extends DEECoMode> mode){
+		if(mode == null){
+			throw new IllegalArgumentException(String.format("The %s argument is null.", "mode"));
+		}
+		
+		this.mode = mode;
+	}
 }

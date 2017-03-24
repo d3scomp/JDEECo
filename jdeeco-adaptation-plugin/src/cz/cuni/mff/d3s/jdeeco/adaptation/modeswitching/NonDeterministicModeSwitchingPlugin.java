@@ -31,6 +31,7 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.runtime.PluginInitFailedException;
 import cz.cuni.mff.d3s.deeco.runtime.PluginStartupFailedException;
 import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationPlugin;
+import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationUtility;
 import cz.cuni.mff.d3s.jdeeco.modes.ModeSwitchingPlugin;
 import cz.cuni.mff.d3s.metaadaptation.modeswitch.NonDeterministicModeSwitchingManager;
 import cz.cuni.mff.d3s.metaadaptation.search.StateSpaceSearch;
@@ -55,7 +56,7 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 	}
 	
 	private long startTime = 0;
-	private Class<? extends ModeSwitchFitness> evalClass = null;
+	private final AdaptationUtility utility;
 	private double startingNondeterminism = 0.0001;
 	private DEECoContainer container = null;
 	AdaptationPlugin adaptationPlugin= null;
@@ -70,9 +71,15 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 					AdaptationPlugin.class,
 					ModeSwitchingPlugin.class});
 	
-	public NonDeterministicModeSwitchingPlugin(Class<? extends ModeSwitchFitness> evalClass,
-			TimeProgress timer){
-		this.evalClass = evalClass;
+	public NonDeterministicModeSwitchingPlugin(AdaptationUtility utility, TimeProgress timer){
+		if(utility == null){
+			throw new IllegalArgumentException(String.format("The %s argument is null.", "utility"));
+		}
+		if(timer == null){
+			throw new IllegalArgumentException(String.format("The %s argument is null.", "timer"));
+		}
+		
+		this.utility = utility;
 		this.timer = timer;
 	}
 	
@@ -152,10 +159,9 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 
 					// Create non-deterministic mode switching manager of the component
 					NonDeterministicModeSwitchingManager manager;
-					ComponentImpl componentImpl = new ComponentImpl(c, sssMap.get(c));
+					ComponentImpl componentImpl = new ComponentImpl(c, sssMap.get(c), utility);
 					try {
-						manager = new NonDeterministicModeSwitchingManager(startTime,
-								new NonDetModeSwitchFitnessImpl(evalClass.newInstance()), timer, componentImpl);
+						manager = new NonDeterministicModeSwitchingManager(startTime, timer, componentImpl);
 					} catch (InstantiationException | IllegalAccessException e) {
 						throw new PluginStartupFailedException(e);
 					}	

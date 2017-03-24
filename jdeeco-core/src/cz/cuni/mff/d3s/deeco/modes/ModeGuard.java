@@ -15,10 +15,37 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.deeco.modes;
 
-public interface ModeGuard {
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+public abstract class ModeGuard {
 	
-	String[] getKnowledgeNames();
+	protected final Map<String, Double> parameters;
 	
-	boolean isSatisfied(Object [] knowledgeValues);
+	public ModeGuard(){
+		parameters = new HashMap<>();
+		specifyParameters();
+	}
+	
+	public Map<String, Double> getParameters(){
+		return Collections.unmodifiableMap(parameters);
+	}
+	
+	public void setParameter(String name, double value){
+		if(parameters.containsKey(name)){
+			parameters.put(name, value);
+		} else {
+			throw new IllegalArgumentException(String.format(
+					"The %s parameter doesn't exists in %s",
+					name, this.getClass().getName()));
+		}
+	}
+	
+	abstract protected void specifyParameters();
+	
+	public abstract String[] getKnowledgeNames();
+	
+	public abstract boolean isSatisfied(Object [] knowledgeValues);
 
 }

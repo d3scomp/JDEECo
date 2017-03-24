@@ -85,8 +85,6 @@ public class ModeChartImpl implements ModeChart {
 				}
 			}
 		}
-		
-		
 	}
 	
 	/* (non-Javadoc)
@@ -160,6 +158,8 @@ public class ModeChartImpl implements ModeChart {
 		Class<? extends DEECoMode> toClass = toImpl.getInnerMode();
 		
 		ModeGuard modeGuard = new ModeGuard(){
+			@Override
+			protected void specifyParameters(){}
 			@Override
 			public String[] getKnowledgeNames() {
 				return new String[]{};

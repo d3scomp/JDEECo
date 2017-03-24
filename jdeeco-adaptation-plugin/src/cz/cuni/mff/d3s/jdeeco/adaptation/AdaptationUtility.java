@@ -13,57 +13,41 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *******************************************************************************/
-package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
+package cz.cuni.mff.d3s.jdeeco.adaptation;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
 import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
-import cz.cuni.mff.d3s.metaadaptation.modeswitch.Component;
-import cz.cuni.mff.d3s.metaadaptation.modeswitch.NonDetModeSwitchFitness;
 
 /**
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public class NonDetModeSwitchFitnessImpl implements NonDetModeSwitchFitness {
+public abstract class AdaptationUtility {
+	
+	protected abstract String[] getKnowledgeNames();
+	
+	protected abstract double getUtility(Object[] knowledgeValues);
+	
+	public abstract double getUtilityThreshold();
 
-	private final ModeSwitchFitness fitness;
+	public abstract void restart();
 	
-	public NonDetModeSwitchFitnessImpl(ModeSwitchFitness fitness) {
-		if(fitness == null) {
-			throw new IllegalArgumentException(String.format(
-					"The %s argument is null.", "fitness"));
-		}
+	public double getUtility(ComponentInstance component){
+		String[] names = getKnowledgeNames();
+		Object[] values = getValues(component, names);
 		
-		this.fitness = fitness;
+		return getUtility(values);
 	}
 	
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.NonDetModeSwitchFitness#getFitness(long, cz.cuni.mff.d3s.metaadaptation.modeswitch.Component)
-	 */
-	@Override
-	public double getFitness(long currentTime, Component component) {
-		
-		ComponentInstance compoentInstance = ((ComponentImpl)component).getComponentInstance();
-		String[] fields = fitness.getKnowledgeNames();
-		return fitness.getFitness(currentTime, getKnowledgeValues(fields, compoentInstance));
-	}
-
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.NonDetModeSwitchFitness#restart()
-	 */
-	@Override
-	public void restart() {
-		fitness.restart();
-	}
-	
-	public Object[] getKnowledgeValues(String[] knowledgeNames, ComponentInstance componentInstance) {
+	private Object[] getValues(ComponentInstance component, String[] knowledgeNames) {
 		List<KnowledgePath> paths = new ArrayList<>();
 		for(String knowledgeName : knowledgeNames){
 			KnowledgePath path = RuntimeMetadataFactoryExt.eINSTANCE.createKnowledgePath();
@@ -73,16 +57,15 @@ public class NonDetModeSwitchFitnessImpl implements NonDetModeSwitchFitness {
 			paths.add(path);
 		}
 		try {
-			ValueSet vSet = componentInstance.getKnowledgeManager().get(paths);
-			List<Object> values = new ArrayList<>();
-			for(KnowledgePath path : paths){
-				values.add(vSet.getValue(path));
+			ValueSet vSet = component.getKnowledgeManager().get(paths);
+			Object[] values = new Object[knowledgeNames.length];
+			for (int i = 0; i < knowledgeNames.length; i++) {
+				values[i] = vSet.getValue(paths.get(i));
 			}
-			return values.toArray();
+			return values;
 		} catch (KnowledgeNotFoundException e) {
-			System.err.println("Couldn't find knowledge " + knowledgeNames + " in component " + componentInstance);
+			Log.e("Couldn't find knowledge " + knowledgeNames + " in component " + component);
 			return null;
 		}
 	}
-
 }

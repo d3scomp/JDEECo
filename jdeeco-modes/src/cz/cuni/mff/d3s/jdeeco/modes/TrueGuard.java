@@ -17,8 +17,11 @@ package cz.cuni.mff.d3s.jdeeco.modes;
 
 import cz.cuni.mff.d3s.deeco.modes.ModeGuard;
 
-public class TrueGuard implements ModeGuard {
+public class TrueGuard extends ModeGuard {
 
+	@Override
+	protected void specifyParameters(){}
+	
 	@Override
 	public String[] getKnowledgeNames() {
 		return new String[]{"id"};

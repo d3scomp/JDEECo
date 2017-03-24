@@ -21,8 +21,11 @@ import cz.cuni.mff.d3s.deeco.modes.ModeGuard;
 import cz.cuni.mff.d3s.deeco.task.ProcessContext;
 import cz.cuni.mff.d3s.jdeeco.modes.example.DirtySpot;
 
-public class CleaningGuard implements ModeGuard {
+public class CleaningGuard extends ModeGuard {
 
+	@Override
+	protected void specifyParameters(){}
+	
 	@Override
 	public String[] getKnowledgeNames() {
 		return new String[] {"dirtySpots"};

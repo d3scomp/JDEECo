@@ -16,17 +16,10 @@
 package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
-import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeNotFoundException;
-import cz.cuni.mff.d3s.deeco.knowledge.ValueSet;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
-import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
-import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.task.ProcessContext;
+import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationUtility;
 import cz.cuni.mff.d3s.metaadaptation.modeswitch.ModeChart;
 import cz.cuni.mff.d3s.metaadaptation.search.StateSpaceSearch;
 
@@ -42,7 +35,9 @@ public class ComponentImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitch.
 	
 	private final ModeChartImpl modeChart;
 	
-	public ComponentImpl(ComponentInstance ci, StateSpaceSearch sss){
+	private final AdaptationUtility adaptationUtility;
+	
+	public ComponentImpl(ComponentInstance ci, StateSpaceSearch sss, AdaptationUtility adaptationUtility){
 		if(ci == null) {
 			throw new IllegalArgumentException(String.format(
 					"The %s argument is null.", "ci"));
@@ -51,10 +46,15 @@ public class ComponentImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitch.
 			throw new IllegalArgumentException(String.format(
 					"The %s argument is null.", "sss"));
 		}
+		if(adaptationUtility == null) {
+			throw new IllegalArgumentException(String.format(
+					"The %s argument is null.", "adaptationUtility"));
+		}
 		
 		componentInstance = ci;
 		stateSpaceSearch = sss;
 		modeChart = new ModeChartImpl((cz.cuni.mff.d3s.jdeeco.modes.ModeChartImpl) ci.getModeChart(), ci);
+		this.adaptationUtility = adaptationUtility;
 	}
 	
 	public ComponentInstance getComponentInstance(){
@@ -84,29 +84,6 @@ public class ComponentImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitch.
 	public StateSpaceSearch getStateSpaceSearch() {
 		return stateSpaceSearch;
 	}
-
-/*	@Override
-	public List<Object> getKnowledgeValues(List<String> knowledgeNames) {
-		List<KnowledgePath> paths = new ArrayList<>();
-		for(String knowledgeName : knowledgeNames){
-			KnowledgePath path = RuntimeMetadataFactoryExt.eINSTANCE.createKnowledgePath();
-			PathNodeField pNode = RuntimeMetadataFactoryExt.eINSTANCE.createPathNodeField();
-			pNode.setName(knowledgeName);
-			path.getNodes().add(pNode);
-			paths.add(path);
-		}
-		try {
-			ValueSet vSet = componentInstance.getKnowledgeManager().get(paths);
-			List<Object> values = new ArrayList<>();
-			for(KnowledgePath path : paths){
-				values.add(vSet.getValue(path));
-			}
-			return values;
-		} catch (KnowledgeNotFoundException e) {
-			System.err.println("Couldn't find knowledge " + knowledgeNames + " in component " + componentInstance);
-			return null;
-		}
-	}*/
 	
 	@Override
 	public void nonDeterminismLevelChanged(double probability){
@@ -121,6 +98,23 @@ public class ComponentImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitch.
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Component#getUtility()
+	 */
+	@Override
+	public double getUtility() {
+		return adaptationUtility.getUtility(componentInstance);
+	}
+
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Component#restartUtility()
+	 */
+	@Override
+	public void restartUtility() {
+		adaptationUtility.restart();
+		
 	}
 
 }
