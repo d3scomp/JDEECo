@@ -15,17 +15,19 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
+import cz.cuni.mff.d3s.deeco.modes.DEECoTransition;
 import cz.cuni.mff.d3s.deeco.modes.ModeGuard;
 import cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching.runtimelog.NonDetModeTransitionLogger;
 import cz.cuni.mff.d3s.jdeeco.modes.ModeSuccessor;
-import cz.cuni.mff.d3s.metaadaptation.modeswitch.Guard;
 import cz.cuni.mff.d3s.metaadaptation.modeswitch.Mode;
 import cz.cuni.mff.d3s.metaadaptation.modeswitch.ModeChart;
 import cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition;
@@ -36,15 +38,15 @@ import cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition;
  */
 public class ModeChartImpl implements ModeChart {
 
-	private final cz.cuni.mff.d3s.jdeeco.modes.ModeChartImpl modeChart;
+	private final cz.cuni.mff.d3s.deeco.modes.ModeChart modeChart;
 	
-	private final Map<Class<? extends DEECoMode>, ModeImpl> modes;
+	private final Map<DEECoMode, ModeImpl> modes;
 	
 	private final Set<Transition> transitions;
 	
 	private final ComponentInstance component;
 		
-	public ModeChartImpl(cz.cuni.mff.d3s.jdeeco.modes.ModeChartImpl modeChart, ComponentInstance component){
+	public ModeChartImpl(cz.cuni.mff.d3s.deeco.modes.ModeChart modeChart, ComponentInstance component){
 		if(modeChart == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "modeChart"));
 		}
@@ -60,30 +62,21 @@ public class ModeChartImpl implements ModeChart {
 		init();
 	}
 	
-	private void init(){		
-		for(Class<? extends DEECoMode> m : modeChart.getModes()){
+	private void init(){
+		// Create modes
+		for(DEECoMode m : modeChart.getModes()){
 			ModeImpl mode = new ModeImpl(m);
 			modes.put(m, mode);
 		}
 		
-		for(Class<? extends DEECoMode> m : modeChart.getModes()){
-			Mode fromModeImpl = modes.get(m);
-			if(modeChart.modes.containsKey(m)){
-				for(ModeSuccessor ms : modeChart.modes.get(m)){
-					Class<? extends DEECoMode> succMode = ms.successor;
-					ModeImpl succModeImpl;
-					if(modes.containsKey(succMode)){
-						succModeImpl = modes.get(succMode);
-					} else {
-						succModeImpl = new ModeImpl(succMode);
-						modes.put(succMode, succModeImpl);
-					}
-					
-					GuardImpl guard = new GuardImpl(ms.getGuard(), component);
-					TransitionImpl transition = (TransitionImpl) createTransition(fromModeImpl, succModeImpl, guard);
-					transitions.add(transition);
-				}
-			}
+		// Create transitions
+		for(DEECoTransition transition : modeChart.getTransitions()){
+			//GuardImpl guard = new GuardImpl(transition.getGuard(), component);
+			TransitionImpl transitionImpl =  new TransitionImpl(
+					modes.get(transition.getFrom()),
+					modes.get(transition.getTo()),
+					transition, component);
+			transitions.add(transitionImpl);
 		}
 	}
 	
@@ -115,21 +108,41 @@ public class ModeChartImpl implements ModeChart {
 	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.ModeChart#addTransition(cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition)
 	 */
 	@Override
-	public void addTransition(Transition transition) {
-		ModeImpl fromImpl = (ModeImpl) transition.getFrom();
-		Class<? extends DEECoMode> from = fromImpl.getInnerMode();
-		ModeImpl toImpl = (ModeImpl) transition.getTo();
-		Class<? extends DEECoMode> to = toImpl.getInnerMode();
+	public Transition addTransition(Mode from, Mode to, Predicate<Void> guard) {
+		DEECoMode DFrom = ((ModeImpl)from).getInnerMode();
+		DEECoMode DTo = ((ModeImpl)to).getInnerMode();
 		
-		transitions.add(transition);
-		if(!modeChart.modes.containsKey(from)){
-			modeChart.modes.put(from, new HashSet<>());
-		}
-		
-		modeChart.modes.get(from).add(((TransitionImpl)transition).getModeSuccessor());
+		cz.cuni.mff.d3s.jdeeco.modes.Transition transition = new cz.cuni.mff.d3s.jdeeco.modes.Transition(
+				DFrom, DTo, new ModeGuard(){
+			@Override
+			protected void specifyParameters() {
+				// Nothing to do here				
+			}
 
+			@Override
+			public String[] getKnowledgeNames() {
+				return new String[]{"id"};
+			}
+
+			@Override
+			public boolean isSatisfied(Object[] knowledgeValues) {
+				return guard.test(null);
+			}});
+		
+		TransitionImpl transitionImpl = new TransitionImpl((ModeImpl) from, 
+				(ModeImpl) to, transition, component);
+		
+		// Add the transition
+		transitions.add(transitionImpl);
+		modeChart.getTransitions().add(transition);
+		
 		// Add transition listener
-		modeChart.addTransitionListener(from, to, new NonDetModeTransitionLogger(from, to));
+		if(!modeChart.getTransitionListeners().containsKey(transition)){
+			modeChart.getTransitionListeners().put(transition, new ArrayList<>());
+		}
+		modeChart.getTransitionListeners().get(transition).add(new NonDetModeTransitionLogger(DFrom, DTo));
+		
+		return transitionImpl;
 	}
 
 	/* (non-Javadoc)
@@ -137,58 +150,53 @@ public class ModeChartImpl implements ModeChart {
 	 */
 	@Override
 	public void removeTransition(Transition transition) {
-		ModeImpl fromImpl = (ModeImpl) transition.getFrom();
-		Class<? extends DEECoMode> from = fromImpl.getInnerMode();
-		ModeImpl toImpl = (ModeImpl) transition.getTo();
-		Class<? extends DEECoMode> to = toImpl.getInnerMode();
-		
+		cz.cuni.mff.d3s.deeco.modes.DEECoTransition DTransition = ((TransitionImpl)transition).getInnerTransition();
+				
 		transitions.remove(transition);
-		double probability = transition.getProbability();
-		ModeGuard guard = ((GuardImpl) transition.getGuard()).getInnerGuard();
-		modeChart.modes.get(from).remove(new ModeSuccessor(to, probability, guard));
+		modeChart.getTransitions().remove(DTransition);
 	}
 
 	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.ModeChart#createTransition(cz.cuni.mff.d3s.metaadaptation.modeswitch.Mode, cz.cuni.mff.d3s.metaadaptation.modeswitch.Mode, cz.cuni.mff.d3s.metaadaptation.modeswitch.Guard)
 	 */
-	@Override
-	public Transition createTransition(Mode from, Mode to, Guard guard) {
-		ModeImpl toImpl = (ModeImpl) to;
-		ModeImpl fromImpl = (ModeImpl) from;
-		Class<? extends DEECoMode> toClass = toImpl.getInnerMode();
-		
-		ModeGuard modeGuard = new ModeGuard(){
-			@Override
-			protected void specifyParameters(){}
-			@Override
-			public String[] getKnowledgeNames() {
-				return new String[]{};
-			}
-			@Override
-			public boolean isSatisfied(Object[] knowledgeValues) {
-				return guard.isSatisfied();
-			}};
-		GuardImpl guardImpl = new GuardImpl(modeGuard, component);
-		
-		ModeSuccessor successor = new ModeSuccessor(toClass, 0, modeGuard);
-		return new TransitionImpl(fromImpl, toImpl, guardImpl, successor);
-	}
+//	@Override
+//	public Transition createTransition(Mode from, Mode to, Guard guard) {
+//		ModeImpl toImpl = (ModeImpl) to;
+//		ModeImpl fromImpl = (ModeImpl) from;
+//		Class<? extends DEECoMode> toClass = toImpl.getInnerMode();
+//		
+//		ModeGuard modeGuard = new ModeGuard(){
+//			@Override
+//			protected void specifyParameters(){}
+//			@Override
+//			public String[] getKnowledgeNames() {
+//				return new String[]{};
+//			}
+//			@Override
+//			public boolean isSatisfied(Object[] knowledgeValues) {
+//				return guard.isSatisfied();
+//			}};
+//		GuardImpl guardImpl = new GuardImpl(modeGuard, component);
+//		
+//		ModeSuccessor successor = new ModeSuccessor(toClass, 0, modeGuard);
+//		return new TransitionImpl(fromImpl, toImpl, guardImpl, successor);
+//	}
 
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.ModeChart#isModified()
-	 */
-	@Override
-	public boolean isModified() {
-		return modeChart.isModified();
-	}
-
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.ModeChart#setModified()
-	 */
-	@Override
-	public void setModified() {
-		modeChart.wasModified();
-	}
+//	/* (non-Javadoc)
+//	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.ModeChart#isModified()
+//	 */
+//	@Override
+//	public boolean isModified() {
+//		return modeChart.isModified();
+//	}
+//
+//	/* (non-Javadoc)
+//	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.ModeChart#setModified()
+//	 */
+//	@Override
+//	public void setModified() {
+//		modeChart.wasModified();
+//	}
 	
 
 }

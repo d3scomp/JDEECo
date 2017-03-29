@@ -15,8 +15,10 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
 
-import cz.cuni.mff.d3s.jdeeco.modes.ModeSuccessor;
-import cz.cuni.mff.d3s.metaadaptation.modeswitch.Guard;
+import java.util.function.Predicate;
+
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.modes.DEECoTransition;
 import cz.cuni.mff.d3s.metaadaptation.modeswitch.Mode;
 import cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition;
 
@@ -28,31 +30,28 @@ public class TransitionImpl implements Transition {
 
 	private final ModeImpl from;
 	private final ModeImpl to;
+	private final DEECoTransition transition;
 	private final GuardImpl guard;
-	private final ModeSuccessor modeSuccessor;
 	
-	public TransitionImpl(ModeImpl from, ModeImpl to, GuardImpl guard, ModeSuccessor successor){
+	public TransitionImpl(ModeImpl from, ModeImpl to, DEECoTransition transition, ComponentInstance component){
 		if(from == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "from"));
 		}
 		if(to == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "to"));
 		}
-		if(guard == null){
-			throw new IllegalArgumentException(String.format("The %s argument is null.", "guard"));
-		}
-		if(successor == null){
-			throw new IllegalArgumentException(String.format("The %s argument is null.", "successor"));
+		if(transition == null){
+			throw new IllegalArgumentException(String.format("The %s argument is null.", "transition"));
 		}
 		
 		this.from = from;
 		this.to= to;
-		this.guard = guard;
-		this.modeSuccessor = successor;
+		this.transition = transition;
+		guard = new GuardImpl(transition.getGuard(), component);
 	}
 	
-	public ModeSuccessor getModeSuccessor(){
-		return modeSuccessor;
+	public DEECoTransition getInnerTransition(){
+		return transition;
 	}
 	
 	
@@ -72,53 +71,75 @@ public class TransitionImpl implements Transition {
 		return to;
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#isGuardSatisfied()
-	 */
-	@Override
-	public boolean isGuardSatisfied() {
-		return guard.isSatisfied();
-	}
-
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#getProbability()
-	 */
-	@Override
-	public double getProbability() {
-		return modeSuccessor.getProbability();
-	}
-
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#setProbability(double)
-	 */
-	@Override
-	public void setProbability(double probability) {
-		modeSuccessor.setProbability(probability);
-	}
-
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#isDynamic()
-	 */
-	@Override
-	public boolean isDynamic() {
-		return modeSuccessor.isDynamic();
-	}
-
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#setDynamic(boolean)
-	 */
-	@Override
-	public void setDynamic(boolean isDynamic) {
-		modeSuccessor.setDynamic(isDynamic);
-		
-	}
+//	/* (non-Javadoc)
+//	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#isGuardSatisfied()
+//	 */
+//	@Override
+//	public boolean isGuardSatisfied() {
+//		return transition.getGuard().isSatisfied();
+//	}
+//
+//	/* (non-Javadoc)
+//	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#getProbability()
+//	 */
+//	@Override
+//	public double getProbability() {
+//		return modeSuccessor.getProbability();
+//	}
+//
+//	/* (non-Javadoc)
+//	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#setProbability(double)
+//	 */
+//	@Override
+//	public void setProbability(double probability) {
+//		modeSuccessor.setProbability(probability);
+//	}
+//
+//	/* (non-Javadoc)
+//	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#isDynamic()
+//	 */
+//	@Override
+//	public boolean isDynamic() {
+//		return modeSuccessor.isDynamic();
+//	}
+//
+//	/* (non-Javadoc)
+//	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#setDynamic(boolean)
+//	 */
+//	@Override
+//	public void setDynamic(boolean isDynamic) {
+//		modeSuccessor.setDynamic(isDynamic);
+//		
+//	}
 
 	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#getGuard()
 	 */
 	@Override
-	public Guard getGuard() {
-		return guard;
+	public Predicate<Void> getGuard() {
+		return new Predicate<Void>(){
+			@Override
+			public boolean test(Void t) {
+				return guard.isSatisfied();
+			}
+			
+		};
+	}
+
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#getPriority()
+	 */
+	@Override
+	public int getPriority() {
+		return transition.getPriority();
+	}
+
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#setPriority(int)
+	 */
+	@Override
+	public void setPriority(int priority) {
+		transition.setPriority(priority);		
 	}
 
 }

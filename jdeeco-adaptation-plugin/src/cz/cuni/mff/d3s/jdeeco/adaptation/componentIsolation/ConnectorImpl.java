@@ -13,34 +13,25 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *******************************************************************************/
-package ComponentIsolation;
+package cz.cuni.mff.d3s.jdeeco.adaptation.componentIsolation;
 
 import java.util.Set;
 
-import cz.cuni.mff.d3s.metaadaptation.componentisolation.Component;
+import cz.cuni.mff.d3s.metaadaptation.componentisolation.Port;
 
 /**
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public class ComponentManagerImpl implements cz.cuni.mff.d3s.metaadaptation.componentisolation.ComponentManager {
+public class ConnectorImpl implements cz.cuni.mff.d3s.metaadaptation.componentisolation.Connector {
 
-	private final Set<Component> components;
-	
-	public ComponentManagerImpl(Set<Component> components){
-		if(components == null){
-			throw new IllegalArgumentException(String.format("The %s argument is null.", "components"));
-		}
-		
-		this.components = components;
-	}
-	
 	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.componentisolation.ComponentManager#getComponents()
+	 * @see cz.cuni.mff.d3s.metaadaptation.componentisolation.Connector#getPorts()
 	 */
 	@Override
-	public Set<Component> getComponents() {
-		return components;
+	public Set<Port> getPorts() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

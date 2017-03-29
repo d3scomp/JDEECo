@@ -20,48 +20,48 @@ import cz.cuni.mff.d3s.deeco.modes.ModeGuard;
 
 public class ModeSuccessor {
 
-	double probability;
-	
-	final ModeGuard guard;
-	
-	/**
-	 * Indicates whether the transition is static (false),
-	 * that means specified in the mode chart by the designer,
-	 * or dynamic (true) added by the system at runtime.
-	 */
-	private boolean dynamic;
-	
-	public final Class<? extends DEECoMode> successor;
-	
-	public ModeSuccessor(Class<? extends DEECoMode> successor,
-			double probability, ModeGuard guard) {
-		this.successor = successor;
-		this.probability = probability;
-		this.guard = guard;
-		dynamic = false;
-	}
-	
-	public double getProbability(){
-		return probability;
-	}
-	
-	public void setProbability(double probability){
-		this.probability = probability;
-	}
-	
-	public ModeGuard getGuard(){
-		return guard;
-	}
-	
-	public String getTypeName(){
-		return successor.getTypeName();
-	}
-	
-	public boolean isDynamic(){
-		return dynamic;
-	}
-	
-	public void setDynamic(boolean dynamic){
-		this.dynamic = dynamic;
-	}
+//	double probability;
+//	
+//	final ModeGuard guard;
+//	
+//	/**
+//	 * Indicates whether the transition is static (false),
+//	 * that means specified in the mode chart by the designer,
+//	 * or dynamic (true) added by the system at runtime.
+//	 */
+//	private boolean dynamic;
+//	
+//	public final Class<? extends DEECoMode> successor;
+//	
+//	public ModeSuccessor(Class<? extends DEECoMode> successor,
+//			double probability, ModeGuard guard) {
+//		this.successor = successor;
+//		this.probability = probability;
+//		this.guard = guard;
+//		dynamic = false;
+//	}
+//	
+//	public double getProbability(){
+//		return probability;
+//	}
+//	
+//	public void setProbability(double probability){
+//		this.probability = probability;
+//	}
+//	
+//	public ModeGuard getGuard(){
+//		return guard;
+//	}
+//	
+//	public String getTypeName(){
+//		return successor.getTypeName();
+//	}
+//	
+//	public boolean isDynamic(){
+//		return dynamic;
+//	}
+//	
+//	public void setDynamic(boolean dynamic){
+//		this.dynamic = dynamic;
+//	}
 }

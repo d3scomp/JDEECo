@@ -20,6 +20,7 @@ import java.io.IOException;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.task.ProcessContext;
 import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationUtility;
+import cz.cuni.mff.d3s.metaadaptation.modeswitch.ComponentType;
 import cz.cuni.mff.d3s.metaadaptation.modeswitch.ModeChart;
 import cz.cuni.mff.d3s.metaadaptation.search.StateSpaceSearch;
 
@@ -31,44 +32,43 @@ public class ComponentImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitch.
 
 	private final ComponentInstance componentInstance;
 
-	private final StateSpaceSearch stateSpaceSearch;
+//	private final StateSpaceSearch stateSpaceSearch;
 	
 	private final ModeChartImpl modeChart;
 	
-	private final AdaptationUtility adaptationUtility;
+//	private final AdaptationUtility adaptationUtility;
 	
-	public ComponentImpl(ComponentInstance ci, StateSpaceSearch sss, AdaptationUtility adaptationUtility){
+	private final ComponentTypeImpl componentType;
+	
+	public ComponentImpl(ComponentInstance ci, ComponentTypeImpl componentType/*, StateSpaceSearch sss, AdaptationUtility adaptationUtility*/){
 		if(ci == null) {
 			throw new IllegalArgumentException(String.format(
 					"The %s argument is null.", "ci"));
 		}
-		if(sss == null) {
+		if(componentType == null) {
 			throw new IllegalArgumentException(String.format(
-					"The %s argument is null.", "sss"));
+					"The %s argument is null.", "componentType"));
 		}
-		if(adaptationUtility == null) {
-			throw new IllegalArgumentException(String.format(
-					"The %s argument is null.", "adaptationUtility"));
-		}
+//		if(sss == null) {
+//			throw new IllegalArgumentException(String.format(
+//					"The %s argument is null.", "sss"));
+//		}
+//		if(adaptationUtility == null) {
+//			throw new IllegalArgumentException(String.format(
+//					"The %s argument is null.", "adaptationUtility"));
+//		}
 		
 		componentInstance = ci;
-		stateSpaceSearch = sss;
+//		stateSpaceSearch = sss;
 		modeChart = new ModeChartImpl((cz.cuni.mff.d3s.jdeeco.modes.ModeChartImpl) ci.getModeChart(), ci);
-		this.adaptationUtility = adaptationUtility;
+		this.componentType = componentType;
+//		this.adaptationUtility = adaptationUtility;
 	}
 	
 	public ComponentInstance getComponentInstance(){
 		return componentInstance;
 	}
 	
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Component#getId()
-	 */
-	@Override
-	public String getId() {
-		return componentInstance.getKnowledgeManager().getId();
-	}
-
 	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Component#getModeChart()
 	 */
@@ -78,43 +78,51 @@ public class ComponentImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitch.
 	}
 
 	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Component#getStateSpaceSearch()
+	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Component#getType()
 	 */
 	@Override
-	public StateSpaceSearch getStateSpaceSearch() {
-		return stateSpaceSearch;
+	public ComponentType getType() {
+		return componentType;
 	}
+
+//	/* (non-Javadoc)
+//	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Component#getStateSpaceSearch()
+//	 */
+//	@Override
+//	public StateSpaceSearch getStateSpaceSearch() {
+//		return stateSpaceSearch;
+//	}
 	
-	@Override
-	public void nonDeterminismLevelChanged(double probability){
-		// Log the current non-determinism level
-		try {
-			NonDeterministicLevelRecord record = new NonDeterministicLevelRecord("EMS"); // Enhanced Mode Switching
-			record.setProbability(probability);
-			record.setComponent(componentInstance);
-			ProcessContext.getRuntimeLogger().log(record);
-		} catch (IllegalStateException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Component#getUtility()
-	 */
-	@Override
-	public double getUtility() {
-		return adaptationUtility.getUtility(componentInstance);
-	}
-
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Component#restartUtility()
-	 */
-	@Override
-	public void restartUtility() {
-		adaptationUtility.restart();
-		
-	}
+//	@Override
+//	public void nonDeterminismLevelChanged(double probability){
+//		// Log the current non-determinism level
+//		try {
+//			NonDeterministicLevelRecord record = new NonDeterministicLevelRecord("EMS"); // Enhanced Mode Switching
+//			record.setProbability(probability);
+//			record.setComponent(componentInstance);
+//			ProcessContext.getRuntimeLogger().log(record);
+//		} catch (IllegalStateException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
+//
+//	/* (non-Javadoc)
+//	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Component#getUtility()
+//	 */
+//	@Override
+//	public double getUtility() {
+//		return adaptationUtility.getUtility(componentInstance);
+//	}
+//
+//	/* (non-Javadoc)
+//	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Component#restartUtility()
+//	 */
+//	@Override
+//	public void restartUtility() {
+//		adaptationUtility.restart();
+//		
+//	}
 
 }

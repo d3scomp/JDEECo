@@ -23,9 +23,9 @@ import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
  */
 public class ModeImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitchprops.Mode {
 
-	private final Class<? extends DEECoMode> mode;
+	private final DEECoMode mode;
 	
-	public ModeImpl(Class<? extends DEECoMode> mode){
+	public ModeImpl(DEECoMode mode){
 		if(mode == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "mode"));
 		}

@@ -31,12 +31,12 @@ public class ModeRecord extends RuntimeLogRecord {
 		super(id, new HashMap<>());
 	}
 	
-	public void setOldMode(Class<? extends DEECoMode> mode){
-		recordValues.put("oldMode", mode.getName());
+	public void setOldMode(DEECoMode mode){
+		recordValues.put("oldMode", mode);
 	}
 	
-	public void setNewMode(Class<? extends DEECoMode> mode){
-		recordValues.put("newMode", mode.getName());
+	public void setNewMode(DEECoMode mode){
+		recordValues.put("newMode", mode);
 	}
 	
 }

@@ -55,7 +55,7 @@ public class ModeSwitchingManager {
 	 * @param id
 	 */
 	@Process
-	@PeriodicScheduling(period = 1, order=-1)
+	@PeriodicScheduling(period = 1000, order=-1)
 	/*
 	 * this period is set here just to pass the annotation processor checks, the
 	 * actual period is set from the IRMPlugin
@@ -68,7 +68,7 @@ public class ModeSwitchingManager {
 		for (ComponentInstance c : runtime.getComponentInstances()) {
 			ModeChart modeChart = c.getModeChart();
 			if (modeChart != null) {
-				Class<? extends DEECoMode> currentMode = modeChart.switchMode();
+				DEECoMode currentMode = modeChart.switchMode();
 
 				reconfigureArchitecture(c, currentMode);
 			}
@@ -76,24 +76,19 @@ public class ModeSwitchingManager {
 
 	}
 
-	private static void reconfigureArchitecture(ComponentInstance c, Class<? extends DEECoMode> currentMode) {
+	private static void reconfigureArchitecture(ComponentInstance c, DEECoMode currentMode) {
 		for (ComponentProcess p : c.getComponentProcesses()) {
-			
-			List<DEECoMode> processModes = p.getModes();
-			
-			if (processModes != null && !processModes.isEmpty()) {
-				
-				List<Class<? extends DEECoMode>> processModeClasses = new ArrayList<>();
-				processModes.forEach(pm -> processModeClasses.add(pm.getClass()));
-			
-				if (processModeClasses.contains(currentMode)) {
-					if (!p.isActive()) {
-						p.setActive(true);
-					}
-				} else {
-					if (p.isActive()) {
-						p.setActive(false);
-					}
+			List<DEECoMode> processModes = p.getModes(); // TODO: check
+			if (processModes == null || processModes.isEmpty()) {
+				continue;
+			}
+			if (processModes.contains(currentMode)) {
+				if (!p.isActive()) {
+					p.setActive(true);
+				}
+			} else {
+				if (p.isActive()) {
+					p.setActive(false);
 				}
 			}
 		}

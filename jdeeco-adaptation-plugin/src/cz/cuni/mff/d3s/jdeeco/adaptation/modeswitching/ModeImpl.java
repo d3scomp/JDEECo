@@ -24,57 +24,30 @@ import cz.cuni.mff.d3s.metaadaptation.modeswitch.Mode;
  */
 public class ModeImpl implements Mode {
 
-	private final Class<? extends DEECoMode> mode;
-	private NonDetModeSwitchMode modeInstance;
+	private final DEECoMode mode;
 	
-	public ModeImpl(Class<? extends DEECoMode> mode){
+	public ModeImpl(DEECoMode mode){
 		if(mode == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "mode"));
 		}
 		
 		this.mode = mode;
-		try{
-			modeInstance = (NonDetModeSwitchMode) mode.newInstance();
-		} catch(InstantiationException | IllegalAccessException e) {
-			System.err.println(e.getMessage());
-			modeInstance = null;
-		}
 	}
 	
-	public Class<? extends DEECoMode> getInnerMode(){
+	public DEECoMode getInnerMode(){
 		return mode;
 	}
 	
 	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Mode#getId()
+	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public String getId() {
-		return mode.getName();
+	public boolean equals(Object obj) {
+		if(obj instanceof ModeImpl){
+			ModeImpl other = (ModeImpl) obj;
+			return this.mode.equals(other.mode);
+		}
+		
+		return false;
 	}
-
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Mode#nonDeterministicIn()
-	 */
-	@Override
-	public boolean nonDeterministicIn() {
-		return modeInstance.nonDeterministicIn();
-	}
-
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Mode#nonDeterministicOut()
-	 */
-	@Override
-	public boolean nonDeterministicOut() {
-		return modeInstance.nonDeterministicOut();
-	}
-
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Mode#isFitnessComputed()
-	 */
-	@Override
-	public boolean isFitnessComputed() {
-		return modeInstance.isFitnessComputed();
-	}
-
 }

@@ -13,25 +13,27 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *******************************************************************************/
-package ComponentIsolation;
-
-import java.util.Set;
-
-import cz.cuni.mff.d3s.metaadaptation.componentisolation.Port;
+package cz.cuni.mff.d3s.jdeeco.adaptation.componentIsolation;
 
 /**
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public class ConnectorImpl implements cz.cuni.mff.d3s.metaadaptation.componentisolation.Connector {
+public class PortImpl implements cz.cuni.mff.d3s.metaadaptation.componentisolation.Port {
 
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.componentisolation.Connector#getPorts()
-	 */
-	@Override
-	public Set<Port> getPorts() {
-		// TODO Auto-generated method stub
-		return null;
+	@SuppressWarnings("rawtypes")
+	private final Class role;
+	
+	@SuppressWarnings("rawtypes")
+	public PortImpl(Class role){
+		if(role == null){
+			throw new IllegalArgumentException(String.format("The %s argument is null.", "role"));
+		}
+		this.role = role;
 	}
-
+	
+	@SuppressWarnings("rawtypes")
+	public Class getRole(){
+		return role;
+	}
 }

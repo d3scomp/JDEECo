@@ -37,14 +37,16 @@ public abstract class AdaptationUtility {
 	protected abstract double getUtility(Object[] knowledgeValues);
 	
 	public abstract double getUtilityThreshold();
-
-	public abstract void restart();
 	
 	public double getUtility(ComponentInstance component){
-		String[] names = getKnowledgeNames();
-		Object[] values = getValues(component, names);
+		if(component != null){
+			String[] names = getKnowledgeNames();
+			Object[] values = getValues(component, names);
+			
+			return getUtility(values);
+		}
 		
-		return getUtility(values);
+		return getUtility((Object[]) null);
 	}
 	
 	private Object[] getValues(ComponentInstance component, String[] knowledgeNames) {

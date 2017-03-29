@@ -17,6 +17,9 @@ package cz.cuni.mff.d3s.jdeeco.modes.example.modechart;
 
 import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
 
-public class Searching implements DEECoMode {
+public class Searching extends DEECoMode {
 
+	public Searching() {
+		super("Searching");
+	}
 }

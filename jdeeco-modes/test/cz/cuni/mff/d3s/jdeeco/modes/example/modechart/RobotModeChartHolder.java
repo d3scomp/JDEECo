@@ -15,16 +15,26 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.modes.example.modechart;
 
+import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
 import cz.cuni.mff.d3s.jdeeco.modes.ModeChartFactory;
 import cz.cuni.mff.d3s.jdeeco.modes.ModeChartHolder;
 
 public class RobotModeChartHolder extends ModeChartHolder {
 
 	public RobotModeChartHolder(){
-		ModeChartFactory factory = new ModeChartFactory();
-		factory.addTransitionWithGuard(Searching.class, Cleaning.class, new CleaningGuard());
-		factory.addInitialMode(Searching.class);
 		
-		modeChart = factory.create();
+		// Modes
+		DEECoMode searching = new Searching();
+		DEECoMode cleaning = new Cleaning();
+		
+		addTransition(searching, cleaning, new CleaningGuard());
+	}
+
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.jdeeco.modes.ModeChartHolder#getInitialMode()
+	 */
+	@Override
+	public DEECoMode getInitialMode() {
+		return new Searching();
 	}
 }

@@ -29,11 +29,10 @@ import cz.cuni.mff.d3s.deeco.task.ProcessContext;
  */
 public class ModeTransitionLogger implements ModeTransitionListener {
 
-	public final Class<? extends DEECoMode> oldMode;
-	public final Class<? extends DEECoMode> newMode;
+	public final DEECoMode oldMode;
+	public final DEECoMode newMode;
 	
-	public ModeTransitionLogger(Class<? extends DEECoMode> oldMode,
-			Class<? extends DEECoMode> newMode) {
+	public ModeTransitionLogger(DEECoMode oldMode, DEECoMode newMode) {
 		this.oldMode = oldMode;
 		this.newMode = newMode;
 	}
@@ -59,8 +58,7 @@ public class ModeTransitionLogger implements ModeTransitionListener {
 			e.printStackTrace();
 		}
 
-		Log.i(String.format("%s switching from %s to %s", robotId,
-				oldMode.getSimpleName(), newMode.getSimpleName()));
+		Log.i(String.format("%s switching from %s to %s", robotId, oldMode, newMode));
 	}
 
 }

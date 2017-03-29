@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *  
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      http:www.apache.org/licenses/LICENSE-2.0
  *  
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,13 +25,12 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.modes.ModeGuard;
-import cz.cuni.mff.d3s.metaadaptation.modeswitch.Guard;
 
 /**
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public class GuardImpl implements Guard {
+public class GuardImpl {
 	
 	private final ModeGuard guard;
 	
@@ -53,10 +52,6 @@ public class GuardImpl implements Guard {
 		return guard;
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Guard#isSatisfied()
-	 */
-	@Override
 	public boolean isSatisfied() {
 		String[] fields = guard.getKnowledgeNames();
 		Object[] values = getKnowledgeValues(fields);

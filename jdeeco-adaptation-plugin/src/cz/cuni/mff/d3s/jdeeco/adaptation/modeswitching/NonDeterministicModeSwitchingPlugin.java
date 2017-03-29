@@ -15,8 +15,10 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,8 +35,8 @@ import cz.cuni.mff.d3s.deeco.runtime.PluginStartupFailedException;
 import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationPlugin;
 import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationUtility;
 import cz.cuni.mff.d3s.jdeeco.modes.ModeSwitchingPlugin;
+import cz.cuni.mff.d3s.metaadaptation.modeswitch.Component;
 import cz.cuni.mff.d3s.metaadaptation.modeswitch.NonDeterministicModeSwitchingManager;
-import cz.cuni.mff.d3s.metaadaptation.search.StateSpaceSearch;
 import cz.cuni.mff.d3s.metaadaptation.search.annealing.TimeProgress;
 
 /**
@@ -49,20 +51,26 @@ import cz.cuni.mff.d3s.metaadaptation.search.annealing.TimeProgress;
  */
 public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, StartupListener {
 
-	private static Map<ComponentInstance, StateSpaceSearch> sssMap = new HashMap<>();
+//	private static Map<ComponentInstance, StateSpaceSearch> sssMap = new HashMap<>();
+//	
+//	public static void storeStateSpaceSearch(ComponentInstance ci, StateSpaceSearch sss){
+//		sssMap.put(ci, sss);
+//	}
 	
-	public static void storeStateSpaceSearch(ComponentInstance ci, StateSpaceSearch sss){
-		sssMap.put(ci, sss);
-	}
-	
-	private long startTime = 0;
+//	private long startTime = 0;
 	private final Map<String, AdaptationUtility> utilities;
-	private double startingNondeterminism = 0.0001;
+//	private double startingNondeterminism = 0.0001;
 	private DEECoContainer container = null;
 	AdaptationPlugin adaptationPlugin= null;
-	private final TimeProgress timer;
+//	private final TimeProgress timer;
 	
 	private boolean verbose = false;
+	private double transitionProbability = 0;
+	private int transitionPriority = 0;
+	private boolean training = false;
+	private String trainFrom = null;
+	private String trainTo = null;
+	private String trainingOutput = null;
 	
 	/** Plugin dependencies. */
 	@SuppressWarnings("unchecked")
@@ -71,19 +79,19 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 					AdaptationPlugin.class,
 					ModeSwitchingPlugin.class});
 	
-	public NonDeterministicModeSwitchingPlugin(Map<String, AdaptationUtility> utilities, TimeProgress timer){
+	public NonDeterministicModeSwitchingPlugin(Map<String, AdaptationUtility> utilities/*, TimeProgress timer*/){
 		if(utilities == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "utilities"));
 		}
-		if(timer == null){
-			throw new IllegalArgumentException(String.format("The %s argument is null.", "timer"));
-		}
+//		if(timer == null){
+//			throw new IllegalArgumentException(String.format("The %s argument is null.", "timer"));
+//		}
 		
 		this.utilities = utilities;
-		this.timer = timer;
+//		this.timer = timer;
 	}
 	
-	public NonDeterministicModeSwitchingPlugin startAt(long startTime) {
+	/*public NonDeterministicModeSwitchingPlugin startAt(long startTime) {
 		this.startTime = startTime;
 		return this;
 	}
@@ -91,10 +99,34 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 	public NonDeterministicModeSwitchingPlugin withStartingNondetermoinism(double nondeterminism) {
 		this.startingNondeterminism = nondeterminism;
 		return this;
-	}
+	}*/
 	
 	public NonDeterministicModeSwitchingPlugin withVerbosity(boolean verbosity){
 		verbose = verbosity;
+		return this;
+	}
+	public NonDeterministicModeSwitchingPlugin withTransitionProbability(double transitionProbability){
+		this.transitionProbability = transitionProbability;
+		return this;
+	}
+	public NonDeterministicModeSwitchingPlugin withTransitionPriority(int transitionPriority){
+		this.transitionPriority = transitionPriority;
+		return this;
+	}
+	public NonDeterministicModeSwitchingPlugin withTraining(boolean training){
+		this.training = training;
+		return this;
+	}
+	public NonDeterministicModeSwitchingPlugin withTrainFrom(String trainFrom){
+		this.trainFrom = trainFrom;
+		return this;
+	}
+	public NonDeterministicModeSwitchingPlugin withTrainTo(String trainTo){
+		this.trainTo = trainTo;
+		return this;
+	}
+	public NonDeterministicModeSwitchingPlugin withTrainingOutput(String trainingOutput){
+		this.trainingOutput = trainingOutput;
 		return this;
 	}
 	
@@ -120,8 +152,13 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 		
 		adaptationPlugin = container.getPluginInstance(AdaptationPlugin.class);
 		
-		NonDeterministicModeSwitchingManager.startingNondeterminism = startingNondeterminism;
+//		NonDeterministicModeSwitchingManager.startingNondeterminism = startingNondeterminism;
 		NonDeterministicModeSwitchingManager.verbose = verbose;
+		NonDeterministicModeSwitchingManager.transitionProbability = transitionProbability;
+		NonDeterministicModeSwitchingManager.transitionPriority = transitionPriority;
+		NonDeterministicModeSwitchingManager.training = training;
+		NonDeterministicModeSwitchingManager.trainingOutput = new File(trainingOutput);
+		
 	}
 
 	/* (non-Javadoc)
@@ -142,20 +179,27 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 					"AdaptationPlugin"));
 		}
 		
-		
+		List<Component> components = new ArrayList<>();
 		// Components with non-deterministic mode switching aspiration
 		for (ComponentInstance c : container.getRuntimeMetadata().getComponentInstances()) {
 			ModeChart modeChart = c.getModeChart();
 			if (modeChart != null) {
-				if(sssMap.containsKey(c)){
-					// Check if modes are of correct type
-					for(Class<? extends DEECoMode> mode : modeChart.getModes()){
-						if(!NonDetModeSwitchMode.class.isAssignableFrom(mode)){
-							throw new PluginStartupFailedException(String.format(
-									"The %s mode doesn't extend %s class.",
-									mode, NonDetModeSwitchMode.class));
+//				if(sssMap.containsKey(c)){
+				if(training){
+					for(DEECoMode mode : modeChart.getModes()){
+						if(mode.getId().equals(trainFrom)){
+							NonDeterministicModeSwitchingManager.trainFrom = new ModeImpl(mode);
 						}
+						if(mode.getId().equals(trainTo)){
+							NonDeterministicModeSwitchingManager.trainTo = new ModeImpl(mode);
+						}
+//						if(!NonDetModeSwitchMode.class.isAssignableFrom(mode)){
+//							throw new PluginStartupFailedException(String.format(
+//									"The %s mode doesn't extend %s class.",
+//									mode, NonDetModeSwitchMode.class));
+//						}
 					}
+				}
 
 					// Check the required utility was placed
 					if(!utilities.containsKey(c.getKnowledgeManager().getId())){
@@ -166,17 +210,28 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 					
 					// Create non-deterministic mode switching manager of the component
 					NonDeterministicModeSwitchingManager manager;
-					ComponentImpl componentImpl = new ComponentImpl(c, sssMap.get(c),
-							utilities.get(c.getKnowledgeManager().getId()));
-					try {
-						manager = new NonDeterministicModeSwitchingManager(startTime, timer, componentImpl);
-					} catch (InstantiationException | IllegalAccessException e) {
-						throw new PluginStartupFailedException(e);
-					}	
-					adaptationPlugin.registerAdaptation(manager);
-				}
+					ComponentImpl componentImpl = new ComponentImpl(c,
+							new ComponentTypeImpl(utilities.get(c.getKnowledgeManager().getId())));
+					components.add(componentImpl);
+//				}
 			}
 		}
+
+		if(training && (NonDeterministicModeSwitchingManager.trainFrom == null
+				|| NonDeterministicModeSwitchingManager.trainTo == null)){
+			throw new PluginStartupFailedException(String.format(
+					"The %s or %s mode not found.", trainFrom, trainTo));
+		}
+		
+		try {
+			if(training){
+				NonDeterministicModeSwitchingManager manager = new NonDeterministicModeSwitchingManager(components, null);
+				adaptationPlugin.registerAdaptation(manager);
+			}
+		} catch (InstantiationException | IllegalAccessException | FileNotFoundException e) {
+			throw new PluginStartupFailedException(e);
+		}	
+		
 	}
 
 }

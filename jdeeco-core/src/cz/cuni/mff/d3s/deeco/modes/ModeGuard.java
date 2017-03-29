@@ -42,7 +42,7 @@ public abstract class ModeGuard {
 		}
 	}
 	
-	abstract protected void specifyParameters();
+	protected abstract void specifyParameters();
 	
 	public abstract String[] getKnowledgeNames();
 	

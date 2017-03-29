@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2016 Charles University in Prague
+ * Copyright 2017 Charles University in Prague
  *  
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,36 +15,40 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
 
-import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
+import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationUtility;
+import cz.cuni.mff.d3s.metaadaptation.modeswitch.ComponentType;
 
 /**
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public interface NonDetModeSwitchMode extends DEECoMode {
+public class ComponentTypeImpl implements ComponentType {
 
-	/**
-	 * Indicate whether it is safe to non-deterministically enter the mode.
-	 * 
-	 * @return True if its safe to enter the mode non-deterministically.
-	 * 	False otherwise.
-	 */
-	boolean nonDeterministicIn();
-
-	/**
-	 * Indicate whether it is safe to non-deterministically leave the mode.
-	 * 
-	 * @return True if its safe to leave the mode non-deterministically.
-	 * 	False otherwise.
-	 */
-	boolean nonDeterministicOut();
+	private final AdaptationUtility utility;
 	
-	/**
-	 * Indicates whether is the fitness computed while the component
-	 * is in this mode.
-	 * 
-	 * @return True if the fitness is computed while the component
-	 * is in this mode. False otherwise.
+	public ComponentTypeImpl(AdaptationUtility utility){
+		if(utility == null){
+			throw new IllegalArgumentException(String.format(
+					"The %s argument is null.", "utility"));
+		}
+		
+		this.utility = utility;
+	}
+	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.ComponentType#getUtility()
 	 */
-	boolean isFitnessComputed();
+	@Override
+	public double getUtility() {
+		return utility.getUtility(null);
+	}
+
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.ComponentType#getUtilityThreshold()
+	 */
+	@Override
+	public double getUtilityThreshold() {
+		return utility.getUtilityThreshold();
+	}
+
 }

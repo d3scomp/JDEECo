@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco.modes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,52 +18,67 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
  */
 public abstract class ModeChart {
 
-	protected ComponentInstance component;
-	protected Class<? extends DEECoMode> currentMode;
-	protected Map<Class<? extends DEECoMode>, Map<Class<? extends DEECoMode>,
-				List<ModeTransitionListener>>> transitionListeners;
+	protected final ComponentInstance component;
+	
+	protected Set<DEECoMode> modes;
+	protected DEECoMode currentMode;
+	protected Set<DEECoTransition> transitions;
+	
+	protected Map<DEECoTransition, List<ModeTransitionListener>> transitionListeners;
 		
+	public ModeChart(ComponentInstance component){
+		if (component == null){
+			throw new IllegalArgumentException(
+				String.format("The \"%s\" argument is null.", "component"));
+		}
+		
+		this.component = component;
+		modes = new HashSet<>();
+		transitions = new HashSet<>();
+		transitionListeners = new HashMap<>();
+	}
+	
+	
 	public ComponentInstance getComponent() {
 		return component;
 	}
 
-	public void setComponent(ComponentInstance component) {
+	/*public void setComponent(ComponentInstance component) {
 		this.component = component;
-	}
+	}*/
 
-	public Class<? extends DEECoMode> getCurrentMode(){
+	public DEECoMode getCurrentMode(){
 		return currentMode;
 	}
 	
-	public void addTransitionListener(Class<? extends DEECoMode> from,
-			Class<? extends DEECoMode> to,
-			ModeTransitionListener transitionListener){
-		if (from == null) throw new IllegalArgumentException(
-				String.format("The \"%s\" argument is null.", "from"));
-		if (to == null) throw new IllegalArgumentException(
-				String.format("The \"%s\" argument is null.", "to"));
-		if (transitionListener == null) throw new IllegalArgumentException(
-				String.format("The \"%s\" argument is null.", "transitionListener"));
-		
-		if(!transitionListeners.containsKey(from)){
-			transitionListeners.put(from, new HashMap<>());
-		}
-		Map<Class<? extends DEECoMode>, List<ModeTransitionListener>> fromTransitions =
-				transitionListeners.get(from);
-		if(!fromTransitions.containsKey(to)){
-			fromTransitions.put(to, new ArrayList<>());
-		}
-		List<ModeTransitionListener> transition = fromTransitions.get(to);
-		transition.add(transitionListener);
-	}
+//	public void addTransitionListener(DEECoTransition transition,
+//			ModeTransitionListener transitionListener){
+//		if (transition == null) throw new IllegalArgumentException(
+//				String.format("The \"%s\" argument is null.", "transition"));
+//		if (transitionListener == null) throw new IllegalArgumentException(
+//				String.format("The \"%s\" argument is null.", "transitionListener"));
+//		
+//		if(!transitionListeners.containsKey(transition)){
+//			transitionListeners.put(transition, new ArrayList<>());
+//		}
+//		transitionListeners.get(transition).add(transitionListener);
+//	}
 	
 	/**
 	 * @return all the modes that are included in this mode chart
 	 */
-	public abstract Set<Class<? extends DEECoMode>> getModes();
-		
-	public abstract Class<? extends DEECoMode> switchMode();
+	public Set<DEECoMode> getModes(){
+		return modes;
+	}
+
+	public Set<DEECoTransition> getTransitions(){
+		return transitions;
+	}
 	
-	public abstract boolean isModified();
+	public Map<DEECoTransition, List<ModeTransitionListener>> getTransitionListeners(){
+		return transitionListeners;
+	}
+		
+	public abstract DEECoMode switchMode();
 		
 }

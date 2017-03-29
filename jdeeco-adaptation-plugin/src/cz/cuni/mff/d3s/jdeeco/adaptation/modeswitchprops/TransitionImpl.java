@@ -17,6 +17,7 @@ package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitchprops;
 
 import java.util.Map;
 
+import cz.cuni.mff.d3s.deeco.modes.DEECoTransition;
 import cz.cuni.mff.d3s.jdeeco.modes.ModeSuccessor;
 import cz.cuni.mff.d3s.metaadaptation.modeswitchprops.Mode;
 
@@ -28,22 +29,22 @@ public class TransitionImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitch
 
 	private final ModeImpl from;
 	private final ModeImpl to;
-	private final ModeSuccessor modeSuccessor;
+	private final DEECoTransition transition;
 	
-	public TransitionImpl(ModeImpl from, ModeImpl to, ModeSuccessor modeSuccessor) {
+	public TransitionImpl(ModeImpl from, ModeImpl to, DEECoTransition transition) {
 		if(from == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "from"));
 		}
 		if(to == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "to"));
 		}
-		if(modeSuccessor == null){
-			throw new IllegalArgumentException(String.format("The %s argument is null.", "modeSuccessor"));
+		if(transition == null){
+			throw new IllegalArgumentException(String.format("The %s argument is null.", "transition"));
 		}
 		
 		this.from = from;
 		this.to = to;
-		this.modeSuccessor = modeSuccessor;
+		this.transition = transition;
 	}
 	
 	/* (non-Javadoc)
@@ -67,7 +68,7 @@ public class TransitionImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitch
 	 */
 	@Override
 	public Map<String, Double> getGuardParams() {
-		return modeSuccessor.getGuard().getParameters();
+		return transition.getGuard().getParameters();
 	}
 
 	/* (non-Javadoc)
@@ -75,7 +76,7 @@ public class TransitionImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitch
 	 */
 	@Override
 	public void setGuardParam(String name, double value) {
-		modeSuccessor.getGuard().setParameter(name, value);
+		transition.getGuard().setParameter(name, value);
 	}
 
 }

@@ -24,30 +24,30 @@ import java.util.Map;
  */
 public class NonDetModeSwitchAnnealStateSpace {
 
-	public static final double DEFAULT_STARTING_NONDETERMINISM = 0.0001;
-	
-	public final double startingNondeterminism;
-	
-	private Map<Double, NonDetModeSwitchAnnealState> states;
-	
-	public NonDetModeSwitchAnnealStateSpace(){
-		states = new HashMap<>();
-		startingNondeterminism = DEFAULT_STARTING_NONDETERMINISM;
-	}
-	
-	public NonDetModeSwitchAnnealStateSpace(double startingNondeterminism){
-		states = new HashMap<>();
-		this.startingNondeterminism = startingNondeterminism;
-	}
-	
-	public NonDetModeSwitchAnnealState getState(double nondeterminism){
-		if(states.containsKey(nondeterminism)){
-			return states.get(nondeterminism);
-		} else {
-			NonDetModeSwitchAnnealState newState =
-					new NonDetModeSwitchAnnealState(nondeterminism, this);
-			states.put(nondeterminism, newState);
-			return newState;
-		}
-	}
+//	public static final double DEFAULT_STARTING_NONDETERMINISM = 0.0001;
+//	
+//	public final double startingNondeterminism;
+//	
+//	private Map<Double, NonDetModeSwitchAnnealState> states;
+//	
+//	public NonDetModeSwitchAnnealStateSpace(){
+//		states = new HashMap<>();
+//		startingNondeterminism = DEFAULT_STARTING_NONDETERMINISM;
+//	}
+//	
+//	public NonDetModeSwitchAnnealStateSpace(double startingNondeterminism){
+//		states = new HashMap<>();
+//		this.startingNondeterminism = startingNondeterminism;
+//	}
+//	
+//	public NonDetModeSwitchAnnealState getState(double nondeterminism){
+//		if(states.containsKey(nondeterminism)){
+//			return states.get(nondeterminism);
+//		} else {
+//			NonDetModeSwitchAnnealState newState =
+//					new NonDetModeSwitchAnnealState(nondeterminism, this);
+//			states.put(nondeterminism, newState);
+//			return newState;
+//		}
+//	}
 }

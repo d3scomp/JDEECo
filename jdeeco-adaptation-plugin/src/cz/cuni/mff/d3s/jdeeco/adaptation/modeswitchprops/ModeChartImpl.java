@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
-import cz.cuni.mff.d3s.jdeeco.modes.ModeSuccessor;
+import cz.cuni.mff.d3s.deeco.modes.DEECoTransition;
 import cz.cuni.mff.d3s.metaadaptation.modeswitchprops.Mode;
 import cz.cuni.mff.d3s.metaadaptation.modeswitchprops.Transition;
 
@@ -32,7 +32,7 @@ import cz.cuni.mff.d3s.metaadaptation.modeswitchprops.Transition;
 public class ModeChartImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitchprops.ModeChart {
 
 	private final cz.cuni.mff.d3s.jdeeco.modes.ModeChartImpl modeChart;
-	private final Map<Class<? extends DEECoMode>, ModeImpl> modes;
+	private final Map<DEECoMode, ModeImpl> modes;
 	private final Set<Transition> transitions;
 	
 	public ModeChartImpl(cz.cuni.mff.d3s.jdeeco.modes.ModeChartImpl modeChart){
@@ -48,28 +48,20 @@ public class ModeChartImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitchp
 	}
 
 	private void init(){
-		for(Class<? extends DEECoMode> m : modeChart.getModes()){
+		// Create modes
+		for(DEECoMode m : modeChart.getModes()){
 			ModeImpl mode = new ModeImpl(m);
 			modes.put(m, mode);
 		}
 		
-		for(Class<? extends DEECoMode> m : modeChart.getModes()){
-			ModeImpl fromModeImpl = modes.get(m);
-			if(modeChart.modes.containsKey(m)){
-				for(ModeSuccessor ms : modeChart.modes.get(m)){
-					Class<? extends DEECoMode> succMode = ms.successor;
-					ModeImpl succModeImpl;
-					if(modes.containsKey(succMode)){
-						succModeImpl = modes.get(succMode);
-					} else {
-						succModeImpl = new ModeImpl(succMode);
-						modes.put(succMode, succModeImpl);
-					}
-					
-					TransitionImpl transition = new TransitionImpl(fromModeImpl, succModeImpl, ms);
-					transitions.add(transition);
-				}
-			}
+		// Create transitions
+		for(DEECoTransition transition : modeChart.getTransitions()){
+			//GuardImpl guard = new GuardImpl(transition.getGuard(), component);
+			TransitionImpl transitionImpl =  new TransitionImpl(
+					modes.get(transition.getFrom()),
+					modes.get(transition.getTo()),
+					transition);
+			transitions.add(transitionImpl);
 		}
 	}
 	

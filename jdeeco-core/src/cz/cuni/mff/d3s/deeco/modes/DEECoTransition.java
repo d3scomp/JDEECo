@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2015 Charles University in Prague
+ * Copyright 2017 Charles University in Prague
  *  
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,18 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *******************************************************************************/
-package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching.runtimelog;
-
-import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
-import cz.cuni.mff.d3s.jdeeco.modes.runtimelog.ModeTransitionLogger;
+package cz.cuni.mff.d3s.deeco.modes;
 
 /**
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public class NonDetModeTransitionLogger extends ModeTransitionLogger {
-
-	public NonDetModeTransitionLogger(DEECoMode oldMode, DEECoMode newMode) {
-		super(oldMode, newMode);
-	}
+public interface DEECoTransition {
+	public DEECoMode getFrom();
+	public DEECoMode getTo();
+	public int getPriority();
+	public void setPriority(int priority);
+	public ModeGuard getGuard();
 }

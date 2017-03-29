@@ -41,19 +41,19 @@ public class NonDetModeSwitchAwareAnnotationProcessorExtension extends Annotatio
 			Class<? extends StateSpaceSearch> searchEngine = nonDetModeSwitchAnnotation.searchEngine();
 			Class<? extends SearchParameters> searchParameters = nonDetModeSwitchAnnotation.searchParameters();
 			
-			try { 
+//			try { 
 				ModeChart modeChart = componentInstance.getModeChart();
 				if(modeChart == null){
 					throw new IllegalStateException(String.format(
 							"The %s requires \"%s\" to be set. Do you miss @%s annotation?",
 							this.getClass().getName(), "modeChart", ComponentModeChart.class.getName()));
 				}
-				StateSpaceSearch sss = searchEngine.newInstance();
-				sss.processParameters(searchParameters.newInstance());
-				NonDeterministicModeSwitchingPlugin.storeStateSpaceSearch(componentInstance, sss);
-			} catch (InstantiationException | IllegalAccessException e) {
-				e.printStackTrace();
-			}
+				//StateSpaceSearch sss = searchEngine.newInstance();
+				//sss.processParameters(searchParameters.newInstance());
+				//NonDeterministicModeSwitchingPlugin.storeStateSpaceSearch(componentInstance, sss);
+//			} catch (InstantiationException | IllegalAccessException e) {
+//				e.printStackTrace();
+//			}
 		}
 	}
 }

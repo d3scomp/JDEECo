@@ -25,6 +25,7 @@ Export-Package: cz.cuni.mff.d3s.deeco.annotations,
  cz.cuni.mff.d3s.deeco.modes,
  cz.cuni.mff.d3s.deeco.runners,
  cz.cuni.mff.d3s.deeco.runtime,
+ cz.cuni.mff.d3s.deeco.runtimelog,
  cz.cuni.mff.d3s.deeco.task,
  cz.cuni.mff.d3s.deeco.timer
 Require-Bundle: org.eclipse.core.runtime,

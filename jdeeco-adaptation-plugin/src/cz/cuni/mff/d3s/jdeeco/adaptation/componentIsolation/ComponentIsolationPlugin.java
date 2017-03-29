@@ -1,4 +1,4 @@
-package ComponentIsolation;
+package cz.cuni.mff.d3s.jdeeco.adaptation.componentIsolation;
 
 import java.util.Arrays;
 import java.util.HashSet;
