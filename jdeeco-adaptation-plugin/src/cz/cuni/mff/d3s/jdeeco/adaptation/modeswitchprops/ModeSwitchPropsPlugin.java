@@ -23,6 +23,8 @@ import java.util.Set;
 import ComponentIsolation.ComponentIsolationPlugin;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
+import cz.cuni.mff.d3s.deeco.modes.ModeChart;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer.StartupListener;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
@@ -30,8 +32,8 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.runtime.PluginStartupFailedException;
 import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationPlugin;
 import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationUtility;
+import cz.cuni.mff.d3s.metaadaptation.modeswitch.NonDeterministicModeSwitchingManager;
 import cz.cuni.mff.d3s.metaadaptation.modeswitchprops.Component;
-import cz.cuni.mff.d3s.metaadaptation.modeswitchprops.ModeChart;
 import cz.cuni.mff.d3s.metaadaptation.modeswitchprops.ModeSwitchPropsManager;
 
 /**
@@ -99,9 +101,18 @@ public class ModeSwitchPropsPlugin implements DEECoPlugin, StartupListener {
 		
 		for(DEECoNode node : nodes){
 			for(ComponentInstance ci : node.getRuntimeMetadata().getComponentInstances()){
-				if(utilities.containsKey(ci.getName())){
-					Component c = new ComponentImpl(ci, utilities.get(ci.getName()));
-					ModeChart m = new ModeChartImpl((cz.cuni.mff.d3s.jdeeco.modes.ModeChartImpl) ci.getModeChart());
+				ModeChart modeChart = ci.getModeChart();
+				if (modeChart != null) {
+					// Check the required utility was placed
+					if(!utilities.containsKey(ci.getKnowledgeManager().getId())){
+						throw new PluginStartupFailedException(String.format(
+								"The %s component has no associated utility function.",
+								ci.getKnowledgeManager().getId()));
+					}
+				
+					Component c = new ComponentImpl(ci, utilities.get(ci.getKnowledgeManager().getId()));
+					cz.cuni.mff.d3s.metaadaptation.modeswitchprops.ModeChart m = 
+							new ModeChartImpl((cz.cuni.mff.d3s.jdeeco.modes.ModeChartImpl) modeChart);
 					adaptationPlugin.registerAdaptation(new ModeSwitchPropsManager(c, m));
 					
 					if(verbose){
@@ -111,7 +122,6 @@ public class ModeSwitchPropsPlugin implements DEECoPlugin, StartupListener {
 					}
 				}
 			}
-		}
-				
+		}		
 	}
 }

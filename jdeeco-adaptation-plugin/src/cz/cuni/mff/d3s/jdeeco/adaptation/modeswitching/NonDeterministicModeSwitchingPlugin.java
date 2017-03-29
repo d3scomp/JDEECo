@@ -56,7 +56,7 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 	}
 	
 	private long startTime = 0;
-	private final AdaptationUtility utility;
+	private final Map<String, AdaptationUtility> utilities;
 	private double startingNondeterminism = 0.0001;
 	private DEECoContainer container = null;
 	AdaptationPlugin adaptationPlugin= null;
@@ -71,15 +71,15 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 					AdaptationPlugin.class,
 					ModeSwitchingPlugin.class});
 	
-	public NonDeterministicModeSwitchingPlugin(AdaptationUtility utility, TimeProgress timer){
-		if(utility == null){
-			throw new IllegalArgumentException(String.format("The %s argument is null.", "utility"));
+	public NonDeterministicModeSwitchingPlugin(Map<String, AdaptationUtility> utilities, TimeProgress timer){
+		if(utilities == null){
+			throw new IllegalArgumentException(String.format("The %s argument is null.", "utilities"));
 		}
 		if(timer == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "timer"));
 		}
 		
-		this.utility = utility;
+		this.utilities = utilities;
 		this.timer = timer;
 	}
 	
@@ -157,9 +157,17 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 						}
 					}
 
+					// Check the required utility was placed
+					if(!utilities.containsKey(c.getKnowledgeManager().getId())){
+						throw new PluginStartupFailedException(String.format(
+								"The %s component has no associated utility function.",
+								c.getKnowledgeManager().getId()));
+					}
+					
 					// Create non-deterministic mode switching manager of the component
 					NonDeterministicModeSwitchingManager manager;
-					ComponentImpl componentImpl = new ComponentImpl(c, sssMap.get(c), utility);
+					ComponentImpl componentImpl = new ComponentImpl(c, sssMap.get(c),
+							utilities.get(c.getKnowledgeManager().getId()));
 					try {
 						manager = new NonDeterministicModeSwitchingManager(startTime, timer, componentImpl);
 					} catch (InstantiationException | IllegalAccessException e) {
