@@ -19,7 +19,7 @@ import java.io.IOException;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
-import cz.cuni.mff.d3s.deeco.modes.ModeTransitionListener;
+import cz.cuni.mff.d3s.deeco.modes.DEECoTransitionListener;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 import cz.cuni.mff.d3s.deeco.task.ProcessContext;
 
@@ -27,7 +27,7 @@ import cz.cuni.mff.d3s.deeco.task.ProcessContext;
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public class ModeTransitionLogger implements ModeTransitionListener {
+public class ModeTransitionLogger implements DEECoTransitionListener {
 
 	public final DEECoMode oldMode;
 	public final DEECoMode newMode;

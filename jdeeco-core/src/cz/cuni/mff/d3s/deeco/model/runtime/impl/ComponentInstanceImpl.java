@@ -10,7 +10,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.EnsembleController;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RatingsProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.SecurityRole;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
-import cz.cuni.mff.d3s.deeco.modes.ModeChart;
+import cz.cuni.mff.d3s.deeco.modes.DEECoModeChart;
 
 import java.util.Collection;
 import org.eclipse.emf.common.notify.Notification;
@@ -188,7 +188,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * @generated
 	 * @ordered
 	 */
-	protected static final ModeChart MODE_CHART_EDEFAULT = null;
+	protected static final DEECoModeChart MODE_CHART_EDEFAULT = null;
 
 	/**
 	 * The cached value of the '{@link #getModeChart() <em>Mode Chart</em>}' attribute.
@@ -198,7 +198,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * @generated
 	 * @ordered
 	 */
-	protected ModeChart modeChart = MODE_CHART_EDEFAULT;
+	protected DEECoModeChart modeChart = MODE_CHART_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -399,7 +399,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ModeChart getModeChart() {
+	public DEECoModeChart getModeChart() {
 		return modeChart;
 	}
 
@@ -408,8 +408,8 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setModeChart(ModeChart newModeChart) {
-		ModeChart oldModeChart = modeChart;
+	public void setModeChart(DEECoModeChart newModeChart) {
+		DEECoModeChart oldModeChart = modeChart;
 		modeChart = newModeChart;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, RuntimeMetadataPackage.COMPONENT_INSTANCE__MODE_CHART, oldModeChart, modeChart));
@@ -531,7 +531,7 @@ public class ComponentInstanceImpl extends MinimalEObjectImpl.Container implemen
 				setRatingsProcess((RatingsProcess)newValue);
 				return;
 			case RuntimeMetadataPackage.COMPONENT_INSTANCE__MODE_CHART:
-				setModeChart((ModeChart)newValue);
+				setModeChart((DEECoModeChart)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);

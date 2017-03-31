@@ -19,11 +19,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class ModeGuard {
+public abstract class DEECoModeGuard {
 	
 	protected final Map<String, Double> parameters;
 	
-	public ModeGuard(){
+	public DEECoModeGuard(){
 		parameters = new HashMap<>();
 		specifyParameters();
 	}

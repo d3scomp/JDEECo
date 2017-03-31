@@ -34,12 +34,12 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
 import cz.cuni.mff.d3s.deeco.modes.DEECoTransition;
-import cz.cuni.mff.d3s.deeco.modes.ModeChart;
-import cz.cuni.mff.d3s.deeco.modes.ModeTransitionListener;
+import cz.cuni.mff.d3s.deeco.modes.DEECoModeChart;
+import cz.cuni.mff.d3s.deeco.modes.DEECoTransitionListener;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 
 // TODO: make tests
-public class ModeChartImpl extends ModeChart{
+public class ModeChartImpl extends DEECoModeChart{
 	
 //	public static final double MODE_NOT_FOUND = -1;
 //	
@@ -105,7 +105,7 @@ public class ModeChartImpl extends ModeChart{
 		this.transitions.addAll(transitions);	
 	}
 	
-	public void setTransitionListeners(Map<DEECoTransition, List<ModeTransitionListener>> listeners){
+	public void setTransitionListeners(Map<DEECoTransition, List<DEECoTransitionListener>> listeners){
 		if(listeners == null){
 			throw new IllegalArgumentException(String.format(
 					"The %s argument is null.", "listeners"));
@@ -253,7 +253,7 @@ public class ModeChartImpl extends ModeChart{
 	
 	private void invokeTransitionListeners(DEECoTransition transition){
 		if(transitionListeners.containsKey(transition)){
-			for(ModeTransitionListener transitionListener : transitionListeners.get(transition)){
+			for(DEECoTransitionListener transitionListener : transitionListeners.get(transition)){
 				// Get the knowledge values
 				String[] knowledge = transitionListener.getKnowledgeNames();
 				ParamHolder<?>[] values = getValuesForUpdate(knowledge);

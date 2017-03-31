@@ -4,7 +4,7 @@ package cz.cuni.mff.d3s.deeco.model.runtime.api;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ShadowKnowledgeManagerRegistry;
-import cz.cuni.mff.d3s.deeco.modes.ModeChart;
+import cz.cuni.mff.d3s.deeco.modes.DEECoModeChart;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
@@ -247,12 +247,12 @@ public interface ComponentInstance extends EObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Mode Chart</em>' attribute.
-	 * @see #setModeChart(ModeChart)
+	 * @see #setModeChart(DEECoModeChart)
 	 * @see cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage#getComponentInstance_ModeChart()
 	 * @model dataType="cz.cuni.mff.d3s.deeco.model.runtime.api.ModeChart"
 	 * @generated
 	 */
-	ModeChart getModeChart();
+	DEECoModeChart getModeChart();
 
 	/**
 	 * Sets the value of the '{@link cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance#getModeChart <em>Mode Chart</em>}' attribute.
@@ -262,6 +262,6 @@ public interface ComponentInstance extends EObject {
 	 * @see #getModeChart()
 	 * @generated
 	 */
-	void setModeChart(ModeChart value);
+	void setModeChart(DEECoModeChart value);
 
 } // ComponentInstance

@@ -19,8 +19,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
-import cz.cuni.mff.d3s.deeco.modes.ModeGuard;
-import cz.cuni.mff.d3s.deeco.modes.ModeTransitionListener;
+import cz.cuni.mff.d3s.deeco.modes.DEECoModeGuard;
+import cz.cuni.mff.d3s.deeco.modes.DEECoTransitionListener;
 
 public class ModeChartFactory {
 

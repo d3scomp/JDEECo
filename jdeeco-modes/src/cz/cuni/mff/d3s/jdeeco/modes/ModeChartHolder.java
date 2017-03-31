@@ -24,14 +24,14 @@ import java.util.Set;
 
 import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
 import cz.cuni.mff.d3s.deeco.modes.DEECoTransition;
-import cz.cuni.mff.d3s.deeco.modes.ModeGuard;
-import cz.cuni.mff.d3s.deeco.modes.ModeTransitionListener;
+import cz.cuni.mff.d3s.deeco.modes.DEECoModeGuard;
+import cz.cuni.mff.d3s.deeco.modes.DEECoTransitionListener;
 
 public abstract class ModeChartHolder {
 	
 	private Set<DEECoMode> modes;
 	private Set<DEECoTransition> transitions;
-	private Map<DEECoTransition, List<ModeTransitionListener>> transitionListeners;
+	private Map<DEECoTransition, List<DEECoTransitionListener>> transitionListeners;
 	
 	public ModeChartHolder() {
 		modes = new HashSet<>();
@@ -49,7 +49,7 @@ public abstract class ModeChartHolder {
 		return transitions;
 	}
 	
-	public Map<DEECoTransition, List<ModeTransitionListener>> getTransitionListeners(){
+	public Map<DEECoTransition, List<DEECoTransitionListener>> getTransitionListeners(){
 		return transitionListeners;
 	}
 	
@@ -62,7 +62,7 @@ public abstract class ModeChartHolder {
 		}
 	}
 	
-	public Transition addTransition(DEECoMode from, DEECoMode to, ModeGuard guard) {
+	public Transition addTransition(DEECoMode from, DEECoMode to, DEECoModeGuard guard) {
 		if (from == null) throw new IllegalArgumentException(
 				String.format("The \"%s\" argument is null.", "from"));
 		if (to == null) throw new IllegalArgumentException(
@@ -137,7 +137,7 @@ public abstract class ModeChartHolder {
 //	}
 	
 	public void addTransitionListener(Transition transition,
-			ModeTransitionListener transitionListener){
+			DEECoTransitionListener transitionListener){
 		if (transition == null) throw new IllegalArgumentException(
 				String.format("The \"%s\" argument is null.", "transition"));
 		if (transitionListener == null) throw new IllegalArgumentException(

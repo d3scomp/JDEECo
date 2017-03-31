@@ -27,7 +27,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentProcess;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
-import cz.cuni.mff.d3s.deeco.modes.ModeChart;
+import cz.cuni.mff.d3s.deeco.modes.DEECoModeChart;
 import cz.cuni.mff.d3s.deeco.task.ProcessContext;
 
 /**
@@ -66,7 +66,7 @@ public class ModeSwitchingManager {
 		RuntimeMetadata runtime = (RuntimeMetadata) component.eContainer();
 
 		for (ComponentInstance c : runtime.getComponentInstances()) {
-			ModeChart modeChart = c.getModeChart();
+			DEECoModeChart modeChart = c.getModeChart();
 			if (modeChart != null) {
 				DEECoMode currentMode = modeChart.switchMode();
 

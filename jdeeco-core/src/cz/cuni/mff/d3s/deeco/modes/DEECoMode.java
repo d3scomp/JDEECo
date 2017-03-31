@@ -27,12 +27,20 @@ public abstract class DEECoMode {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof DEECoMode){ // TODO: debug
+		if(obj instanceof DEECoMode){
 			DEECoMode other = (DEECoMode) obj;
 			return this.id.equals(other.id);
 		}
 		
 		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return id.hashCode();
 	}
 	
 	/* (non-Javadoc)

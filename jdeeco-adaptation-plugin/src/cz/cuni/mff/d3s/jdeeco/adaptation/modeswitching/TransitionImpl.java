@@ -141,5 +141,34 @@ public class TransitionImpl implements Transition {
 	public void setPriority(int priority) {
 		transition.setPriority(priority);		
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof TransitionImpl){
+			TransitionImpl other = (TransitionImpl) obj;
+			return this.transition.equals(other.transition);
+		}
+		
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return transition.hashCode();
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return transition.toString();
+	}
 
 }

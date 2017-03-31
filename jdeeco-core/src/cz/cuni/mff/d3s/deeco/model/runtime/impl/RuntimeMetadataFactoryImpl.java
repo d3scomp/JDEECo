@@ -9,7 +9,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.*;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
-import cz.cuni.mff.d3s.deeco.modes.ModeChart;
+import cz.cuni.mff.d3s.deeco.modes.DEECoModeChart;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -592,8 +592,8 @@ public class RuntimeMetadataFactoryImpl extends EFactoryImpl implements RuntimeM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ModeChart createModeChartFromString(EDataType eDataType, String initialValue) {
-		return (ModeChart)super.createFromString(eDataType, initialValue);
+	public DEECoModeChart createModeChartFromString(EDataType eDataType, String initialValue) {
+		return (DEECoModeChart)super.createFromString(eDataType, initialValue);
 	}
 
 	/**

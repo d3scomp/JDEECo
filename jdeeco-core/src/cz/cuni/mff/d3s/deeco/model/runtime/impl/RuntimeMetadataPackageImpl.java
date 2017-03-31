@@ -38,7 +38,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.meta.RuntimeMetadataPackage;
 import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
-import cz.cuni.mff.d3s.deeco.modes.ModeChart;
+import cz.cuni.mff.d3s.deeco.modes.DEECoModeChart;
 import cz.cuni.mff.d3s.deeco.network.CommunicationBoundaryPredicate;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -1583,7 +1583,7 @@ public class RuntimeMetadataPackageImpl extends EPackageImpl implements RuntimeM
 		initEDataType(ratingsManagerEDataType, RatingsManager.class, "RatingsManager", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(typeEDataType, Type.class, "Type", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(deeCoModeEDataType, DEECoMode.class, "DEECoMode", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(modeChartEDataType, ModeChart.class, "ModeChart", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(modeChartEDataType, DEECoModeChart.class, "ModeChart", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

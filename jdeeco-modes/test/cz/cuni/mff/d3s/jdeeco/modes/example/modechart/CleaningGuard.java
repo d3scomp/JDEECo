@@ -17,11 +17,11 @@ package cz.cuni.mff.d3s.jdeeco.modes.example.modechart;
 
 import java.util.List;
 
-import cz.cuni.mff.d3s.deeco.modes.ModeGuard;
+import cz.cuni.mff.d3s.deeco.modes.DEECoModeGuard;
 import cz.cuni.mff.d3s.deeco.task.ProcessContext;
 import cz.cuni.mff.d3s.jdeeco.modes.example.DirtySpot;
 
-public class CleaningGuard extends ModeGuard {
+public class CleaningGuard extends DEECoModeGuard {
 
 	@Override
 	protected void specifyParameters(){}

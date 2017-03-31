@@ -25,7 +25,7 @@ import java.util.function.Predicate;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
 import cz.cuni.mff.d3s.deeco.modes.DEECoTransition;
-import cz.cuni.mff.d3s.deeco.modes.ModeGuard;
+import cz.cuni.mff.d3s.deeco.modes.DEECoModeGuard;
 import cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching.runtimelog.NonDetModeTransitionLogger;
 import cz.cuni.mff.d3s.jdeeco.modes.ModeSuccessor;
 import cz.cuni.mff.d3s.metaadaptation.modeswitch.Mode;
@@ -38,7 +38,7 @@ import cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition;
  */
 public class ModeChartImpl implements ModeChart {
 
-	private final cz.cuni.mff.d3s.deeco.modes.ModeChart modeChart;
+	private final cz.cuni.mff.d3s.deeco.modes.DEECoModeChart modeChart;
 	
 	private final Map<DEECoMode, ModeImpl> modes;
 	
@@ -46,7 +46,7 @@ public class ModeChartImpl implements ModeChart {
 	
 	private final ComponentInstance component;
 		
-	public ModeChartImpl(cz.cuni.mff.d3s.deeco.modes.ModeChart modeChart, ComponentInstance component){
+	public ModeChartImpl(cz.cuni.mff.d3s.deeco.modes.DEECoModeChart modeChart, ComponentInstance component){
 		if(modeChart == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "modeChart"));
 		}
@@ -113,7 +113,7 @@ public class ModeChartImpl implements ModeChart {
 		DEECoMode DTo = ((ModeImpl)to).getInnerMode();
 		
 		cz.cuni.mff.d3s.jdeeco.modes.Transition transition = new cz.cuni.mff.d3s.jdeeco.modes.Transition(
-				DFrom, DTo, new ModeGuard(){
+				DFrom, DTo, new DEECoModeGuard(){
 			@Override
 			protected void specifyParameters() {
 				// Nothing to do here				

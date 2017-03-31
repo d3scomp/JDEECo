@@ -15,9 +15,9 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.modes;
 
-import cz.cuni.mff.d3s.deeco.modes.ModeGuard;
+import cz.cuni.mff.d3s.deeco.modes.DEECoModeGuard;
 
-public class TrueGuard extends ModeGuard {
+public class TrueGuard extends DEECoModeGuard {
 
 	@Override
 	protected void specifyParameters(){}

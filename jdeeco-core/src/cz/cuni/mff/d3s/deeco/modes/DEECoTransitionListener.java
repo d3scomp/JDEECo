@@ -21,7 +21,7 @@ import cz.cuni.mff.d3s.deeco.task.ParamHolder;
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public interface ModeTransitionListener {
+public interface DEECoTransitionListener {
 
 	String[] getKnowledgeNames();
 	

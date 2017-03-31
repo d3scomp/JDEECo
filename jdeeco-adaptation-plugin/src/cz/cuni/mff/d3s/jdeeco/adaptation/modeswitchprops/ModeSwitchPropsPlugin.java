@@ -23,7 +23,7 @@ import java.util.Set;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
-import cz.cuni.mff.d3s.deeco.modes.ModeChart;
+import cz.cuni.mff.d3s.deeco.modes.DEECoModeChart;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer.StartupListener;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
@@ -46,7 +46,7 @@ public class ModeSwitchPropsPlugin implements DEECoPlugin, StartupListener {
 	
 	private final Set<DEECoNode> nodes;
 	
-	private final Map<String, AdaptationUtility> utilities;
+	private final Map<Class<?>, AdaptationUtility> utilities;
 
 	private AdaptationPlugin adaptationPlugin = null;
 	
@@ -56,7 +56,7 @@ public class ModeSwitchPropsPlugin implements DEECoPlugin, StartupListener {
 			Arrays.asList(new Class[]{AdaptationPlugin.class});;
 
 
-	public ModeSwitchPropsPlugin(Set<DEECoNode> nodes, Map<String, AdaptationUtility> utilities){
+	public ModeSwitchPropsPlugin(Set<DEECoNode> nodes, Map<Class<?>, AdaptationUtility> utilities){
 		if(nodes == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "nodes"));
 		}
@@ -101,16 +101,23 @@ public class ModeSwitchPropsPlugin implements DEECoPlugin, StartupListener {
 		
 		for(DEECoNode node : nodes){
 			for(ComponentInstance ci : node.getRuntimeMetadata().getComponentInstances()){
-				ModeChart modeChart = ci.getModeChart();
+				DEECoModeChart modeChart = ci.getModeChart();
 				if (modeChart != null) {
 					// Check the required utility was placed
-					if(!utilities.containsKey(ci.getKnowledgeManager().getId())){
+					AdaptationUtility utility = null;
+					for(Class<?> key : utilities.keySet()){
+						if(key.getName().equals(ci.getName())){
+							utility = utilities.get(key);
+						}
+					}
+					
+					if(utility == null){
 						throw new PluginStartupFailedException(String.format(
 								"The %s component has no associated utility function.",
 								ci.getKnowledgeManager().getId()));
 					}
 				
-					Component c = new ComponentImpl(ci, utilities.get(ci.getKnowledgeManager().getId()));
+					Component c = new ComponentImpl(ci, utility);
 					cz.cuni.mff.d3s.metaadaptation.modeswitchprops.ModeChart m = 
 							new ModeChartImpl((cz.cuni.mff.d3s.jdeeco.modes.ModeChartImpl) modeChart);
 					adaptationPlugin.registerAdaptation(new ModeSwitchPropsManager(c, m));

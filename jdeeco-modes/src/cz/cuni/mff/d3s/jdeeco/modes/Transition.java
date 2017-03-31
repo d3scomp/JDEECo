@@ -17,7 +17,7 @@ package cz.cuni.mff.d3s.jdeeco.modes;
 
 import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
 import cz.cuni.mff.d3s.deeco.modes.DEECoTransition;
-import cz.cuni.mff.d3s.deeco.modes.ModeGuard;
+import cz.cuni.mff.d3s.deeco.modes.DEECoModeGuard;
 
 /**
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
@@ -28,9 +28,9 @@ public class Transition implements DEECoTransition {
 	private final DEECoMode from;
 	private final DEECoMode to;
 	private int priority;
-	private final ModeGuard guard;
+	private final DEECoModeGuard guard;
 	
-	public Transition(DEECoMode from, DEECoMode to, ModeGuard guard){
+	public Transition(DEECoMode from, DEECoMode to, DEECoModeGuard guard){
 		if (from == null) throw new IllegalArgumentException(
 				String.format("The \"%s\" argument is null.", "from"));
 		if (to == null) throw new IllegalArgumentException(
@@ -80,7 +80,7 @@ public class Transition implements DEECoTransition {
 	 * @see cz.cuni.mff.d3s.deeco.modes.DEECoTransition#getGuard()
 	 */
 	@Override
-	public ModeGuard getGuard() {
+	public DEECoModeGuard getGuard() {
 		return guard;
 	}
 
@@ -98,10 +98,18 @@ public class Transition implements DEECoTransition {
 	}
 	
 	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return from.hashCode() + 17 * to.hashCode();
+	}
+	
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return String.format("%s -> %s", from, to);
+		return String.format("%s -> %s", from.toString(), to.toString());
 	}
 }

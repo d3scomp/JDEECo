@@ -16,7 +16,7 @@
 package cz.cuni.mff.d3s.jdeeco.modes;
 
 import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
-import cz.cuni.mff.d3s.deeco.modes.ModeGuard;
+import cz.cuni.mff.d3s.deeco.modes.DEECoModeGuard;
 
 public class ModeSuccessor {
 

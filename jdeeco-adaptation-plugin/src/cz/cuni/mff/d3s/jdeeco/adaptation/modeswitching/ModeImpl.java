@@ -50,4 +50,20 @@ public class ModeImpl implements Mode {
 		
 		return false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return mode.hashCode();
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return mode.toString();
+	}
 }

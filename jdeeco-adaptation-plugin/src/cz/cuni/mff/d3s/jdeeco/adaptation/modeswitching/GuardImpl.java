@@ -24,7 +24,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.PathNodeField;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
-import cz.cuni.mff.d3s.deeco.modes.ModeGuard;
+import cz.cuni.mff.d3s.deeco.modes.DEECoModeGuard;
 
 /**
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
@@ -32,11 +32,11 @@ import cz.cuni.mff.d3s.deeco.modes.ModeGuard;
  */
 public class GuardImpl {
 	
-	private final ModeGuard guard;
+	private final DEECoModeGuard guard;
 	
 	private final ComponentInstance component;
 	
-	public GuardImpl(ModeGuard guard, ComponentInstance comonent){
+	public GuardImpl(DEECoModeGuard guard, ComponentInstance comonent){
 		if(guard == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "guard"));
 		}
@@ -48,7 +48,7 @@ public class GuardImpl {
 		this.component = comonent;
 	}
 	
-	public ModeGuard getInnerGuard(){
+	public DEECoModeGuard getInnerGuard(){
 		return guard;
 	}
 

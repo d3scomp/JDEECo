@@ -26,7 +26,7 @@ import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorExtensionP
 import cz.cuni.mff.d3s.deeco.annotations.processor.NonDetModeSwitchAwareAnnotationProcessorExtension;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
-import cz.cuni.mff.d3s.deeco.modes.ModeChart;
+import cz.cuni.mff.d3s.deeco.modes.DEECoModeChart;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer.StartupListener;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
@@ -58,7 +58,7 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 //	}
 	
 //	private long startTime = 0;
-	private final Map<String, AdaptationUtility> utilities;
+	private final Map<Class<?>, AdaptationUtility> utilities;
 //	private double startingNondeterminism = 0.0001;
 	private DEECoContainer container = null;
 	AdaptationPlugin adaptationPlugin= null;
@@ -79,7 +79,7 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 					AdaptationPlugin.class,
 					ModeSwitchingPlugin.class});
 	
-	public NonDeterministicModeSwitchingPlugin(Map<String, AdaptationUtility> utilities/*, TimeProgress timer*/){
+	public NonDeterministicModeSwitchingPlugin(Map<Class<?>, AdaptationUtility> utilities/*, TimeProgress timer*/){
 		if(utilities == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "utilities"));
 		}
@@ -182,7 +182,7 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 		List<Component> components = new ArrayList<>();
 		// Components with non-deterministic mode switching aspiration
 		for (ComponentInstance c : container.getRuntimeMetadata().getComponentInstances()) {
-			ModeChart modeChart = c.getModeChart();
+			DEECoModeChart modeChart = c.getModeChart();
 			if (modeChart != null) {
 //				if(sssMap.containsKey(c)){
 				if(training){
@@ -202,17 +202,21 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 				}
 
 					// Check the required utility was placed
-					if(!utilities.containsKey(c.getKnowledgeManager().getId())){
-						throw new PluginStartupFailedException(String.format(
-								"The %s component has no associated utility function.",
-								c.getKnowledgeManager().getId()));
+				AdaptationUtility utility = null;
+				for(Class<?> key : utilities.keySet()){
+					if(key.getName().equals(c.getName())){
+						utility = utilities.get(key);
 					}
-					
-					// Create non-deterministic mode switching manager of the component
-					NonDeterministicModeSwitchingManager manager;
-					ComponentImpl componentImpl = new ComponentImpl(c,
-							new ComponentTypeImpl(utilities.get(c.getKnowledgeManager().getId())));
-					components.add(componentImpl);
+				}
+				
+				if(utility == null){
+					throw new PluginStartupFailedException(String.format(
+							"The %s component has no associated utility function.",
+							c.getKnowledgeManager().getId()));
+				}
+				
+				ComponentImpl componentImpl = new ComponentImpl(c, new ComponentTypeImpl(utility));
+				components.add(componentImpl);
 //				}
 			}
 		}
@@ -220,7 +224,7 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 		if(training && (NonDeterministicModeSwitchingManager.trainFrom == null
 				|| NonDeterministicModeSwitchingManager.trainTo == null)){
 			throw new PluginStartupFailedException(String.format(
-					"The %s or %s mode not found.", trainFrom, trainTo));
+					"The \"%s\" or \"%s\" mode not found.", trainFrom, trainTo));
 		}
 		
 		try {

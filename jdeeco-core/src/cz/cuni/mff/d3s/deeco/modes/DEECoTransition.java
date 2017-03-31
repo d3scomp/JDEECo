@@ -24,5 +24,5 @@ public interface DEECoTransition {
 	public DEECoMode getTo();
 	public int getPriority();
 	public void setPriority(int priority);
-	public ModeGuard getGuard();
+	public DEECoModeGuard getGuard();
 }

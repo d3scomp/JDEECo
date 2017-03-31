@@ -16,7 +16,7 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
  * @author Ilias Gerostathopoulos <iliasg@d3s.mff.cuni.cz>
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  */
-public abstract class ModeChart {
+public abstract class DEECoModeChart {
 
 	protected final ComponentInstance component;
 	
@@ -24,9 +24,9 @@ public abstract class ModeChart {
 	protected DEECoMode currentMode;
 	protected Set<DEECoTransition> transitions;
 	
-	protected Map<DEECoTransition, List<ModeTransitionListener>> transitionListeners;
+	protected Map<DEECoTransition, List<DEECoTransitionListener>> transitionListeners;
 		
-	public ModeChart(ComponentInstance component){
+	public DEECoModeChart(ComponentInstance component){
 		if (component == null){
 			throw new IllegalArgumentException(
 				String.format("The \"%s\" argument is null.", "component"));
@@ -75,7 +75,7 @@ public abstract class ModeChart {
 		return transitions;
 	}
 	
-	public Map<DEECoTransition, List<ModeTransitionListener>> getTransitionListeners(){
+	public Map<DEECoTransition, List<DEECoTransitionListener>> getTransitionListeners(){
 		return transitionListeners;
 	}
 		

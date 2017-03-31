@@ -19,7 +19,7 @@ import java.lang.annotation.Annotation;
 
 import cz.cuni.mff.d3s.deeco.annotations.NonDeterministicModeSwitching;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
-import cz.cuni.mff.d3s.deeco.modes.ModeChart;
+import cz.cuni.mff.d3s.deeco.modes.DEECoModeChart;
 import cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching.NonDeterministicModeSwitchingPlugin;
 import cz.cuni.mff.d3s.jdeeco.annotations.ComponentModeChart;
 import cz.cuni.mff.d3s.metaadaptation.search.SearchParameters;
@@ -42,7 +42,7 @@ public class NonDetModeSwitchAwareAnnotationProcessorExtension extends Annotatio
 			Class<? extends SearchParameters> searchParameters = nonDetModeSwitchAnnotation.searchParameters();
 			
 //			try { 
-				ModeChart modeChart = componentInstance.getModeChart();
+				DEECoModeChart modeChart = componentInstance.getModeChart();
 				if(modeChart == null){
 					throw new IllegalStateException(String.format(
 							"The %s requires \"%s\" to be set. Do you miss @%s annotation?",
