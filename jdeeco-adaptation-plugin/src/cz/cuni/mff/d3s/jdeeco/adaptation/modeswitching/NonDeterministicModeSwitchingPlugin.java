@@ -19,15 +19,21 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorExtensionPoint;
 import cz.cuni.mff.d3s.deeco.annotations.processor.NonDetModeSwitchAwareAnnotationProcessorExtension;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
 import cz.cuni.mff.d3s.deeco.modes.DEECoModeChart;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer.ShutdownListener;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer.StartupListener;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.runtime.PluginInitFailedException;
@@ -36,8 +42,9 @@ import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationPlugin;
 import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationUtility;
 import cz.cuni.mff.d3s.jdeeco.modes.ModeSwitchingPlugin;
 import cz.cuni.mff.d3s.metaadaptation.modeswitch.Component;
+import cz.cuni.mff.d3s.metaadaptation.modeswitch.Mode;
 import cz.cuni.mff.d3s.metaadaptation.modeswitch.NonDeterministicModeSwitchingManager;
-import cz.cuni.mff.d3s.metaadaptation.search.annealing.TimeProgress;
+import cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition;
 
 /**
  * Non-Deterministic Mode Switching plugin deploys a adaptation strategy,
@@ -49,7 +56,7 @@ import cz.cuni.mff.d3s.metaadaptation.search.annealing.TimeProgress;
  * 
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  */
-public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, StartupListener {
+public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, StartupListener, ShutdownListener {
 
 //	private static Map<ComponentInstance, StateSpaceSearch> sssMap = new HashMap<>();
 //	
@@ -59,9 +66,11 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 	
 //	private long startTime = 0;
 	private final Map<Class<?>, AdaptationUtility> utilities;
+	private final Map<String, Double> precomputedUtilities;
 //	private double startingNondeterminism = 0.0001;
 	private DEECoContainer container = null;
-	AdaptationPlugin adaptationPlugin= null;
+	private AdaptationPlugin adaptationPlugin= null;
+	private NonDeterministicModeSwitchingManager manager = null;
 //	private final TimeProgress timer;
 	
 	private boolean verbose = false;
@@ -72,6 +81,7 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 	private String trainTo = null;
 	private String trainingOutput = null;
 	
+	
 	/** Plugin dependencies. */
 	@SuppressWarnings("unchecked")
 	static private final List<Class<? extends DEECoPlugin>> DEPENDENCIES =
@@ -79,7 +89,7 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 					AdaptationPlugin.class,
 					ModeSwitchingPlugin.class});
 	
-	public NonDeterministicModeSwitchingPlugin(Map<Class<?>, AdaptationUtility> utilities/*, TimeProgress timer*/){
+	public NonDeterministicModeSwitchingPlugin(Map<Class<?>, AdaptationUtility> utilities, Map<String, Double> precomputedUtilities){
 		if(utilities == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "utilities"));
 		}
@@ -88,6 +98,7 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 //		}
 		
 		this.utilities = utilities;
+		this.precomputedUtilities = precomputedUtilities;
 //		this.timer = timer;
 	}
 	
@@ -149,6 +160,7 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 		container.getProcessor().addExtension(nonDetModeAwareAnnotationProcessor);
 		
 		container.addStartupListener(this);
+		container.addShutdownListener(this);
 		
 		adaptationPlugin = container.getPluginInstance(AdaptationPlugin.class);
 		
@@ -227,14 +239,66 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 					"The \"%s\" or \"%s\" mode not found.", trainFrom, trainTo));
 		}
 		
+		Map<Transition, Double> transitionAsocUtilities = null;
+		if(!components.isEmpty()){
+			transitionAsocUtilities = associateUtilities(components.get(0).getModeChart().getModes());
+		}
 		try {
-			if(training){
-				NonDeterministicModeSwitchingManager manager = new NonDeterministicModeSwitchingManager(components, null);
-				adaptationPlugin.registerAdaptation(manager);
-			}
+			manager = new NonDeterministicModeSwitchingManager(components, transitionAsocUtilities);
+			adaptationPlugin.registerAdaptation(manager);
 		} catch (InstantiationException | IllegalAccessException | FileNotFoundException e) {
 			throw new PluginStartupFailedException(e);
-		}	
+		}
+	}
+	
+	private Map<Transition, Double> associateUtilities(Set<Mode> modes){
+		if(precomputedUtilities == null){
+			return null;
+		}
+		
+		Map<Transition, Double> transitionAsocUtilities = new HashMap<>();
+		final Pattern nameValuePattern = Pattern.compile("(\\w+)-(\\w+)");
+		
+		for(String transitionString : precomputedUtilities.keySet()){
+			final Matcher nameValueMatcher = nameValuePattern.matcher(transitionString);
+			if((!nameValueMatcher.matches()) ||
+					nameValueMatcher.groupCount() != 2){
+				String msg = String.format("The \"%s\" string doesn't represent a transition.", transitionString);
+				Log.e(msg);
+				throw new IllegalStateException(msg);
+			}
+			final String fromStr = nameValueMatcher.group(1);
+			final String toStr = nameValueMatcher.group(2);
+			Mode fromMode = null;
+			Mode toMode = null;
+			for(Mode mode : modes){
+				if(mode.toString().equals(fromStr)){
+					fromMode = mode;
+				}
+				if(mode.toString().equals(toStr)){
+					toMode = mode;
+				}
+			}
+			if(fromMode == null || toMode == null){
+				String msg = String.format("The modes for transition \"%s\" not found.", transitionString);
+				Log.e(msg);
+				throw new IllegalStateException(msg);
+			}
+			
+			transitionAsocUtilities.put(new PhonyTransition(fromMode, toMode), precomputedUtilities.get(transitionString));
+		}
+		
+		return transitionAsocUtilities;
+	}
+
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.runtime.DEECoContainer.ShutdownListener#onShutdown()
+	 */
+	@Override
+	public void onShutdown() {
+		if(manager != null){
+			manager.terminate();
+		}
 		
 	}
 

@@ -17,8 +17,6 @@ package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
 
 import java.util.function.Predicate;
 
-import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
-import cz.cuni.mff.d3s.deeco.modes.DEECoTransition;
 import cz.cuni.mff.d3s.metaadaptation.modeswitch.Mode;
 import cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition;
 
@@ -26,34 +24,22 @@ import cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition;
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public class TransitionImpl implements Transition {
+public class PhonyTransition implements Transition {
 
-	private final ModeImpl from;
-	private final ModeImpl to;
-	private final DEECoTransition transition;
-	private final GuardImpl guard;
+	private final Mode from;
+	private final Mode to;
 	
-	public TransitionImpl(ModeImpl from, ModeImpl to, DEECoTransition transition, ComponentInstance component){
+	public PhonyTransition(Mode from, Mode to){
 		if(from == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "from"));
 		}
 		if(to == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "to"));
 		}
-		if(transition == null){
-			throw new IllegalArgumentException(String.format("The %s argument is null.", "transition"));
-		}
 		
 		this.from = from;
 		this.to= to;
-		this.transition = transition;
-		guard = new GuardImpl(transition.getGuard(), component);
-	}
-	
-	public DEECoTransition getInnerTransition(){
-		return transition;
-	}
-	
+	}	
 	
 	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#getFrom()
@@ -71,59 +57,12 @@ public class TransitionImpl implements Transition {
 		return to;
 	}
 
-//	/* (non-Javadoc)
-//	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#isGuardSatisfied()
-//	 */
-//	@Override
-//	public boolean isGuardSatisfied() {
-//		return transition.getGuard().isSatisfied();
-//	}
-//
-//	/* (non-Javadoc)
-//	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#getProbability()
-//	 */
-//	@Override
-//	public double getProbability() {
-//		return modeSuccessor.getProbability();
-//	}
-//
-//	/* (non-Javadoc)
-//	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#setProbability(double)
-//	 */
-//	@Override
-//	public void setProbability(double probability) {
-//		modeSuccessor.setProbability(probability);
-//	}
-//
-//	/* (non-Javadoc)
-//	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#isDynamic()
-//	 */
-//	@Override
-//	public boolean isDynamic() {
-//		return modeSuccessor.isDynamic();
-//	}
-//
-//	/* (non-Javadoc)
-//	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#setDynamic(boolean)
-//	 */
-//	@Override
-//	public void setDynamic(boolean isDynamic) {
-//		modeSuccessor.setDynamic(isDynamic);
-//		
-//	}
-
 	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#getGuard()
 	 */
 	@Override
 	public Predicate<Void> getGuard() {
-		return new Predicate<Void>(){
-			@Override
-			public boolean test(Void t) {
-				return guard.isSatisfied();
-			}
-			
-		};
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -131,17 +70,17 @@ public class TransitionImpl implements Transition {
 	 */
 	@Override
 	public int getPriority() {
-		return transition.getPriority();
+		return 0;
 	}
 
 	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#setPriority(int)
 	 */
 	@Override
-	public void setPriority(int priority) {
-		transition.setPriority(priority);		
+	public void setPriority(int priority) {		
 	}
 	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -169,7 +108,7 @@ public class TransitionImpl implements Transition {
 	 */
 	@Override
 	public String toString() {
-		return transition.toString();
+		return String.format("PHONY %s -> %s", from, to);
 	}
 
 }
