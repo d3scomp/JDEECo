@@ -236,7 +236,7 @@ public class ModeChartImpl extends DEECoModeChart{
 	private Set<DEECoTransition> getTransitionsFrom(DEECoMode mode){
 		Set<DEECoTransition> outgoing = new HashSet<>();
 		for(DEECoTransition transition : transitions){
-			if(transition.getFrom() == mode){
+			if(transition.getFrom().equals(mode)){
 				outgoing.add(transition);
 			}
 		}

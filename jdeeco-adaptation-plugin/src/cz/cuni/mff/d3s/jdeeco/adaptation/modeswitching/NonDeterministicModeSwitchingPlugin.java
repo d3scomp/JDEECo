@@ -169,7 +169,7 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 		NonDeterministicModeSwitchingManager.transitionProbability = transitionProbability;
 		NonDeterministicModeSwitchingManager.transitionPriority = transitionPriority;
 		NonDeterministicModeSwitchingManager.training = training;
-		NonDeterministicModeSwitchingManager.trainingOutput = new File(trainingOutput);
+		//NonDeterministicModeSwitchingManager.trainingOutput = new File(trainingOutput);
 		
 	}
 
