@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
 import cz.cuni.mff.d3s.deeco.modes.DEECoTransition;
 import cz.cuni.mff.d3s.metaadaptation.modeswitchprops.Mode;
@@ -31,16 +32,21 @@ import cz.cuni.mff.d3s.metaadaptation.modeswitchprops.Transition;
  */
 public class ModeChartImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitchprops.ModeChart {
 
-	private final cz.cuni.mff.d3s.jdeeco.modes.ModeChartImpl modeChart;
+	private final cz.cuni.mff.d3s.deeco.modes.DEECoModeChart modeChart;
 	private final Map<DEECoMode, ModeImpl> modes;
 	private final Set<Transition> transitions;
+	private final ComponentInstance component;
 	
-	public ModeChartImpl(cz.cuni.mff.d3s.jdeeco.modes.ModeChartImpl modeChart){
+	public ModeChartImpl(cz.cuni.mff.d3s.deeco.modes.DEECoModeChart modeChart, ComponentInstance component){
 		if(modeChart == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "modeChart"));
 		}
+		if(component == null){
+			throw new IllegalArgumentException(String.format("The %s argument is null.", "component"));
+		}
 		
 		this.modeChart = modeChart;
+		this.component = component;
 		modes = new HashMap<>();
 		transitions = new HashSet<>();
 		

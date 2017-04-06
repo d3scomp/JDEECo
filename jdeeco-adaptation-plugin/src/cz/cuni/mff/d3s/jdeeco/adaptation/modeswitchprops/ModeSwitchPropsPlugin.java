@@ -15,14 +15,14 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitchprops;
 
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
-import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
 import cz.cuni.mff.d3s.deeco.modes.DEECoModeChart;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer.StartupListener;
@@ -31,10 +31,10 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.runtime.PluginStartupFailedException;
 import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationPlugin;
 import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationUtility;
-import cz.cuni.mff.d3s.jdeeco.adaptation.componentIsolation.ComponentIsolationPlugin;
 import cz.cuni.mff.d3s.metaadaptation.modeswitch.NonDeterministicModeSwitchingManager;
 import cz.cuni.mff.d3s.metaadaptation.modeswitchprops.Component;
 import cz.cuni.mff.d3s.metaadaptation.modeswitchprops.ModeSwitchPropsManager;
+import cz.cuni.mff.d3s.metaadaptation.modeswitchprops.Transition;
 
 /**
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
@@ -42,13 +42,18 @@ import cz.cuni.mff.d3s.metaadaptation.modeswitchprops.ModeSwitchPropsManager;
  */
 public class ModeSwitchPropsPlugin implements DEECoPlugin, StartupListener {
 
-	private boolean verbose;
-	
 	private final Set<DEECoNode> nodes;
 	
 	private final Map<Class<?>, AdaptationUtility> utilities;
 
 	private AdaptationPlugin adaptationPlugin = null;
+	private DEECoContainer container = null;
+	private ModeSwitchPropsManager manager = null;	
+
+	private boolean verbose = false;
+	private String trainProperty = null;
+	private double trainValue = 0;
+	private boolean training = false;
 	
 	/** Plugin dependencies. */
 	@SuppressWarnings("unchecked")
@@ -67,13 +72,20 @@ public class ModeSwitchPropsPlugin implements DEECoPlugin, StartupListener {
 		this.utilities = utilities;
 	}
 		
-	/**
-	 * Specify the verbosity of the correlation process.
-	 * @param verbose True to be verbose, false to be still.
-	 * @return The self instance of {@link ComponentIsolationPlugin} 
-	 */
-	public ModeSwitchPropsPlugin withVerbosity(boolean verbose){
-		this.verbose = verbose;
+	public ModeSwitchPropsPlugin withVerbosity(boolean verbosity){
+		verbose = verbosity;
+		return this;
+	}
+	public ModeSwitchPropsPlugin withTrainProperty(String trainProperty){
+		this.trainProperty = trainProperty;
+		return this;
+	}
+	public ModeSwitchPropsPlugin withTrainValue(double trainValue){
+		this.trainValue = trainValue;
+		return this;
+	}
+	public ModeSwitchPropsPlugin withTraining(boolean training){
+		this.training = training;
 		return this;
 	}
 
@@ -84,14 +96,27 @@ public class ModeSwitchPropsPlugin implements DEECoPlugin, StartupListener {
 
 	@Override
 	public void init(DEECoContainer container) {
+
+		this.container = container;
 		
 		container.addStartupListener(this);
 		
 		adaptationPlugin = container.getPluginInstance(AdaptationPlugin.class);
+
+		ModeSwitchPropsManager.verbose = verbose;
+		ModeSwitchPropsManager.trainProperty = trainProperty;
+		ModeSwitchPropsManager.trainValue = trainValue;
+		ModeSwitchPropsManager.training = training;
 	}
 
 	@Override
 	public void onStartup() throws PluginStartupFailedException {
+		if(container == null){
+			throw new PluginStartupFailedException(String.format(
+					"The %s plugin doesn't have a reference to %s.",
+					"NonDeterministicModeSwitching",
+					"DEECo container"));
+		}
 		if(adaptationPlugin == null){
 			throw new PluginStartupFailedException(String.format(
 					"The %s plugin doesn't have a reference to %s.",
@@ -99,36 +124,40 @@ public class ModeSwitchPropsPlugin implements DEECoPlugin, StartupListener {
 					"AdaptationPlugin"));
 		}
 		
-		for(DEECoNode node : nodes){
-			for(ComponentInstance ci : node.getRuntimeMetadata().getComponentInstances()){
-				DEECoModeChart modeChart = ci.getModeChart();
-				if (modeChart != null) {
-					// Check the required utility was placed
-					AdaptationUtility utility = null;
-					for(Class<?> key : utilities.keySet()){
-						if(key.getName().equals(ci.getName())){
-							utility = utilities.get(key);
-						}
-					}
-					
-					if(utility == null){
-						throw new PluginStartupFailedException(String.format(
-								"The %s component has no associated utility function.",
-								ci.getKnowledgeManager().getId()));
-					}
-				
-					Component c = new ComponentImpl(ci, utility);
-					cz.cuni.mff.d3s.metaadaptation.modeswitchprops.ModeChart m = 
-							new ModeChartImpl((cz.cuni.mff.d3s.jdeeco.modes.ModeChartImpl) modeChart);
-					adaptationPlugin.registerAdaptation(new ModeSwitchPropsManager(c, m));
-					
-					if(verbose){
-						Log.i(String.format("%s deploid for %s %s",
-								getClass().getName(),
-								ci.getName(), ci.getKnowledgeManager().getId()));
+		List<Component> components = new ArrayList<>();
+		// Components with non-deterministic mode switching aspiration
+		for (ComponentInstance c : container.getRuntimeMetadata().getComponentInstances()) {
+			DEECoModeChart modeChart = c.getModeChart();
+			if (modeChart != null) {
+				// Check the required utility was placed
+				AdaptationUtility utility = null;
+				for(Class<?> key : utilities.keySet()){
+					if(key.getName().equals(c.getName())){
+						utility = utilities.get(key);
 					}
 				}
+				
+				if(utility == null){
+					throw new PluginStartupFailedException(String.format(
+							"The %s component has no associated utility function.",
+							c.getKnowledgeManager().getId()));
+				}
+				
+				ComponentImpl componentImpl = new ComponentImpl(c/*, new ComponentTypeImpl(utility)*/);
+				components.add(componentImpl);
+//				}
 			}
-		}		
+		}
+		
+		/*Map<Transition, Double> transitionAsocUtilities = null; // TODO: utility from property to double
+		if(!components.isEmpty()){
+			transitionAsocUtilities = associateUtilities(components.get(0).getModeChart().getModes());
+		}*/
+		//try {
+			manager = new ModeSwitchPropsManager(components/*, transitionAsocUtilities*/);
+			adaptationPlugin.registerAdaptation(manager);
+		/*} catch (InstantiationException | IllegalAccessException | FileNotFoundException e) {
+			throw new PluginStartupFailedException(e);
+		}*/
 	}
 }

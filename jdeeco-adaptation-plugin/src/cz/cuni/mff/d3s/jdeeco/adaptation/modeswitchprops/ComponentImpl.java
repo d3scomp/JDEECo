@@ -17,6 +17,7 @@ package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitchprops;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationUtility;
+import cz.cuni.mff.d3s.metaadaptation.modeswitchprops.ModeChart;
 
 /**
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
@@ -26,18 +27,26 @@ public class ComponentImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitchp
 
 	private final ComponentInstance component;
 	
-	private final AdaptationUtility utility;
+	//private final AdaptationUtility utility;
+
+	private final ModeChartImpl modeChart;
 	
-	public ComponentImpl(ComponentInstance component, AdaptationUtility utility){
+	public ComponentImpl(ComponentInstance component/*, AdaptationUtility utility*/){
 		if(component == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "component"));
 		}
-		if(utility == null){
+	/*	if(utility == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "utility"));
-		}
+		}*/
 		
 		this.component = component;
-		this.utility = utility;
+		//this.utility = utility;
+		modeChart = new ModeChartImpl((cz.cuni.mff.d3s.jdeeco.modes.ModeChartImpl) component.getModeChart(), component);
+	}
+	
+	@Override
+	public ModeChart getModeChart() {
+		return modeChart;
 	}
 	
 	/* (non-Javadoc)
@@ -45,7 +54,8 @@ public class ComponentImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitchp
 	 */
 	@Override
 	public double getUtility() {
-		return utility.getUtility(component);
+		//return utility.getUtility(component);
+		return 0;
 	}
 
 	/* (non-Javadoc)
@@ -53,7 +63,8 @@ public class ComponentImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitchp
 	 */
 	@Override
 	public double getUtilityThreshold() {
-		return utility.getUtilityThreshold();
+		//return utility.getUtilityThreshold();
+		return 0;
 	}
 
 }
