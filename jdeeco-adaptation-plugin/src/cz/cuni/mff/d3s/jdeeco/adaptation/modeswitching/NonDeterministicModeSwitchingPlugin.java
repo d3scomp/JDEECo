@@ -79,6 +79,8 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 	private boolean training = false;
 	private String trainFrom = null;
 	private String trainTo = null;
+	private String trainFrom2 = null;
+	private String trainTo2 = null;
 	private String trainingOutput = null;
 	
 	
@@ -134,6 +136,14 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 	}
 	public NonDeterministicModeSwitchingPlugin withTrainTo(String trainTo){
 		this.trainTo = trainTo;
+		return this;
+	}
+	public NonDeterministicModeSwitchingPlugin withTrainFrom2(String trainFrom2){
+		this.trainFrom2 = trainFrom2;
+		return this;
+	}
+	public NonDeterministicModeSwitchingPlugin withTrainTo2(String trainTo2){
+		this.trainTo2 = trainTo2;
 		return this;
 	}
 	public NonDeterministicModeSwitchingPlugin withTrainingOutput(String trainingOutput){
@@ -204,6 +214,12 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 						}
 						if(mode.getId().equals(trainTo)){
 							NonDeterministicModeSwitchingManager.trainTo = new ModeImpl(mode);
+						}
+						if(mode.getId().equals(trainFrom2)){
+							NonDeterministicModeSwitchingManager.trainFrom2 = new ModeImpl(mode);
+						}
+						if(mode.getId().equals(trainTo2)){
+							NonDeterministicModeSwitchingManager.trainTo2 = new ModeImpl(mode);
 						}
 //						if(!NonDetModeSwitchMode.class.isAssignableFrom(mode)){
 //							throw new PluginStartupFailedException(String.format(
