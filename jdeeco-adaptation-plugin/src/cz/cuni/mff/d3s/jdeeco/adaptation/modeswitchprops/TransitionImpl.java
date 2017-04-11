@@ -78,5 +78,13 @@ public class TransitionImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitch
 	public void setGuardParam(String name, double value) {
 		transition.getGuard().setParameter(name, value);
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return transition.toString();
+	}
 
 }

@@ -66,5 +66,13 @@ public class ComponentImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitchp
 		//return utility.getUtilityThreshold();
 		return 0;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return component.getKnowledgeManager().getId();
+	}
 
 }

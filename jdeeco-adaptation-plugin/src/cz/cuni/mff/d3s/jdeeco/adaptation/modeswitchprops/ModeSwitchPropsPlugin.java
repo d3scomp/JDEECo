@@ -51,9 +51,11 @@ public class ModeSwitchPropsPlugin implements DEECoPlugin, StartupListener {
 	private ModeSwitchPropsManager manager = null;	
 
 	private boolean verbose = false;
+	private boolean training = false;
 	private String trainProperty = null;
 	private double trainValue = 0;
-	private boolean training = false;
+	private String trainProperty2 = null;
+	private double trainValue2 = 0;
 	
 	/** Plugin dependencies. */
 	@SuppressWarnings("unchecked")
@@ -76,6 +78,10 @@ public class ModeSwitchPropsPlugin implements DEECoPlugin, StartupListener {
 		verbose = verbosity;
 		return this;
 	}
+	public ModeSwitchPropsPlugin withTraining(boolean training){
+		this.training = training;
+		return this;
+	}
 	public ModeSwitchPropsPlugin withTrainProperty(String trainProperty){
 		this.trainProperty = trainProperty;
 		return this;
@@ -84,8 +90,12 @@ public class ModeSwitchPropsPlugin implements DEECoPlugin, StartupListener {
 		this.trainValue = trainValue;
 		return this;
 	}
-	public ModeSwitchPropsPlugin withTraining(boolean training){
-		this.training = training;
+	public ModeSwitchPropsPlugin withTrainProperty2(String trainProperty2){
+		this.trainProperty2 = trainProperty2;
+		return this;
+	}
+	public ModeSwitchPropsPlugin withTrainValue2(double trainValue2){
+		this.trainValue2 = trainValue2;
 		return this;
 	}
 
@@ -104,9 +114,11 @@ public class ModeSwitchPropsPlugin implements DEECoPlugin, StartupListener {
 		adaptationPlugin = container.getPluginInstance(AdaptationPlugin.class);
 
 		ModeSwitchPropsManager.verbose = verbose;
+		ModeSwitchPropsManager.training = training;
 		ModeSwitchPropsManager.trainProperty = trainProperty;
 		ModeSwitchPropsManager.trainValue = trainValue;
-		ModeSwitchPropsManager.training = training;
+		ModeSwitchPropsManager.trainProperty2 = trainProperty2;
+		ModeSwitchPropsManager.trainValue2 = trainValue2;
 	}
 
 	@Override
