@@ -60,7 +60,7 @@ public class ComponentImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitch.
 		
 		componentInstance = ci;
 //		stateSpaceSearch = sss;
-		modeChart = new ModeChartImpl((cz.cuni.mff.d3s.jdeeco.modes.ModeChartImpl) ci.getModeChart(), ci);
+		modeChart = new ModeChartImpl(ci.getModeChart(), ci);
 		this.componentType = componentType;
 //		this.adaptationUtility = adaptationUtility;
 	}
