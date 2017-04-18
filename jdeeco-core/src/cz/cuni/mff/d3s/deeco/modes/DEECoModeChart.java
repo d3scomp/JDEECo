@@ -1,6 +1,5 @@
 package cz.cuni.mff.d3s.deeco.modes;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -43,26 +42,9 @@ public abstract class DEECoModeChart {
 		return component;
 	}
 
-	/*public void setComponent(ComponentInstance component) {
-		this.component = component;
-	}*/
-
 	public DEECoMode getCurrentMode(){
 		return currentMode;
 	}
-	
-//	public void addTransitionListener(DEECoTransition transition,
-//			ModeTransitionListener transitionListener){
-//		if (transition == null) throw new IllegalArgumentException(
-//				String.format("The \"%s\" argument is null.", "transition"));
-//		if (transitionListener == null) throw new IllegalArgumentException(
-//				String.format("The \"%s\" argument is null.", "transitionListener"));
-//		
-//		if(!transitionListeners.containsKey(transition)){
-//			transitionListeners.put(transition, new ArrayList<>());
-//		}
-//		transitionListeners.get(transition).add(transitionListener);
-//	}
 	
 	/**
 	 * @return all the modes that are included in this mode chart
