@@ -208,6 +208,8 @@ public class ProcessTask extends Task {
 			Log.e(String.format(
 					"Process method \"%s\" returned an exception.", componentProcess.getName()),
 					e.getTargetException());
+			throw new TaskInvocationException(String.format("Process method \"%s\" returned an exception.", componentProcess.getName()),
+					e.getTargetException());
 		}		
 	}
 
