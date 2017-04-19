@@ -49,7 +49,6 @@ public class ModeChartImpl extends DEECoModeChart {
 			throw new IllegalArgumentException(String.format(
 					"The %s argument is null.", "mode"));
 		}
-		
 		if(!modes.contains(mode)){
 			throw new IllegalArgumentException(String.format(
 					"The given mode %s doesn't appear in the mode chart.", mode));

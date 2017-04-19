@@ -18,7 +18,6 @@ package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitchprops;
 import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.modes.DEECoTransition;
-import cz.cuni.mff.d3s.jdeeco.modes.ModeSuccessor;
 import cz.cuni.mff.d3s.metaadaptation.modeswitchprops.Mode;
 
 /**

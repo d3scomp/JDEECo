@@ -16,7 +16,6 @@
 package cz.cuni.mff.d3s.jdeeco.modes.example.modechart;
 
 import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
-import cz.cuni.mff.d3s.jdeeco.modes.ModeChartFactory;
 import cz.cuni.mff.d3s.jdeeco.modes.ModeChartHolder;
 
 public class RobotModeChartHolder extends ModeChartHolder {

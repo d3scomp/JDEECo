@@ -83,58 +83,6 @@ public abstract class ModeChartHolder {
 
 		return transition;
 	}
-
-//	public ModeChartFactory addTransitionWithProbability(
-//			Class<? extends DEECoMode> from, Class<? extends DEECoMode> to,
-//			double probability) {
-//		if (from == null) throw new IllegalArgumentException(
-//				String.format("The \"%s\" argument is null.", "from"));
-//		if (to == null) throw new IllegalArgumentException(
-//				String.format("The \"%s\" argument is null.", "to"));
-//		if(probability < 0 || probability > 1) throw new IllegalArgumentException(
-//				String.format("The \"%s\" argument has to be within the [0, 1] interval.",
-//						"probability"));
-//			
-//		if (!modeChart.modes.containsKey(from)) {
-//			modeChart.modes.put(from, new HashSet<>());
-//		} else {
-//			if (modeChart.modes.get(from).contains(to)) {
-//				throw new IllegalStateException(
-//						String.format("Transition \"%s\" -> \"%s\" already defined.",
-//								from, to));
-//			}
-//		}
-//		modeChart.modes.get(from).add(new ModeSuccessor(to, probability, new TrueGuard()));
-//
-//		return this;
-//	}
-
-//	public ModeChartFactory addTransition(
-//			Class<? extends DEECoMode> from, Class<? extends DEECoMode> to,
-//			ModeGuard guard, double probability) {
-//		if (from == null) throw new IllegalArgumentException(
-//				String.format("The \"%s\" argument is null.", "from"));
-//		if (to == null) throw new IllegalArgumentException(
-//				String.format("The \"%s\" argument is null.", "to"));
-//		if (guard == null) throw new IllegalArgumentException(
-//				String.format("The \"%s\" argument is null.", "guard"));
-//		if(probability < 0 || probability > 1) throw new IllegalArgumentException(
-//				String.format("The \"%s\" argument has to be within the [0, 1] interval.",
-//						"probability"));
-//			
-//		if (!modeChart.modes.containsKey(from)) {
-//			modeChart.modes.put(from, new HashSet<>());
-//		} else {
-//			if (modeChart.modes.get(from).contains(to)) {
-//				throw new IllegalStateException(
-//						String.format("Transition \"%s\" -> \"%s\" already defined.",
-//								from, to));
-//			}
-//		}
-//		modeChart.modes.get(from).add(new ModeSuccessor(to, probability, guard));
-//
-//		return this;
-//	}
 	
 	public void addTransitionListener(Transition transition,
 			DEECoTransitionListener transitionListener){
@@ -150,12 +98,6 @@ public abstract class ModeChartHolder {
 		}
 		transitionListeners.get(transition).add(transitionListener);
 	}
-	
-
-//	public ModeChartFactory addInitialMode(Class<? extends DEECoMode> mode){
-//		modeChart.setInitialNode(mode);
-//		return this;
-//	}
 
 	public void validate(){
 		if(getInitialMode() == null) throw new IllegalStateException(

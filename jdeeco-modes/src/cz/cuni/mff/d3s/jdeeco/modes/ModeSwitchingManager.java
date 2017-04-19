@@ -15,7 +15,6 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.modes;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.annotations.Component;
@@ -78,7 +77,7 @@ public class ModeSwitchingManager {
 
 	private static void reconfigureArchitecture(ComponentInstance c, DEECoMode currentMode) {
 		for (ComponentProcess p : c.getComponentProcesses()) {
-			List<DEECoMode> processModes = p.getModes(); // TODO: check
+			List<DEECoMode> processModes = p.getModes();
 			if (processModes == null || processModes.isEmpty()) {
 				continue;
 			}

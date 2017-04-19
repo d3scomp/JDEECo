@@ -24,10 +24,9 @@ import java.util.function.Predicate;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
-import cz.cuni.mff.d3s.deeco.modes.DEECoTransition;
 import cz.cuni.mff.d3s.deeco.modes.DEECoModeGuard;
+import cz.cuni.mff.d3s.deeco.modes.DEECoTransition;
 import cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching.runtimelog.NonDetModeTransitionLogger;
-import cz.cuni.mff.d3s.jdeeco.modes.ModeSuccessor;
 import cz.cuni.mff.d3s.metaadaptation.modeswitch.Mode;
 import cz.cuni.mff.d3s.metaadaptation.modeswitch.ModeChart;
 import cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition;
