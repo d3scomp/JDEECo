@@ -15,26 +15,49 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.adaptation.componentIsolation;
 
+import java.lang.reflect.Field;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
 public class PortImpl implements cz.cuni.mff.d3s.metaadaptation.componentisolation.Port {
 
-	@SuppressWarnings("rawtypes")
-	private final Class role;
+	private final Class<?> role;
 	
 	
-	@SuppressWarnings("rawtypes")
-	public PortImpl(Class role){
+	public PortImpl(Class<?> role){
 		if(role == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "role"));
 		}
 		this.role = role;
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public Class getRole(){
+	public Class<?> getRole(){
 		return role;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return role.getName();
+	}
+
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.metaadaptation.componentisolation.Port#getExposedKnowledge()
+	 */
+	@Override
+	public Set<String> getExposedKnowledge() {
+		Set<String> exposedKnowledge = new HashSet<>();
+		
+		for(Field f : role.getFields()){
+			exposedKnowledge.add(f.getName());
+		}
+		
+		return exposedKnowledge;
 	}
 }

@@ -17,21 +17,14 @@ package cz.cuni.mff.d3s.jdeeco.adaptation.componentIsolation;
 
 import java.util.Set;
 
-import cz.cuni.mff.d3s.metaadaptation.componentisolation.Port;
+import cz.cuni.mff.d3s.deeco.annotations.Role;
 
 /**
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public class ConnectorImpl implements cz.cuni.mff.d3s.metaadaptation.componentisolation.Connector {
+@Role
+public class FaultyKnowledgeReportingRole {
 
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.componentisolation.Connector#getPorts()
-	 */
-	@Override
-	public Set<Port> getPorts() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	public Set<String> faultyKnowledge;
 }

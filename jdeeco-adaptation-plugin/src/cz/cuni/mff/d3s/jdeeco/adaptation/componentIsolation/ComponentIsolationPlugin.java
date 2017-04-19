@@ -84,7 +84,9 @@ public class ComponentIsolationPlugin implements DEECoPlugin, StartupListener {
 		Set<Component> c = new HashSet<>();
 		for(DEECoNode node : nodes){
 			for(ComponentInstance ci : node.getRuntimeMetadata().getComponentInstances()){
-				c.add(new ComponentImpl(ci));
+				ComponentImpl component = new ComponentImpl(ci);
+				component.setVerbosity(verbose);
+				c.add(component);
 			}
 		}
 		
