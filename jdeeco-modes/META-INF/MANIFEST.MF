@@ -6,3 +6,4 @@ Bundle-Version: 1.0.0.qualifier
 Import-Package: cz.cuni.mff.d3s.deeco.annotations,
  junit.framework;version="4.12.0"
 Require-Bundle: cz.cuni.mff.d3s.jdeeco.core
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
