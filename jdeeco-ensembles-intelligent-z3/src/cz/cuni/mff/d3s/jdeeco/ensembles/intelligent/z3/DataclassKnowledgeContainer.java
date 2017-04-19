@@ -6,6 +6,7 @@ import java.util.List;
 
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer;
 import cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainerException;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 
 public class DataclassKnowledgeContainer implements KnowledgeContainer {
 	
@@ -53,5 +54,14 @@ public class DataclassKnowledgeContainer implements KnowledgeContainer {
 	
 	public <TComponent>void storeDataClass(TComponent component) {
 		componentData.add(component);
+	}
+
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer#getUntrackedLocalKnowledgeForRole(cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance, java.lang.Class)
+	 */
+	@Override
+	public <TRole> TRole getUntrackedLocalKnowledgeForRole(ComponentInstance component, Class<TRole> roleClass)
+			throws KnowledgeContainerException {
+		throw new UnsupportedOperationException();
 	}
 }

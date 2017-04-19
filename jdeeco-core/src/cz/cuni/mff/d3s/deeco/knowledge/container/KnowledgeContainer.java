@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import cz.cuni.mff.d3s.deeco.annotations.PlaysRole;
 import cz.cuni.mff.d3s.deeco.annotations.Role;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 
 /**
  * Knowledge container is useful when operating with multiple component's knowledge. It provides access to
@@ -27,6 +28,17 @@ public interface KnowledgeContainer {
 	 * @throws KnowledgeContainerException
 	 */
 	public abstract <TRole> Collection<TRole> getUntrackedKnowledgeForRole(
+			Class<TRole> roleClass) throws KnowledgeContainerException;
+	
+	/**
+	 * Returns knowledge of the given component instance represented as {@link TRole}.
+	 * @param component The local component instance.
+	 * @param roleClass The role class.
+	 * @return Knowledge of the given component instance represented as {@link TRole}.
+	 * @throws KnowledgeContainerException
+	 */
+	public abstract <TRole> TRole getUntrackedLocalKnowledgeForRole(
+			ComponentInstance component,
 			Class<TRole> roleClass) throws KnowledgeContainerException;
 
 	/**

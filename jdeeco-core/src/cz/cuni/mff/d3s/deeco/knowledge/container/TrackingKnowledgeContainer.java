@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager;
 import cz.cuni.mff.d3s.deeco.knowledge.ReadOnlyKnowledgeManager;
+import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 
 /**
  * An implementation of the {@link KnowledgeContainer} interface that is using knowledge managers.
@@ -64,6 +65,27 @@ public class TrackingKnowledgeContainer implements KnowledgeContainer {
 			
 			return result;
 			
+		} catch (RoleClassException | KnowledgeAccessException e) {
+			throw new KnowledgeContainerException(e.getMessage(), e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.container.KnowledgeContainer#getUntrackedLocalKnowledgeForRole(cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance, java.lang.Class)
+	 */
+	@Override
+	public <TRole> TRole getUntrackedLocalKnowledgeForRole(ComponentInstance component, Class<TRole> roleClass)
+			throws KnowledgeContainerException {
+		try {
+			if (!localKnowledgeContainer.hasRole(roleClass)) {
+				throw new KnowledgeContainerException(String.format(
+						"The %s component does not have %s role",
+						component.getKnowledgeManager().getId(),
+						roleClass.getName()));
+			}
+						
+			return localKnowledgeContainer.getUntrackedRoleKnowledge(roleClass);
+
 		} catch (RoleClassException | KnowledgeAccessException e) {
 			throw new KnowledgeContainerException(e.getMessage(), e);
 		}
