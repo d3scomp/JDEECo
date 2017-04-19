@@ -51,12 +51,15 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 	
 	private final ComponentInstance component;
 	private final String id;
-	private Class<?>[] roleClasses;
+	private Set<Class<?>> roleClasses;
 
 	public BaseKnowledgeManager(String id, ComponentInstance component, Class<?>[] roleClasses) {
 		this.id = id;
 		this.component = component;
-		this.roleClasses = roleClasses != null ? roleClasses : new Class<?>[0];
+		this.roleClasses = new HashSet<>();
+		if(roleClasses != null){
+			this.roleClasses.addAll(Arrays.asList(roleClasses));
+		}
 		this.knowledge = new HashMap<>();
 		this.knowledgeChangeListeners = new HashMap<>();
 		this.localKnowledgePaths = new LinkedList<>();
@@ -826,7 +829,7 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 
 	@Override
 	public Class<?>[] getRoles() {
-		return roleClasses;
+		return roleClasses.toArray(new Class<?>[roleClasses.size()]);
 	}
 
 	@Override
@@ -836,7 +839,24 @@ public class BaseKnowledgeManager implements KnowledgeManager {
 
 	@Override
 	public void updateRoles(Class<?>[] newRoleClasses) {
-		this.roleClasses = newRoleClasses != null ? newRoleClasses : new Class<?>[0];
+		this.roleClasses.clear();
+		if(newRoleClasses != null){
+			this.roleClasses.addAll(Arrays.asList(newRoleClasses));
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.knowledge.KnowledgeManager#removeRole(java.lang.Class)
+	 */
+	@Override
+	public void removeRole(Class<?> roleClass) {
+		if(this.roleClasses.contains(roleClass)){
+			this.roleClasses.remove(roleClass);
+		} else {
+			throw new UnsupportedOperationException(String.format(
+					"The specified role \"%s\" cannot be removed bacause \"%s\" component doesn't extend it.",
+					roleClass.getName(), id));
+		}
 	}
 
 }

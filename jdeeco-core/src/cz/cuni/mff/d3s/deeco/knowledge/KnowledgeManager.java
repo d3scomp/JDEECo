@@ -92,7 +92,9 @@ public interface KnowledgeManager extends ReadOnlyKnowledgeManager {
 	 * @param newRoleClasses
 	 *            if null, then all roles are removed
 	 */
-	void updateRoles(Class<?>[] newRoleClasses); 
+	void updateRoles(Class<?>[] newRoleClasses);
+	
+	void removeRole(Class<?> roleClass);
 	
 	boolean isOfSystemComponent();
 	
