@@ -39,8 +39,12 @@ public class ComponentIsolationPlugin implements DEECoPlugin, StartupListener {
 	/** Plugin dependencies. */
 	@SuppressWarnings("unchecked")
 	static private final List<Class<? extends DEECoPlugin>> DEPENDENCIES =
-			Arrays.asList(new Class[]{AdaptationPlugin.class});;
+			Arrays.asList(new Class[]{AdaptationPlugin.class});
 
+	@Override
+	public List<Class<? extends DEECoPlugin>> getDependencies() {
+		return DEPENDENCIES;
+	}
 
 	public ComponentIsolationPlugin(Set<DEECoNode> nodes){
 		if(nodes == null){
@@ -48,7 +52,6 @@ public class ComponentIsolationPlugin implements DEECoPlugin, StartupListener {
 		}
 		
 		verbose = false;
-		
 		this.nodes = nodes;
 	}
 		
@@ -61,15 +64,9 @@ public class ComponentIsolationPlugin implements DEECoPlugin, StartupListener {
 		this.verbose = verbose;
 		return this;
 	}
-
-	@Override
-	public List<Class<? extends DEECoPlugin>> getDependencies() {
-		return DEPENDENCIES;
-	}
-
+	
 	@Override
 	public void init(DEECoContainer container) {
-		
 		container.addStartupListener(this);
 		
 		adaptationPlugin = container.getPluginInstance(AdaptationPlugin.class);
@@ -91,6 +88,9 @@ public class ComponentIsolationPlugin implements DEECoPlugin, StartupListener {
 			}
 		}
 		
-		adaptationPlugin.registerAdaptation(new ComponentIsolationManager(new ComponentManagerImpl(c)));		
+		ComponentIsolationManager ciManager = new ComponentIsolationManager(new ComponentManagerImpl(c));
+		ciManager.setVerbosity(verbose);
+		
+		adaptationPlugin.registerAdaptation(ciManager);		
 	}
 }

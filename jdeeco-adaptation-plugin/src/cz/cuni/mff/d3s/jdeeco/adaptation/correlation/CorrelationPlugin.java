@@ -45,7 +45,12 @@ public class CorrelationPlugin implements DEECoPlugin, StartupListener {
 	/** Plugin dependencies. */
 	@SuppressWarnings("unchecked")
 	static private final List<Class<? extends DEECoPlugin>> DEPENDENCIES =
-			Arrays.asList(new Class[]{AdaptationPlugin.class});;
+			Arrays.asList(new Class[]{AdaptationPlugin.class});
+
+	@Override
+	public List<Class<? extends DEECoPlugin>> getDependencies() {
+		return DEPENDENCIES;
+	}
 
 
 	public CorrelationPlugin(Set<DEECoNode> nodes){
@@ -70,7 +75,6 @@ public class CorrelationPlugin implements DEECoPlugin, StartupListener {
 	 */
 	public CorrelationPlugin withVerbosity(boolean verbose){
 		this.verbose = verbose;
-		CorrelationManager.verbose = verbose;
 		return this;
 	}
 
@@ -81,13 +85,7 @@ public class CorrelationPlugin implements DEECoPlugin, StartupListener {
 	 */
 	public CorrelationPlugin withDumping(boolean dumpValues){
 		this.dumpValues = dumpValues;
-		CorrelationManager.dumpValues = dumpValues;
 		return this;
-	}
-
-	@Override
-	public List<Class<? extends DEECoPlugin>> getDependencies() {
-		return DEPENDENCIES;
 	}
 
 	@Override
@@ -97,8 +95,8 @@ public class CorrelationPlugin implements DEECoPlugin, StartupListener {
 		container.addStartupListener(this);
 		
 		try {
-			CorrelationManager.verbose = verbose;
-			CorrelationManager.dumpValues = dumpValues;
+			manager.setVerbosity(verbose);
+			manager.setDumpValues(dumpValues);
 			
 			container.deployComponent(new CorrelationKnowledgeData());
 			container.deployEnsemble(CorrelationDataAggregation.class);

@@ -37,6 +37,7 @@ public class ComponentImpl implements cz.cuni.mff.d3s.metaadaptation.correlation
 
 	private final ComponentInstance componentInstance;
 
+	
 	public ComponentImpl(String componentName, ComponentInstance componentInstance) {
 		if (componentName == null || componentName.isEmpty()) {
 			throw new IllegalArgumentException(String.format("The %s argument is null or empty.", "componentName"));
@@ -90,7 +91,8 @@ public class ComponentImpl implements cz.cuni.mff.d3s.metaadaptation.correlation
 	@Override
 	public Object getKnowledgeValue(String knowlegeField) {
 		try {
-			Map<String, Map<String, CorrelationMetadataWrapper<? extends Object>>> knowledgeOfAllComponents = getKnowledgeOfAllComponents();
+			Map<String, Map<String, CorrelationMetadataWrapper<? extends Object>>> knowledgeOfAllComponents
+				= getKnowledgeOfAllComponents();
 
 			if (knowledgeOfAllComponents.containsKey(componentName)) {
 				if (knowledgeOfAllComponents.get(componentName).containsKey(knowlegeField)) {

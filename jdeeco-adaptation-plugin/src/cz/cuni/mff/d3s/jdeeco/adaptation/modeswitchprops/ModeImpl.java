@@ -32,4 +32,12 @@ public class ModeImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitchprops.
 		
 		this.mode = mode;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return mode.toString();
+	}
 }

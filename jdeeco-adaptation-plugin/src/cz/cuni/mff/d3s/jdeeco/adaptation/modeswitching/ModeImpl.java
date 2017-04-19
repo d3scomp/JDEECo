@@ -25,6 +25,7 @@ import cz.cuni.mff.d3s.metaadaptation.modeswitch.Mode;
 public class ModeImpl implements Mode {
 
 	private final DEECoMode mode;
+
 	
 	public ModeImpl(DEECoMode mode){
 		if(mode == null){

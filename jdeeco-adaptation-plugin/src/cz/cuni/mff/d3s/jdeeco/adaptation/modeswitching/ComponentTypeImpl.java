@@ -25,6 +25,7 @@ import cz.cuni.mff.d3s.metaadaptation.modeswitch.ComponentType;
 public class ComponentTypeImpl implements ComponentType {
 
 	private final AdaptationUtility utility;
+
 	
 	public ComponentTypeImpl(AdaptationUtility utility){
 		if(utility == null){

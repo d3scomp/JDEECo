@@ -44,7 +44,8 @@ public class ModeChartImpl implements ModeChart {
 	private final Set<Transition> transitions;
 	
 	private final ComponentInstance component;
-		
+
+	
 	public ModeChartImpl(cz.cuni.mff.d3s.deeco.modes.DEECoModeChart modeChart, ComponentInstance component){
 		if(modeChart == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "modeChart"));
@@ -153,49 +154,9 @@ public class ModeChartImpl implements ModeChart {
 				
 		transitions.remove(transition);
 		modeChart.getTransitions().remove(DTransition);
+		if(modeChart.getTransitionListeners().containsKey(transition)){
+			modeChart.getTransitionListeners().remove(transition);
+		}
 	}
-
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.ModeChart#createTransition(cz.cuni.mff.d3s.metaadaptation.modeswitch.Mode, cz.cuni.mff.d3s.metaadaptation.modeswitch.Mode, cz.cuni.mff.d3s.metaadaptation.modeswitch.Guard)
-	 */
-//	@Override
-//	public Transition createTransition(Mode from, Mode to, Guard guard) {
-//		ModeImpl toImpl = (ModeImpl) to;
-//		ModeImpl fromImpl = (ModeImpl) from;
-//		Class<? extends DEECoMode> toClass = toImpl.getInnerMode();
-//		
-//		ModeGuard modeGuard = new ModeGuard(){
-//			@Override
-//			protected void specifyParameters(){}
-//			@Override
-//			public String[] getKnowledgeNames() {
-//				return new String[]{};
-//			}
-//			@Override
-//			public boolean isSatisfied(Object[] knowledgeValues) {
-//				return guard.isSatisfied();
-//			}};
-//		GuardImpl guardImpl = new GuardImpl(modeGuard, component);
-//		
-//		ModeSuccessor successor = new ModeSuccessor(toClass, 0, modeGuard);
-//		return new TransitionImpl(fromImpl, toImpl, guardImpl, successor);
-//	}
-
-//	/* (non-Javadoc)
-//	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.ModeChart#isModified()
-//	 */
-//	@Override
-//	public boolean isModified() {
-//		return modeChart.isModified();
-//	}
-//
-//	/* (non-Javadoc)
-//	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.ModeChart#setModified()
-//	 */
-//	@Override
-//	public void setModified() {
-//		modeChart.wasModified();
-//	}
-	
 
 }

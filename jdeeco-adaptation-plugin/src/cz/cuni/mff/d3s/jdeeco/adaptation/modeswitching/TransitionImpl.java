@@ -71,47 +71,6 @@ public class TransitionImpl implements Transition {
 		return to;
 	}
 
-//	/* (non-Javadoc)
-//	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#isGuardSatisfied()
-//	 */
-//	@Override
-//	public boolean isGuardSatisfied() {
-//		return transition.getGuard().isSatisfied();
-//	}
-//
-//	/* (non-Javadoc)
-//	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#getProbability()
-//	 */
-//	@Override
-//	public double getProbability() {
-//		return modeSuccessor.getProbability();
-//	}
-//
-//	/* (non-Javadoc)
-//	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#setProbability(double)
-//	 */
-//	@Override
-//	public void setProbability(double probability) {
-//		modeSuccessor.setProbability(probability);
-//	}
-//
-//	/* (non-Javadoc)
-//	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#isDynamic()
-//	 */
-//	@Override
-//	public boolean isDynamic() {
-//		return modeSuccessor.isDynamic();
-//	}
-//
-//	/* (non-Javadoc)
-//	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#setDynamic(boolean)
-//	 */
-//	@Override
-//	public void setDynamic(boolean isDynamic) {
-//		modeSuccessor.setDynamic(isDynamic);
-//		
-//	}
-
 	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition#getGuard()
 	 */
@@ -122,7 +81,6 @@ public class TransitionImpl implements Transition {
 			public boolean test(Void t) {
 				return guard.isSatisfied();
 			}
-			
 		};
 	}
 

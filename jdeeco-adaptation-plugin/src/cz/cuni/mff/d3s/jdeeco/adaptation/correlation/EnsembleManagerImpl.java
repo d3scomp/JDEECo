@@ -36,6 +36,7 @@ public class EnsembleManagerImpl implements cz.cuni.mff.d3s.metaadaptation.corre
 	@Local
 	private final List<DEECoNode> nodes;
 
+	
 	public EnsembleManagerImpl() {
 		this.nodes = new ArrayList<>();
 	}

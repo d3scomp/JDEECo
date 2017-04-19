@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cz.cuni.mff.d3s.deeco.annotations.Component;
-import cz.cuni.mff.d3s.deeco.annotations.Local;
 import cz.cuni.mff.d3s.deeco.annotations.PlaysRole;
 import cz.cuni.mff.d3s.deeco.annotations.SystemComponent;
 import cz.cuni.mff.d3s.metaadaptation.correlation.CorrelationMetadataWrapper;
@@ -33,17 +32,6 @@ import cz.cuni.mff.d3s.metaadaptation.correlation.CorrelationMetadataWrapper;
 @SystemComponent
 @PlaysRole(CorrelationKnowledgeRole.class)
 public class CorrelationKnowledgeData {
-	/**
-	 * Specify whether to print the values being processed by the correlation computation.
-	 */
-	@Local
-	static boolean dumpValues = false;
-
-	@Local
-	static boolean verbose = false;
-	
-	@Local
-	static boolean logGeneratedEnsembles = false;
 	
 	public String id = "CorrelationData";
 

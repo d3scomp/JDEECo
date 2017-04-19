@@ -24,6 +24,7 @@ public class PortImpl implements cz.cuni.mff.d3s.metaadaptation.componentisolati
 	@SuppressWarnings("rawtypes")
 	private final Class role;
 	
+	
 	@SuppressWarnings("rawtypes")
 	public PortImpl(Class role){
 		if(role == null){

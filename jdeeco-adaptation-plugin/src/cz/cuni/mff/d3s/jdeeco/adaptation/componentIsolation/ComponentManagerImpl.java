@@ -27,6 +27,7 @@ public class ComponentManagerImpl implements cz.cuni.mff.d3s.metaadaptation.comp
 
 	private final Set<Component> components;
 	
+	
 	public ComponentManagerImpl(Set<Component> components){
 		if(components == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "components"));

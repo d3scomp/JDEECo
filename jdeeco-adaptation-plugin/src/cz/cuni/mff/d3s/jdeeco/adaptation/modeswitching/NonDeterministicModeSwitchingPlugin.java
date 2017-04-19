@@ -15,7 +15,6 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,8 +25,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessorExtensionPoint;
-import cz.cuni.mff.d3s.deeco.annotations.processor.NonDetModeSwitchAwareAnnotationProcessorExtension;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
@@ -58,20 +55,11 @@ import cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition;
  */
 public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, StartupListener, ShutdownListener {
 
-//	private static Map<ComponentInstance, StateSpaceSearch> sssMap = new HashMap<>();
-//	
-//	public static void storeStateSpaceSearch(ComponentInstance ci, StateSpaceSearch sss){
-//		sssMap.put(ci, sss);
-//	}
-	
-//	private long startTime = 0;
 	private final Map<Class<?>, AdaptationUtility> utilities;
 	private final Map<String, Double> precomputedUtilities;
-//	private double startingNondeterminism = 0.0001;
 	private DEECoContainer container = null;
 	private AdaptationPlugin adaptationPlugin= null;
 	private NonDeterministicModeSwitchingManager manager = null;
-//	private final TimeProgress timer;
 	
 	private boolean verbose = false;
 	private double transitionProbability = 0;
@@ -91,29 +79,23 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 					AdaptationPlugin.class,
 					ModeSwitchingPlugin.class});
 	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin#getDependencies()
+	 */
+	@Override
+	public List<Class<? extends DEECoPlugin>> getDependencies() {
+		return DEPENDENCIES;
+	}
+	
 	public NonDeterministicModeSwitchingPlugin(Map<Class<?>, AdaptationUtility> utilities, Map<String, Double> precomputedUtilities){
 		if(utilities == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "utilities"));
 		}
-//		if(timer == null){
-//			throw new IllegalArgumentException(String.format("The %s argument is null.", "timer"));
-//		}
 		
 		this.utilities = utilities;
 		this.precomputedUtilities = precomputedUtilities;
-//		this.timer = timer;
 	}
-	
-	/*public NonDeterministicModeSwitchingPlugin startAt(long startTime) {
-		this.startTime = startTime;
-		return this;
-	}
-	
-	public NonDeterministicModeSwitchingPlugin withStartingNondetermoinism(double nondeterminism) {
-		this.startingNondeterminism = nondeterminism;
-		return this;
-	}*/
-	
+
 	public NonDeterministicModeSwitchingPlugin withVerbosity(boolean verbosity){
 		verbose = verbosity;
 		return this;
@@ -151,13 +133,6 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 		return this;
 	}
 	
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin#getDependencies()
-	 */
-	@Override
-	public List<Class<? extends DEECoPlugin>> getDependencies() {
-		return DEPENDENCIES;
-	}
 
 	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin#init(cz.cuni.mff.d3s.deeco.runtime.DEECoContainer)
@@ -165,22 +140,11 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 	@Override
 	public void init(DEECoContainer container) throws PluginInitFailedException {
 		this.container = container;
-				
-		AnnotationProcessorExtensionPoint nonDetModeAwareAnnotationProcessor = new NonDetModeSwitchAwareAnnotationProcessorExtension();
-		container.getProcessor().addExtension(nonDetModeAwareAnnotationProcessor);
 		
 		container.addStartupListener(this);
 		container.addShutdownListener(this);
 		
 		adaptationPlugin = container.getPluginInstance(AdaptationPlugin.class);
-		
-//		NonDeterministicModeSwitchingManager.startingNondeterminism = startingNondeterminism;
-		NonDeterministicModeSwitchingManager.verbose = verbose;
-		NonDeterministicModeSwitchingManager.transitionProbability = transitionProbability;
-		NonDeterministicModeSwitchingManager.transitionPriority = transitionPriority;
-		NonDeterministicModeSwitchingManager.training = training;
-		//NonDeterministicModeSwitchingManager.trainingOutput = new File(trainingOutput);
-		
 	}
 
 	/* (non-Javadoc)
@@ -206,7 +170,6 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 		for (ComponentInstance c : container.getRuntimeMetadata().getComponentInstances()) {
 			DEECoModeChart modeChart = c.getModeChart();
 			if (modeChart != null) {
-//				if(sssMap.containsKey(c)){
 				if(training){
 					for(DEECoMode mode : modeChart.getModes()){
 						if(mode.getId().equals(trainFrom)){
@@ -221,15 +184,10 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 						if(mode.getId().equals(trainTo2)){
 							NonDeterministicModeSwitchingManager.trainTo2 = new ModeImpl(mode);
 						}
-//						if(!NonDetModeSwitchMode.class.isAssignableFrom(mode)){
-//							throw new PluginStartupFailedException(String.format(
-//									"The %s mode doesn't extend %s class.",
-//									mode, NonDetModeSwitchMode.class));
-//						}
 					}
 				}
 
-					// Check the required utility was placed
+				// Check the required utility was placed
 				AdaptationUtility utility = null;
 				for(Class<?> key : utilities.keySet()){
 					if(key.getName().equals(c.getName())){
@@ -245,7 +203,6 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 				
 				ComponentImpl componentImpl = new ComponentImpl(c, new ComponentTypeImpl(utility));
 				components.add(componentImpl);
-//				}
 			}
 		}
 
@@ -261,6 +218,11 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 		}
 		try {
 			manager = new NonDeterministicModeSwitchingManager(components, transitionAsocUtilities);
+			manager.setVerbosity(verbose);
+			manager.setTransitionProbability(transitionProbability);
+			manager.setTransitionPriority(transitionPriority);
+			manager.setTraining(training);
+			
 			adaptationPlugin.registerAdaptation(manager);
 		} catch (InstantiationException | IllegalAccessException | FileNotFoundException e) {
 			throw new PluginStartupFailedException(e);

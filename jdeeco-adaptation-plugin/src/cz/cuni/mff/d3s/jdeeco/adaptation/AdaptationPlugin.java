@@ -38,13 +38,25 @@ public class AdaptationPlugin implements DEECoPlugin {
 
 	private long period = 10000;
 	
+	private boolean verbose;
+	
 	private MetaAdaptationManager adaptationManager;
+
 	
 	/** Plugin dependencies. */
 	static private final List<Class<? extends DEECoPlugin>> DEPENDENCIES =
 			Collections.emptyList();
+
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin#getDependencies()
+	 */
+	@Override
+	public List<Class<? extends DEECoPlugin>> getDependencies() {
+		return DEPENDENCIES;
+	}
 	
 	public AdaptationPlugin withVerbosity(boolean verbosity){
+		verbose = verbosity;
 		return this;
 	}
 	
@@ -63,14 +75,6 @@ public class AdaptationPlugin implements DEECoPlugin {
 		
 		adaptationManager.addAdaptation(adaptation);
 	}
-		
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin#getDependencies()
-	 */
-	@Override
-	public List<Class<? extends DEECoPlugin>> getDependencies() {
-		return DEPENDENCIES;
-	}
 
 	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin#init(cz.cuni.mff.d3s.deeco.runtime.DEECoContainer)
@@ -79,18 +83,15 @@ public class AdaptationPlugin implements DEECoPlugin {
 	public void init(DEECoContainer container) throws PluginInitFailedException {
 		try {
 			adaptationManager = new MetaAdaptationManager();
-			container.deployComponent(new AdaptationComponent(adaptationManager));
+			adaptationManager.setVerbosity(verbose);
+			ComponentInstance c = container.deployComponent(new AdaptationComponent(adaptationManager));
 			
-			for (ComponentInstance c : container.getRuntimeMetadata().getComponentInstances()) {
-				if (c.getName().equals(MetaAdaptationManager.class.getName())) {
-					// Adjust non-deterministic mode switching manager periods
-					for (ComponentProcess p: c.getComponentProcesses()) {
-						if(p.getName().equals("reason")){
-							for (Trigger t : p.getTriggers()){
-								if (t instanceof TimeTrigger) {
-									((TimeTrigger) t).setPeriod(period);
-								}
-							}
+			// Adjust non-deterministic mode switching manager periods
+			for (ComponentProcess p: c.getComponentProcesses()) {
+				if(p.getName().equals("reason")){
+					for (Trigger t : p.getTriggers()){
+						if (t instanceof TimeTrigger) {
+							((TimeTrigger) t).setPeriod(period);
 						}
 					}
 				}

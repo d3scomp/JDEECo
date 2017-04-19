@@ -48,7 +48,8 @@ public class ComponentImpl implements cz.cuni.mff.d3s.metaadaptation.componentis
 	 */
 	@Override
 	public void addPort(Port port) {
-		// TODO Auto-generated method stub
+		// TODO: implement
+		throw new UnsupportedOperationException();
 		
 	}
 
@@ -57,6 +58,7 @@ public class ComponentImpl implements cz.cuni.mff.d3s.metaadaptation.componentis
 	 */
 	@Override
 	public void removePort(Port port) {
+		// TODO: implement properly
 		KnowledgeManager kManager = component.getKnowledgeManager();
 		kManager.updateRoles(null);
 		Log.i("Removing the role of the " + kManager.getId());
@@ -82,7 +84,7 @@ public class ComponentImpl implements cz.cuni.mff.d3s.metaadaptation.componentis
 	 */
 	@Override
 	public void monitorHealth(Port port) {
-
+		// TODO: check whether this is needed
 		
 	}
 

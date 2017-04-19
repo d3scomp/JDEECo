@@ -15,7 +15,6 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitchprops;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,10 +30,8 @@ import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.runtime.PluginStartupFailedException;
 import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationPlugin;
 import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationUtility;
-import cz.cuni.mff.d3s.metaadaptation.modeswitch.NonDeterministicModeSwitchingManager;
 import cz.cuni.mff.d3s.metaadaptation.modeswitchprops.Component;
 import cz.cuni.mff.d3s.metaadaptation.modeswitchprops.ModeSwitchPropsManager;
-import cz.cuni.mff.d3s.metaadaptation.modeswitchprops.Transition;
 
 /**
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
@@ -42,8 +39,6 @@ import cz.cuni.mff.d3s.metaadaptation.modeswitchprops.Transition;
  */
 public class ModeSwitchPropsPlugin implements DEECoPlugin, StartupListener {
 
-	private final Set<DEECoNode> nodes;
-	
 	private final Map<Class<?>, AdaptationUtility> utilities;
 
 	private AdaptationPlugin adaptationPlugin = null;
@@ -63,14 +58,9 @@ public class ModeSwitchPropsPlugin implements DEECoPlugin, StartupListener {
 			Arrays.asList(new Class[]{AdaptationPlugin.class});;
 
 
-	public ModeSwitchPropsPlugin(Set<DEECoNode> nodes, Map<Class<?>, AdaptationUtility> utilities){
-		if(nodes == null){
-			throw new IllegalArgumentException(String.format("The %s argument is null.", "nodes"));
-		}
-		
+	public ModeSwitchPropsPlugin(Map<Class<?>, AdaptationUtility> utilities){		
 		verbose = false;
 		
-		this.nodes = nodes;
 		this.utilities = utilities;
 	}
 		
@@ -155,21 +145,12 @@ public class ModeSwitchPropsPlugin implements DEECoPlugin, StartupListener {
 							c.getKnowledgeManager().getId()));
 				}
 				
-				ComponentImpl componentImpl = new ComponentImpl(c/*, new ComponentTypeImpl(utility)*/);
+				ComponentImpl componentImpl = new ComponentImpl(c);
 				components.add(componentImpl);
-//				}
 			}
 		}
 		
-		/*Map<Transition, Double> transitionAsocUtilities = null; // TODO: utility from property to double
-		if(!components.isEmpty()){
-			transitionAsocUtilities = associateUtilities(components.get(0).getModeChart().getModes());
-		}*/
-		//try {
-			manager = new ModeSwitchPropsManager(components/*, transitionAsocUtilities*/);
-			adaptationPlugin.registerAdaptation(manager);
-		/*} catch (InstantiationException | IllegalAccessException | FileNotFoundException e) {
-			throw new PluginStartupFailedException(e);
-		}*/
+		manager = new ModeSwitchPropsManager(components);
+		adaptationPlugin.registerAdaptation(manager);
 	}
 }
