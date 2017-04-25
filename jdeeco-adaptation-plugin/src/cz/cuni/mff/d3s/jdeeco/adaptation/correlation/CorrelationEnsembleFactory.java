@@ -1,7 +1,13 @@
 package cz.cuni.mff.d3s.jdeeco.adaptation.correlation;
 
+import static cz.cuni.mff.d3s.metaadaptation.correlation.ConnectorManager.COORD_FILTER_FIELD;
+import static cz.cuni.mff.d3s.metaadaptation.correlation.ConnectorManager.MEMBER_FILTER_FIELD;
+
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.function.Predicate;
 
 import cz.cuni.mff.d3s.deeco.annotations.Ensemble;
 import cz.cuni.mff.d3s.deeco.annotations.In;
@@ -9,18 +15,21 @@ import cz.cuni.mff.d3s.deeco.annotations.KnowledgeExchange;
 import cz.cuni.mff.d3s.deeco.annotations.Membership;
 import cz.cuni.mff.d3s.deeco.annotations.Out;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.task.ParamHolder;
 import cz.cuni.mff.d3s.metaadaptation.correlation.CorrelationLevel;
 import cz.cuni.mff.d3s.metaadaptation.correlation.CorrelationMetadataWrapper;
-import cz.cuni.mff.d3s.metaadaptation.correlation.EnsembleFactoryHelper;
 import cz.cuni.mff.d3s.metaadaptation.correlation.KnowledgeMetadataHolder;
 import javassist.ClassPool;
 import javassist.CtClass;
+import javassist.CtField;
 import javassist.CtMethod;
 import javassist.CtNewMethod;
+import javassist.Modifier;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.ConstPool;
+import javassist.bytecode.FieldInfo;
 import javassist.bytecode.MethodInfo;
 import javassist.bytecode.ParameterAnnotationsAttribute;
 import javassist.bytecode.annotation.Annotation;
@@ -35,7 +44,7 @@ import javassist.bytecode.annotation.StringMemberValue;
  *
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  */
-public class CorrelationEnsembleFactory implements cz.cuni.mff.d3s.metaadaptation.correlation.EnsembleFactory {
+public class CorrelationEnsembleFactory {
 
 	/**
 	 * The output directory for generated classes.
@@ -62,7 +71,7 @@ public class CorrelationEnsembleFactory implements cz.cuni.mff.d3s.metaadaptatio
 		return this;
 	}
 
-	@SuppressWarnings("rawtypes")
+	/*@SuppressWarnings("rawtypes")
 	public Class setEnsembleMembershipBoundary(String correlationFilter, String correlationSubject, double boundary) throws Exception {
 		Class<?> requestedClass = ensembleFactoryHelper.getEnsembleDefinition(correlationFilter, correlationSubject);
 		String className = requestedClass.getName();
@@ -136,6 +145,106 @@ public class CorrelationEnsembleFactory implements cz.cuni.mff.d3s.metaadaptatio
 		ensembleClass.writeFile(CLASS_DIRECTORY);
 		CorrelationClassLoader loader = new CorrelationClassLoader(CorrelationClassLoader.class.getClassLoader());
 		Class loadedClass = loader.loadClass(className);
+		return loadedClass;
+	}*/
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public Class<?> createEnsembleDefinitionWithMembership(String correlationFilter, String correlationSubject, Predicate<Map<String, Object>> membership) throws Exception {
+		Class<?> requestedClass = ensembleFactoryHelper.getEnsembleDefinition(correlationFilter, correlationSubject);
+		String className = requestedClass.getName();
+
+		ClassPool classPool = ClassPool.getDefault();
+		CtClass ensembleClass = classPool.getCtClass(className);
+		ensembleClass.defrost();
+		ClassFile classFile = ensembleClass.getClassFile();
+		ConstPool constPool = classFile.getConstPool();
+
+		// Inject test Predicate
+		List<FieldInfo> fields = classFile.getFields();
+		for(FieldInfo field : fields){
+			if(field.getName().equals("test")){
+				fields.remove(field);
+				break;
+			}
+		}		
+		//CtClass objType = classPool.get("java.util.function.Predicate");
+		//CtField defField = new CtField(objType, "test", ensembleClass);
+		//defField.setModifiers(Modifier.STATIC);
+		CtField defField = CtField.make("private static java.util.function.Predicate test;", ensembleClass);
+		ensembleClass.addField(defField);
+		
+		// Remove the existing membership method
+		MethodInfo oldMembershipMethod = classFile.getMethod("membership");
+		if(oldMembershipMethod != null){
+			List ensembleMethods = classFile.getMethods();
+			ensembleMethods.remove(oldMembershipMethod);
+		}
+
+		final String wrapperClass = CorrelationMetadataWrapper.class.getCanonicalName();
+		//final String holderClass = KnowledgeMetadataHolder.class.getCanonicalName();
+		
+		String methodBody = String.format(Locale.ENGLISH, "\n"
+				+ "public static boolean membership(\n"
+				+ "		" + wrapperClass + " member%1$s,\n"
+				+ "		" + wrapperClass + " member%2$s,\n"
+				+ "		" + wrapperClass + " coord%1$s,\n"
+				+ "		" + wrapperClass + " coord%2$s) {\n"
+				+ " final java.util.Map knowledge = new java.util.HashMap();\n"
+				+ " knowledge.put(\"%3$s\", member%1$s.getValue());\n"
+				+ " knowledge.put(\"%4$s\", coord%1$s.getValue());\n"
+				+ " if((!member%2$s.isOperational()\n"
+				+ "		&& coord%2$s.isOperational()\n"
+				+ "		&& %5$s.test.test(knowledge)))\n"
+				+ " System.out.println(\"Correl ensemble membership satisfied\");\n"
+				+ " return (!member%2$s.isOperational()\n"
+				+ "		&& coord%2$s.isOperational()\n"
+				+ "		&& %5$s.test.test(knowledge));}",
+					correlationFilter, correlationSubject, MEMBER_FILTER_FIELD, COORD_FILTER_FIELD, className);
+
+		if(verbose){
+			Log.i(methodBody);
+		}
+
+		final String membershipClass = Membership.class.getCanonicalName();
+		final String inClass = In.class.getCanonicalName();
+		// Create new Membership method
+		CtMethod membershipMethod = CtNewMethod.make(methodBody, ensembleClass);
+		// Membership annotation for the membership method
+		Annotation membershipAnnotation = new Annotation(membershipClass, constPool);
+		AnnotationsAttribute membershipAttribute = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
+		membershipAttribute.addAnnotation(membershipAnnotation);
+		membershipMethod.getMethodInfo().addAttribute(membershipAttribute);
+		// Membership parameters annotations
+		ParameterAnnotationsAttribute membershipParamAnnotations = new ParameterAnnotationsAttribute(constPool,
+				ParameterAnnotationsAttribute.visibleTag);
+		Annotation[][] membershipParamAnnotationsInfo = new Annotation[4][1];
+		membershipParamAnnotationsInfo[0][0] = new Annotation(inClass, constPool);
+		membershipParamAnnotationsInfo[0][0].addMemberValue("value", new StringMemberValue(
+				String.format("member.%s", correlationFilter), constPool));
+		membershipParamAnnotationsInfo[1][0] = new Annotation(inClass, constPool);
+		membershipParamAnnotationsInfo[1][0].addMemberValue("value", new StringMemberValue(
+				String.format("member.%s", correlationSubject), constPool));
+		membershipParamAnnotationsInfo[2][0] = new Annotation(inClass, constPool);
+		membershipParamAnnotationsInfo[2][0].addMemberValue("value", new StringMemberValue(
+				String.format("coord.%s", correlationFilter), constPool));
+		membershipParamAnnotationsInfo[3][0] = new Annotation(inClass, constPool);
+		membershipParamAnnotationsInfo[3][0].addMemberValue("value", new StringMemberValue(
+				String.format("coord.%s", correlationSubject), constPool));
+		membershipParamAnnotations.setAnnotations(membershipParamAnnotationsInfo);
+		membershipMethod.getMethodInfo().addAttribute(membershipParamAnnotations);
+
+		// Add the method into the ensemble class
+		ensembleClass.addMethod(membershipMethod);
+
+		ensembleClass.writeFile(CLASS_DIRECTORY);
+		CorrelationClassLoader loader = new CorrelationClassLoader(CorrelationClassLoader.class.getClassLoader());
+		Class loadedClass = loader.loadClass(className);
+		
+		// Inject test Predicate
+		Field testField = loadedClass.getDeclaredField("test");
+		testField.setAccessible(true);
+		testField.set(null, membership);
+		
 		return loadedClass;
 	}
 
@@ -276,10 +385,6 @@ public class CorrelationEnsembleFactory implements cz.cuni.mff.d3s.metaadaptatio
 		return loader.loadClass(ensembleClass.getName());
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.correlation.EnsembleFactory#getHelper()
-	 */
-	@Override
 	public EnsembleFactoryHelper getHelper() {
 		return ensembleFactoryHelper;
 	}

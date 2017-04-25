@@ -16,7 +16,7 @@ import cz.cuni.mff.d3s.metaadaptation.correlation.CorrelationLevel.DistanceClass
 @Ensemble(enableLogging=false)
 @PeriodicScheduling(period = 1000)
 public class CorrelationEnsembleTemplate {
-
+// TODO: update
 	@Membership
 	public static boolean membership(
 			@In("member.position") CorrelationMetadataWrapper<Integer> memberPosition,

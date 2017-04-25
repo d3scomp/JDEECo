@@ -33,14 +33,14 @@ import cz.cuni.mff.d3s.metaadaptation.correlation.CorrelationManager;
  *
  */
 public class CorrelationPlugin implements DEECoPlugin, StartupListener {
-
+// TODO: get rid of CorrelationMetadataWraper and use only faultyKnowledge field
 	private boolean verbose;
 	private boolean dumpValues;
 	
-	private final EnsembleManagerImpl ensembleManager;
-	private final CorrelationManager manager;
-	
 	private final Set<DEECoNode> nodes;
+	
+	AdaptationPlugin adaptationPlugin;
+	
 	
 	/** Plugin dependencies. */
 	@SuppressWarnings("unchecked")
@@ -59,12 +59,7 @@ public class CorrelationPlugin implements DEECoPlugin, StartupListener {
 		}
 		
 		verbose = false;
-		dumpValues = false;
-		
-		ensembleManager = new EnsembleManagerImpl();
-		manager = new CorrelationManager(ensembleManager, 
-				new CorrelationEnsembleFactory());
-		
+		dumpValues = false;		
 		this.nodes = nodes;
 	}
 		
@@ -94,15 +89,11 @@ public class CorrelationPlugin implements DEECoPlugin, StartupListener {
 		container.getProcessor().addExtension(correlationAwareAnnotationProcessorExtension);
 		container.addStartupListener(this);
 		
-		try {
-			manager.setVerbosity(verbose);
-			manager.setDumpValues(dumpValues);
-			
+		try {			
 			container.deployComponent(new CorrelationKnowledgeData());
 			container.deployEnsemble(CorrelationDataAggregation.class);
 			
-			AdaptationPlugin adaptationPlugin = container.getPluginInstance(AdaptationPlugin.class);
-			adaptationPlugin.registerAdaptation(manager);
+			adaptationPlugin = container.getPluginInstance(AdaptationPlugin.class);
 			
 		} catch (AnnotationProcessorException | DuplicateEnsembleDefinitionException e) {
 			Log.e("Error while trying to deploy AdaptationManager", e);
@@ -110,15 +101,24 @@ public class CorrelationPlugin implements DEECoPlugin, StartupListener {
 	}
 
 	@Override
-	public void onStartup() throws PluginStartupFailedException {
-		ensembleManager.setNodes(nodes);
-		
+	public void onStartup() throws PluginStartupFailedException {		
 		Set<Component> components = new HashSet<>();
 		for(DEECoNode node : nodes){
 			for(ComponentInstance ci : node.getRuntimeMetadata().getComponentInstances()){
-				components.add(new ComponentImpl(ci.getKnowledgeManager().getId(), ci));
+				components.add(new ComponentImpl(ci));
 			}
 		}
-		manager.setComponents(components);
+		CorrelationEnsembleFactory ceFactory = new CorrelationEnsembleFactory();
+		ceFactory.withVerbosity(verbose);
+		
+		ComponentManagerImpl componentManager = new ComponentManagerImpl(components);
+		ConnectorManagerImpl connectorManager = new ConnectorManagerImpl(
+				ceFactory, nodes);
+
+		CorrelationManager manager = new CorrelationManager(componentManager, connectorManager);
+		manager.setVerbosity(verbose);
+		manager.setDumpValues(dumpValues);
+		
+		adaptationPlugin.registerAdaptation(manager);
 	}
 }

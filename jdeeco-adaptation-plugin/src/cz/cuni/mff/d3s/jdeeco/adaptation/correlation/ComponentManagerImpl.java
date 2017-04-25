@@ -13,18 +13,35 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *******************************************************************************/
-package cz.cuni.mff.d3s.jdeeco.adaptation.componentIsolation;
+package cz.cuni.mff.d3s.jdeeco.adaptation.correlation;
 
 import java.util.Set;
 
-import cz.cuni.mff.d3s.deeco.annotations.Role;
+import cz.cuni.mff.d3s.metaadaptation.correlation.Component;
 
 /**
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-@Role
-public class FaultyKnowledgeReportingRole {
+public class ComponentManagerImpl implements cz.cuni.mff.d3s.metaadaptation.correlation.ComponentManager {
 
-	public Set<String> faultyKnowledge;
+	private final Set<Component> components;
+	
+	
+	public ComponentManagerImpl(Set<Component> components){
+		if(components == null){
+			throw new IllegalArgumentException(String.format("The %s argument is null.", "components"));
+		}
+		
+		this.components = components;
+	}
+	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.metaadaptation.componentisolation.ComponentManager#getComponents()
+	 */
+	@Override
+	public Set<Component> getComponents() {
+		return components;
+	}
+
 }

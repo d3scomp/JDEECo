@@ -30,6 +30,7 @@ import cz.cuni.mff.d3s.deeco.knowledge.container.TrackingKnowledgeContainer;
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.KnowledgePath;
+import cz.cuni.mff.d3s.jdeeco.adaptation.FaultyKnowledgeReportingRole;
 import cz.cuni.mff.d3s.metaadaptation.componentisolation.Port;
 
 /**
