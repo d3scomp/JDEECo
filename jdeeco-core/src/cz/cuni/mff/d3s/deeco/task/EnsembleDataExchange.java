@@ -103,8 +103,8 @@ public class EnsembleDataExchange {
 		} catch (ClassCastException e) {
 			throw new TaskInvocationException("Membership condition does not return a boolean.", e);			
 		} catch (InvocationTargetException e) {
-			Log.d("Membership condition returned an exception.", e.getTargetException());
-			return false;
+			Log.e("Membership condition returned an exception.", e.getTargetException());
+			throw new TaskInvocationException("Membership condition returned an exception.", e);
 		}
 	}
 	

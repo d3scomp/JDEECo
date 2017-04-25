@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.deeco.executor;
 
 import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.Trigger;
+import cz.cuni.mff.d3s.deeco.runtime.DEECoRuntimeException;
 import cz.cuni.mff.d3s.deeco.task.Task;
 
 /**
@@ -28,10 +29,10 @@ public class SameThreadExecutor implements Executor {
 				task.invoke(trigger);
 			} catch (Exception e) {
 				if (listener != null) {
-					Log.w("Task.invoke() failed", e);
 					listener.executionFailed(task, trigger, e);
 				}
-				return;
+				Log.e("Task.invoke() failed", e);
+				throw new DEECoRuntimeException(e);
 			}
 
 			if (listener != null) {
