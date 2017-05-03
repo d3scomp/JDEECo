@@ -15,13 +15,22 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.adaptation.correlation;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import cz.cuni.mff.d3s.metaadaptation.correlation.ConnectorPort;
+import cz.cuni.mff.d3s.metaadaptation.correlation.DynamicConnector;
+import cz.cuni.mff.d3s.metaadaptation.correlation.Kind;
+
 /**
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public class DynamicConnectorImpl {
+public class DynamicConnectorImpl implements DynamicConnector {
 
 	private final Class<?> ensemble;
+	
+	private final Set<ConnectorPort> ports;
 	
 	public DynamicConnectorImpl(Class<?> ensemble){
 		if (ensemble == null) {
@@ -29,6 +38,7 @@ public class DynamicConnectorImpl {
 		}
 		
 		this.ensemble = ensemble;
+		ports = new HashSet<>();
 	}
 	
 	/* (non-Javadoc)
@@ -37,5 +47,15 @@ public class DynamicConnectorImpl {
 	@Override
 	public String toString() {
 		return ensemble.getName();
+	}
+
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.metaadaptation.correlation.DynamicConnector#addPort(java.util.Set, cz.cuni.mff.d3s.metaadaptation.correlation.Kind, cz.cuni.mff.d3s.metaadaptation.correlation.ComponentPort)
+	 */
+	@Override
+	public ConnectorPort addPort(Set<String> assumedKnowledge, Kind kind) {
+		ConnectorPort cp = new ConnectorPortImpl(assumedKnowledge, kind);
+		ports.add(cp);
+		return cp;
 	}
 }

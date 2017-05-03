@@ -15,6 +15,7 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.adaptation.correlation;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -31,6 +32,7 @@ public class ConnectorManagerImpl implements cz.cuni.mff.d3s.metaadaptation.corr
 	
 	private final Set<DEECoNode> nodes;
 	private final CorrelationEnsembleFactory ensembleFactory;
+	private final Set<DynamicConnector> connectors;
 	private boolean verbose;
 	
 	
@@ -46,6 +48,7 @@ public class ConnectorManagerImpl implements cz.cuni.mff.d3s.metaadaptation.corr
 		
 		this.ensembleFactory = ensembleFactory;
 		this.nodes = nodes;
+		connectors = new HashSet<>();
 		verbose = false;
 	}
 	
@@ -58,15 +61,14 @@ public class ConnectorManagerImpl implements cz.cuni.mff.d3s.metaadaptation.corr
 	 */
 	@Override
 	public Set<DynamicConnector> getConnectors() {
-		// TODO Auto-generated method stub
-		return null;
+		return connectors;
 	}
 
 	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.metaadaptation.correlation.ConnectorManager#addConnector(java.util.function.Predicate, cz.cuni.mff.d3s.metaadaptation.correlation.ConnectorManager.MediatedKnowledge)
 	 */
 	@Override
-	public void addConnector(Predicate<Map<String, Object>> filter, MediatedKnowledge mediatedKnowledge) {
+	public DynamicConnector addConnector(Predicate<Map<String, Object>> filter, MediatedKnowledge mediatedKnowledge) {
 		if(mediatedKnowledge == null){
 			throw new IllegalArgumentException(String.format(
 					"The \"%s\" argument is null.", "mediatedKnowledge"));
@@ -78,7 +80,7 @@ public class ConnectorManagerImpl implements cz.cuni.mff.d3s.metaadaptation.corr
 				mediatedKnowledge.correlationSubject));
 		
 		if(filter == null){
-			return;
+			return null;
 		}
 		
 		try {
@@ -95,6 +97,10 @@ public class ConnectorManagerImpl implements cz.cuni.mff.d3s.metaadaptation.corr
 			if(verbose){
 				Log.i(String.format("Deploying ensemble %s", mediatedKnowledge));
 			}
+			
+			DynamicConnector connector = new DynamicConnectorImpl(ensemble);
+			connectors.add(connector);
+			return connector;
 		} catch (Exception e) {
 			Log.e(e.getMessage());
 			throw new RuntimeException(e);

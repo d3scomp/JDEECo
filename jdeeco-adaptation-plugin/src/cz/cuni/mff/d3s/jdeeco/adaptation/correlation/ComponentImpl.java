@@ -113,8 +113,10 @@ public class ComponentImpl implements cz.cuni.mff.d3s.metaadaptation.correlation
 	 * @see cz.cuni.mff.d3s.metaadaptation.correlation.Component#addPort(java.util.Set)
 	 */
 	@Override
-	public void addPort(Set<String> exposedKnowledge) {
-		componentPorts.add(new ComponentPortImpl(exposedKnowledge));
+	public ComponentPort addPort(Set<String> exposedKnowledge) {
+		ComponentPort cp = new ComponentPortImpl(exposedKnowledge);
+		componentPorts.add(cp);
+		return cp;
 	}
 
 	private Map<String, Map<String, CorrelationMetadataWrapper<? extends Object>>> getKnowledgeOfAllComponents()

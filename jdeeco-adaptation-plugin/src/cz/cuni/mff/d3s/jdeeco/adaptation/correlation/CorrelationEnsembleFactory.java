@@ -25,7 +25,6 @@ import javassist.CtClass;
 import javassist.CtField;
 import javassist.CtMethod;
 import javassist.CtNewMethod;
-import javassist.Modifier;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.ConstPool;
@@ -70,83 +69,6 @@ public class CorrelationEnsembleFactory {
 		ensembleFactoryHelper.withVerbosity(verbosity);
 		return this;
 	}
-
-	/*@SuppressWarnings("rawtypes")
-	public Class setEnsembleMembershipBoundary(String correlationFilter, String correlationSubject, double boundary) throws Exception {
-		Class<?> requestedClass = ensembleFactoryHelper.getEnsembleDefinition(correlationFilter, correlationSubject);
-		String className = requestedClass.getName();
-
-		ClassPool classPool = ClassPool.getDefault();
-		CtClass ensembleClass = classPool.getCtClass(className);
-		ensembleClass.defrost();
-		ClassFile classFile = ensembleClass.getClassFile();
-		ConstPool constPool = classFile.getConstPool();
-
-		// Remove the existing membership method
-		MethodInfo oldMembershipMethod = classFile.getMethod("membership");
-		if(oldMembershipMethod != null){
-			List ensembleMethods = classFile.getMethods();
-			ensembleMethods.remove(oldMembershipMethod);
-		}
-
-		final String wrapperClass = CorrelationMetadataWrapper.class.getCanonicalName();
-		final String holderClass = KnowledgeMetadataHolder.class.getCanonicalName();
-		
-		String methodBody = String.format(Locale.ENGLISH,
-				"public static boolean membership(\n"
-				+ "		" + wrapperClass + " member%1$s,\n"
-				+ "		" + wrapperClass + " member%2$s,\n"
-				+ "		" + wrapperClass + " coord%1$s,\n"
-				+ "		" + wrapperClass + " coord%2$s) {\n"
-				+ " final double %1$s_bound = %3$f;\n"
-//				+ "	System.out.println(\"Membership for %1$s -> %2$s with %1$s_bound = %3$.1f\");\n"
-				+ " return (!member%2$s.isOperational()\n"
-				+ "		&& coord%2$s.isOperational()\n"
-				+ "		&& " + holderClass + ".distance(\n"
-				+ "			\"%1$s\", member%1$s.getValue(), coord%1$s.getValue()) < %1$s_bound);}",
-					correlationFilter, correlationSubject, boundary);
-
-		if(verbose){
-			System.out.println(methodBody);
-		}
-
-		final String membershipClass = Membership.class.getCanonicalName();
-		final String inClass = In.class.getCanonicalName();
-		
-		// Create new Membership method
-		CtMethod membershipMethod = CtNewMethod.make(methodBody, ensembleClass);
-		// Membership annotation for the membership method
-		Annotation membershipAnnotation = new Annotation(membershipClass, constPool);
-		AnnotationsAttribute membershipAttribute = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
-		membershipAttribute.addAnnotation(membershipAnnotation);
-		membershipMethod.getMethodInfo().addAttribute(membershipAttribute);
-		// Membership parameters annotations
-		ParameterAnnotationsAttribute membershipParamAnnotations = new ParameterAnnotationsAttribute(constPool,
-				ParameterAnnotationsAttribute.visibleTag);
-		Annotation[][] membershipParamAnnotationsInfo = new Annotation[4][1];
-		membershipParamAnnotationsInfo[0][0] = new Annotation(inClass, constPool);
-		membershipParamAnnotationsInfo[0][0].addMemberValue("value", new StringMemberValue(
-				String.format("member.%s", correlationFilter), constPool));
-		membershipParamAnnotationsInfo[1][0] = new Annotation(inClass, constPool);
-		membershipParamAnnotationsInfo[1][0].addMemberValue("value", new StringMemberValue(
-				String.format("member.%s", correlationSubject), constPool));
-		membershipParamAnnotationsInfo[2][0] = new Annotation(inClass, constPool);
-		membershipParamAnnotationsInfo[2][0].addMemberValue("value", new StringMemberValue(
-				String.format("coord.%s", correlationFilter), constPool));
-		membershipParamAnnotationsInfo[3][0] = new Annotation(inClass, constPool);
-		membershipParamAnnotationsInfo[3][0].addMemberValue("value", new StringMemberValue(
-				String.format("coord.%s", correlationSubject), constPool));
-		membershipParamAnnotations.setAnnotations(membershipParamAnnotationsInfo);
-		membershipMethod.getMethodInfo().addAttribute(membershipParamAnnotations);
-
-		// Add the method into the ensemble class
-		ensembleClass.addMethod(membershipMethod);
-
-		ensembleClass.writeFile(CLASS_DIRECTORY);
-		CorrelationClassLoader loader = new CorrelationClassLoader(CorrelationClassLoader.class.getClassLoader());
-		Class loadedClass = loader.loadClass(className);
-		return loadedClass;
-	}*/
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Class<?> createEnsembleDefinitionWithMembership(String correlationFilter, String correlationSubject, Predicate<Map<String, Object>> membership) throws Exception {
@@ -166,10 +88,7 @@ public class CorrelationEnsembleFactory {
 				fields.remove(field);
 				break;
 			}
-		}		
-		//CtClass objType = classPool.get("java.util.function.Predicate");
-		//CtField defField = new CtField(objType, "test", ensembleClass);
-		//defField.setModifiers(Modifier.STATIC);
+		}
 		CtField defField = CtField.make("private static java.util.function.Predicate test;", ensembleClass);
 		ensembleClass.addField(defField);
 		
@@ -192,10 +111,11 @@ public class CorrelationEnsembleFactory {
 				+ " final java.util.Map knowledge = new java.util.HashMap();\n"
 				+ " knowledge.put(\"%3$s\", member%1$s.getValue());\n"
 				+ " knowledge.put(\"%4$s\", coord%1$s.getValue());\n"
-				+ " if((!member%2$s.isOperational()\n"
-				+ "		&& coord%2$s.isOperational()\n"
-				+ "		&& %5$s.test.test(knowledge)))\n"
-				+ " System.out.println(\"Correl ensemble membership satisfied\");\n"
+//				+ " if((!member%2$s.isOperational()\n"
+//				+ "		&& coord%2$s.isOperational()\n"
+//				+ "		&& %5$s.test.test(knowledge)))\n"
+//				+ " System.out.println(\"Correl ensemble membership satisfied\");\n"
+//				+ " else System.out.println(\"Correl ensemble membership not satisfied\");\n"
 				+ " return (!member%2$s.isOperational()\n"
 				+ "		&& coord%2$s.isOperational()\n"
 				+ "		&& %5$s.test.test(knowledge));}",

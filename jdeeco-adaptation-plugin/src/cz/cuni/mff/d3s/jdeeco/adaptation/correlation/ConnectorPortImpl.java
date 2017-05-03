@@ -23,7 +23,7 @@ import cz.cuni.mff.d3s.metaadaptation.correlation.Kind;
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public class ConnectorPortImpl implements cz.cuni.mff.d3s.metaadaptation.correlation.ComponentPort {
+public class ConnectorPortImpl implements cz.cuni.mff.d3s.metaadaptation.correlation.ConnectorPort {
 	
 	private final Set<String> assumedKnowledge;
 	private final Kind kind;
