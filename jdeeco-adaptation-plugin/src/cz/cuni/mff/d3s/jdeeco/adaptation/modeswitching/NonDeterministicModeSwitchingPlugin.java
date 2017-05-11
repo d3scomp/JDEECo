@@ -15,10 +15,10 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,7 +30,6 @@ import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.modes.DEECoMode;
 import cz.cuni.mff.d3s.deeco.modes.DEECoModeChart;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
-import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer.ShutdownListener;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer.StartupListener;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.runtime.PluginInitFailedException;
@@ -53,7 +52,7 @@ import cz.cuni.mff.d3s.metaadaptation.modeswitch.Transition;
  * 
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  */
-public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, StartupListener, ShutdownListener {
+public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, StartupListener {
 
 	private final Map<Class<?>, AdaptationUtility> utilities;
 	private final Map<String, Double> precomputedUtilities;
@@ -64,13 +63,8 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 	private boolean verbose = false;
 	private double transitionProbability = 0;
 	private int transitionPriority = 0;
-	private boolean training = false;
-	private String trainFrom = null;
-	private String trainTo = null;
-	private String trainFrom2 = null;
-	private String trainTo2 = null;
-	private String trainingOutput = null;
-	
+	private String trainingTransitions = null;
+		
 	
 	/** Plugin dependencies. */
 	@SuppressWarnings("unchecked")
@@ -108,31 +102,48 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 		this.transitionPriority = transitionPriority;
 		return this;
 	}
-	public NonDeterministicModeSwitchingPlugin withTraining(boolean training){
-		this.training = training;
-		return this;
-	}
-	public NonDeterministicModeSwitchingPlugin withTrainFrom(String trainFrom){
-		this.trainFrom = trainFrom;
-		return this;
-	}
-	public NonDeterministicModeSwitchingPlugin withTrainTo(String trainTo){
-		this.trainTo = trainTo;
-		return this;
-	}
-	public NonDeterministicModeSwitchingPlugin withTrainFrom2(String trainFrom2){
-		this.trainFrom2 = trainFrom2;
-		return this;
-	}
-	public NonDeterministicModeSwitchingPlugin withTrainTo2(String trainTo2){
-		this.trainTo2 = trainTo2;
-		return this;
-	}
-	public NonDeterministicModeSwitchingPlugin withTrainingOutput(String trainingOutput){
-		this.trainingOutput = trainingOutput;
+	
+	public NonDeterministicModeSwitchingPlugin withTrainTransitions(String transitions){
+		this.trainingTransitions = transitions;
 		return this;
 	}
 	
+	private List<Transition> getTrainTransitions(DEECoModeChart modeChart){
+		List<Transition> transitions = new ArrayList<>();
+		
+		if(trainingTransitions == null || trainingTransitions.isEmpty()){
+			return transitions;
+		}
+				
+		final Pattern transitionPattern = Pattern.compile("(\\w+)-(\\w+)");
+		final Matcher transitionMatcher = transitionPattern.matcher(trainingTransitions);
+		while(transitionMatcher.find()){	
+			final String fromName = transitionMatcher.group(1);
+			final String toName = transitionMatcher.group(2);
+			Mode from = getMode(modeChart, fromName);
+			Mode to = getMode(modeChart, toName);
+			transitions.add(new PhonyTransition(from, to));
+		}
+		
+		if(transitions.isEmpty()){
+			Log.e(String.format("The training transitions cannot be matched from: \"%s\"", transitions));
+		}
+		
+		return transitions;
+	}
+	
+	private Mode getMode(DEECoModeChart modeChart, String modeName){
+		for(DEECoMode mode : modeChart.getModes()){
+			if(mode.getId().equals(modeName)){
+				return new ModeImpl(mode);
+			}
+		}
+		
+		throw new IllegalArgumentException(String.format(
+				"The \"%s\" mode for training transition was not recognized.",
+				modeName));
+	}
+		
 
 	/* (non-Javadoc)
 	 * @see cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin#init(cz.cuni.mff.d3s.deeco.runtime.DEECoContainer)
@@ -142,7 +153,6 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 		this.container = container;
 		
 		container.addStartupListener(this);
-		container.addShutdownListener(this);
 		
 		adaptationPlugin = container.getPluginInstance(AdaptationPlugin.class);
 	}
@@ -165,28 +175,14 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 					"AdaptationPlugin"));
 		}
 		
-		List<Component> components = new ArrayList<>();
+		DEECoModeChart validModeChart = null;
+		Set<Mode> validModes = null;
+		Set<Component> components = new HashSet<>();
 		// Components with non-deterministic mode switching aspiration
 		for (ComponentInstance c : container.getRuntimeMetadata().getComponentInstances()) {
 			DEECoModeChart modeChart = c.getModeChart();
 			if (modeChart != null) {
-				if(training){
-					for(DEECoMode mode : modeChart.getModes()){
-						if(mode.getId().equals(trainFrom)){
-							NonDeterministicModeSwitchingManager.trainFrom = new ModeImpl(mode);
-						}
-						if(mode.getId().equals(trainTo)){
-							NonDeterministicModeSwitchingManager.trainTo = new ModeImpl(mode);
-						}
-						if(mode.getId().equals(trainFrom2)){
-							NonDeterministicModeSwitchingManager.trainFrom2 = new ModeImpl(mode);
-						}
-						if(mode.getId().equals(trainTo2)){
-							NonDeterministicModeSwitchingManager.trainTo2 = new ModeImpl(mode);
-						}
-					}
-				}
-
+				validModeChart = modeChart;
 				// Check the required utility was placed
 				AdaptationUtility utility = null;
 				for(Class<?> key : utilities.keySet()){
@@ -203,30 +199,29 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 				
 				ComponentImpl componentImpl = new ComponentImpl(c, new ComponentTypeImpl(utility));
 				components.add(componentImpl);
+				validModes = componentImpl.getModeChart().getModes();
 			}
 		}
-
-		if(training && (NonDeterministicModeSwitchingManager.trainFrom == null
-				|| NonDeterministicModeSwitchingManager.trainTo == null)){
-			throw new PluginStartupFailedException(String.format(
-					"The \"%s\" or \"%s\" mode not found.", trainFrom, trainTo));
-		}
+		ComponentManagerImpl componentManager = new ComponentManagerImpl(components);
+		
+		
 		
 		Map<Transition, Double> transitionAsocUtilities = null;
-		if(!components.isEmpty()){
-			transitionAsocUtilities = associateUtilities(components.get(0).getModeChart().getModes());
+		transitionAsocUtilities = associateUtilities(validModes);
+		
+		manager = new NonDeterministicModeSwitchingManager(componentManager, transitionAsocUtilities);
+		manager.setVerbosity(verbose);
+		manager.setTransitionProbability(transitionProbability);
+		manager.setTransitionPriority(transitionPriority);
+		if(validModeChart != null){
+			manager.setTrainTransitions(getTrainTransitions(validModeChart));
 		}
-		try {
-			manager = new NonDeterministicModeSwitchingManager(components, transitionAsocUtilities);
-			manager.setVerbosity(verbose);
-			manager.setTransitionProbability(transitionProbability);
-			manager.setTransitionPriority(transitionPriority);
-			manager.setTraining(training);
-			
-			adaptationPlugin.registerAdaptation(manager);
-		} catch (InstantiationException | IllegalAccessException | FileNotFoundException e) {
-			throw new PluginStartupFailedException(e);
+		else{
+			throw new PluginStartupFailedException(
+					"No component has associated valid mode chart.");
 		}
+		
+		adaptationPlugin.registerAdaptation(manager);
 	}
 	
 	private Map<Transition, Double> associateUtilities(Set<Mode> modes){
@@ -267,17 +262,6 @@ public class NonDeterministicModeSwitchingPlugin implements DEECoPlugin, Startup
 		}
 		
 		return transitionAsocUtilities;
-	}
-
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.deeco.runtime.DEECoContainer.ShutdownListener#onShutdown()
-	 */
-	@Override
-	public void onShutdown() {
-		if(manager != null){
-			manager.terminate();
-		}
-		
 	}
 
 }

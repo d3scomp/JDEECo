@@ -15,41 +15,33 @@
  *******************************************************************************/
 package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitching;
 
-import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationUtility;
-import cz.cuni.mff.d3s.metaadaptation.modeswitch.ComponentType;
+import java.util.Set;
+
+import cz.cuni.mff.d3s.metaadaptation.modeswitch.Component;
 
 /**
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
  *
  */
-public class ComponentTypeImpl implements ComponentType {
+public class ComponentManagerImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitch.ComponentManager {
 
-	private final AdaptationUtility utility;
-
+	private final Set<Component> components;
 	
-	public ComponentTypeImpl(AdaptationUtility utility){
-		if(utility == null){
-			throw new IllegalArgumentException(String.format(
-					"The %s argument is null.", "utility"));
+	
+	public ComponentManagerImpl(Set<Component> components){
+		if(components == null){
+			throw new IllegalArgumentException(String.format("The %s argument is null.", "components"));
 		}
 		
-		this.utility = utility;
-	}
-
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.ComponentType#getAverageUtility()
-	 */
-	@Override
-	public double getAverageUtility() {
-		return utility.getUtility(null);
+		this.components = components;
 	}
 	
 	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.ComponentType#getUtilityThreshold()
+	 * @see cz.cuni.mff.d3s.metaadaptation.componentisolation.ComponentManager#getComponents()
 	 */
 	@Override
-	public double getUtilityThreshold() {
-		return utility.getUtilityThreshold();
+	public Set<Component> getComponents() {
+		return components;
 	}
 
 }

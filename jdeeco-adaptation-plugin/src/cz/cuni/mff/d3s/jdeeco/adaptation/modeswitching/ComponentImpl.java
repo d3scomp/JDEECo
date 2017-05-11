@@ -67,4 +67,13 @@ public class ComponentImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitch.
 		return componentType;
 	}
 
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitch.Component#getUtility()
+	 */
+	@Override
+	public double getUtility() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }
