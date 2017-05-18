@@ -16,6 +16,7 @@
 package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitchprops;
 
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
+import cz.cuni.mff.d3s.metaadaptation.modeswitchprops.ComponentType;
 import cz.cuni.mff.d3s.metaadaptation.modeswitchprops.ModeChart;
 
 /**
@@ -27,19 +28,30 @@ public class ComponentImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitchp
 	private final ComponentInstance component;
 
 	private final ModeChartImpl modeChart;
+
+	private final ComponentTypeImpl componentType;
 	
-	public ComponentImpl(ComponentInstance component){
+	
+	public ComponentImpl(ComponentInstance component, ComponentTypeImpl componentType){
 		if(component == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "component"));
 		}
+		if(componentType == null) {
+			throw new IllegalArgumentException(String.format(
+					"The %s argument is null.", "componentType"));
+		}
 		
 		this.component = component;
-		modeChart = new ModeChartImpl(component.getModeChart(), component);
+		modeChart = new ModeChartImpl(component);
+		this.componentType = componentType;
 	}
 	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitchprops.Component#getType()
+	 */
 	@Override
-	public ModeChart getModeChart() {
-		return modeChart;
+	public ComponentType getType() {
+		return componentType;
 	}
 	
 	/* (non-Javadoc)
@@ -47,16 +59,15 @@ public class ComponentImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitchp
 	 */
 	@Override
 	public double getUtility() {
-		return 0; // TODO:
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	@Override
+	public ModeChart getModeChart() {
+		return modeChart;
 	}
 
-	/* (non-Javadoc)
-	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitchprops.Component#getUtilityThreshold()
-	 */
-	@Override
-	public double getUtilityThreshold() {
-		return 0; // TODO:
-	}
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
@@ -65,5 +76,6 @@ public class ComponentImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitchp
 	public String toString() {
 		return component.getKnowledgeManager().getId();
 	}
+
 
 }

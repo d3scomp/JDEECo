@@ -35,18 +35,16 @@ public class ModeChartImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitchp
 	private final cz.cuni.mff.d3s.deeco.modes.DEECoModeChart modeChart;
 	private final Map<DEECoMode, ModeImpl> modes;
 	private final Set<Transition> transitions;
-	private final ComponentInstance component;
 	
-	public ModeChartImpl(cz.cuni.mff.d3s.deeco.modes.DEECoModeChart modeChart, ComponentInstance component){
-		if(modeChart == null){
-			throw new IllegalArgumentException(String.format("The %s argument is null.", "modeChart"));
-		}
+	public ModeChartImpl(ComponentInstance component){
 		if(component == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "component"));
 		}
 		
-		this.modeChart = modeChart;
-		this.component = component;
+		modeChart = component.getModeChart();
+		if(modeChart == null){
+			throw new IllegalArgumentException(String.format("Component %s has no mode chart.", component));
+		}
 		modes = new HashMap<>();
 		transitions = new HashSet<>();
 		
@@ -77,6 +75,14 @@ public class ModeChartImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitchp
 	@Override
 	public Set<Mode> getModes() {
 		return new HashSet<>(modes.values());
+	}
+	
+	/* (non-Javadoc)
+	 * @see cz.cuni.mff.d3s.metaadaptation.modeswitchprops.ModeChart#getCurrentMode()
+	 */
+	@Override
+	public Mode getCurrentMode() {
+		return modes.get(modeChart.getCurrentMode());
 	}
 
 	/* (non-Javadoc)

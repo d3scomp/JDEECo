@@ -43,7 +43,7 @@ public class ComponentImpl implements cz.cuni.mff.d3s.metaadaptation.modeswitch.
 		}
 		
 		componentInstance = ci;
-		modeChart = new ModeChartImpl(ci.getModeChart(), ci);
+		modeChart = new ModeChartImpl(ci);
 		this.componentType = componentType;
 	}
 	

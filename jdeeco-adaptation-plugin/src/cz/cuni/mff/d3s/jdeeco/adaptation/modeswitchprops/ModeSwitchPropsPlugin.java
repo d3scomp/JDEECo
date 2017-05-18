@@ -17,21 +17,25 @@ package cz.cuni.mff.d3s.jdeeco.adaptation.modeswitchprops;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import cz.cuni.mff.d3s.deeco.logging.Log;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.ComponentInstance;
 import cz.cuni.mff.d3s.deeco.modes.DEECoModeChart;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoContainer.StartupListener;
-import cz.cuni.mff.d3s.deeco.runtime.DEECoNode;
 import cz.cuni.mff.d3s.deeco.runtime.DEECoPlugin;
 import cz.cuni.mff.d3s.deeco.runtime.PluginStartupFailedException;
 import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationPlugin;
 import cz.cuni.mff.d3s.jdeeco.adaptation.AdaptationUtility;
 import cz.cuni.mff.d3s.metaadaptation.modeswitchprops.Component;
 import cz.cuni.mff.d3s.metaadaptation.modeswitchprops.ModeSwitchPropsManager;
+import cz.cuni.mff.d3s.metaadaptation.modeswitchprops.PropertyValue;
 
 /**
  * @author Dominik Skoda <skoda@d3s.mff.cuni.cz>
@@ -46,11 +50,7 @@ public class ModeSwitchPropsPlugin implements DEECoPlugin, StartupListener {
 	private ModeSwitchPropsManager manager = null;	
 
 	private boolean verbose = false;
-	private boolean training = false;
-	private String trainProperty = null;
-	private double trainValue = 0;
-	private String trainProperty2 = null;
-	private double trainValue2 = 0;
+	private String trainProperties = null;
 	
 	/** Plugin dependencies. */
 	@SuppressWarnings("unchecked")
@@ -68,27 +68,34 @@ public class ModeSwitchPropsPlugin implements DEECoPlugin, StartupListener {
 		verbose = verbosity;
 		return this;
 	}
-	public ModeSwitchPropsPlugin withTraining(boolean training){
-		this.training = training;
+	
+	public ModeSwitchPropsPlugin withTrainProperties(String trainProperties){
+		this.trainProperties = trainProperties;
 		return this;
 	}
-	public ModeSwitchPropsPlugin withTrainProperty(String trainProperty){
-		this.trainProperty = trainProperty;
-		return this;
+	
+	private List<PropertyValue> getTrainProperties(){
+		List<PropertyValue> properties = new ArrayList<>();
+		
+		if(trainProperties == null || trainProperties.isEmpty()){
+			return properties;
+		}
+				
+		final Pattern propertyPattern = Pattern.compile("(\\w+)\\(([-+]?[0-9]*\\.?[0-9]+)\\)");
+		final Matcher propertyMatcher = propertyPattern.matcher(trainProperties);
+		while(propertyMatcher.find()){	
+			final String propertyName = propertyMatcher.group(1);
+			final String propertyValue = propertyMatcher.group(2);
+			properties.add(new PropertyValue(propertyName, Double.parseDouble(propertyValue)));
+		}
+		
+		if(properties.isEmpty()){
+			Log.e(String.format("The training properties cannot be matched from: \"%s\"", trainProperties));
+		}
+		
+		return properties;
 	}
-	public ModeSwitchPropsPlugin withTrainValue(double trainValue){
-		this.trainValue = trainValue;
-		return this;
-	}
-	public ModeSwitchPropsPlugin withTrainProperty2(String trainProperty2){
-		this.trainProperty2 = trainProperty2;
-		return this;
-	}
-	public ModeSwitchPropsPlugin withTrainValue2(double trainValue2){
-		this.trainValue2 = trainValue2;
-		return this;
-	}
-
+	
 	@Override
 	public List<Class<? extends DEECoPlugin>> getDependencies() {
 		return DEPENDENCIES;
@@ -102,13 +109,6 @@ public class ModeSwitchPropsPlugin implements DEECoPlugin, StartupListener {
 		container.addStartupListener(this);
 		
 		adaptationPlugin = container.getPluginInstance(AdaptationPlugin.class);
-
-		ModeSwitchPropsManager.verbose = verbose;
-		ModeSwitchPropsManager.training = training;
-		ModeSwitchPropsManager.trainProperty = trainProperty;
-		ModeSwitchPropsManager.trainValue = trainValue;
-		ModeSwitchPropsManager.trainProperty2 = trainProperty2;
-		ModeSwitchPropsManager.trainValue2 = trainValue2;
 	}
 
 	@Override
@@ -126,7 +126,7 @@ public class ModeSwitchPropsPlugin implements DEECoPlugin, StartupListener {
 					"AdaptationPlugin"));
 		}
 		
-		List<Component> components = new ArrayList<>();
+		Set<Component> components = new HashSet<>();
 		// Components with non-deterministic mode switching aspiration
 		for (ComponentInstance c : container.getRuntimeMetadata().getComponentInstances()) {
 			DEECoModeChart modeChart = c.getModeChart();
@@ -145,12 +145,24 @@ public class ModeSwitchPropsPlugin implements DEECoPlugin, StartupListener {
 							c.getKnowledgeManager().getId()));
 				}
 				
-				ComponentImpl componentImpl = new ComponentImpl(c);
+				ComponentImpl componentImpl = new ComponentImpl(c, new ComponentTypeImpl(utility));
 				components.add(componentImpl);
 			}
 		}
+		ComponentManagerImpl componentManager = new ComponentManagerImpl(components);
 		
-		manager = new ModeSwitchPropsManager(components);
+		manager = new ModeSwitchPropsManager(componentManager);
+		manager.setVerbosity(verbose);
+		
+		List<PropertyValue> properties = getTrainProperties();
+		if(properties != null && !properties.isEmpty()){
+			manager.setTrainProperties(properties);
+		}
+		else{
+			throw new PluginStartupFailedException(
+					"Training properties not specified.");
+		}
+		
 		adaptationPlugin.registerAdaptation(manager);
 	}
 }

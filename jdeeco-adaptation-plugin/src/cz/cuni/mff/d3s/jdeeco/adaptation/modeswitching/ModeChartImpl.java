@@ -46,16 +46,16 @@ public class ModeChartImpl implements ModeChart {
 	private final ComponentInstance component;
 
 	
-	public ModeChartImpl(cz.cuni.mff.d3s.deeco.modes.DEECoModeChart modeChart, ComponentInstance component){
-		if(modeChart == null){
-			throw new IllegalArgumentException(String.format("The %s argument is null.", "modeChart"));
-		}
+	public ModeChartImpl(ComponentInstance component){
 		if(component == null){
 			throw new IllegalArgumentException(String.format("The %s argument is null.", "component"));
 		}
 		
-		this.modeChart = modeChart;
 		this.component = component;
+		modeChart = component.getModeChart();
+		if(modeChart == null){
+			throw new IllegalArgumentException(String.format("Component %s has no mode chart.", component));
+		}
 		modes = new HashMap<>();
 		transitions = new HashSet<>();
 		
