@@ -18,7 +18,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
 	<artifactId>cz.cuni.mff.d3s.jdeeco.modes</artifactId>
-	<version>1.0.0</version>
+	<version>3.0.4</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -32,7 +32,7 @@
 		<dependency>
 			<groupId>cz.cuni.mff.d3s.jdeeco</groupId>
 			<artifactId>cz.cuni.mff.d3s.jdeeco.core</artifactId>
-			<version>3.0.3</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
