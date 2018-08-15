@@ -86,6 +86,31 @@
 			<version>1.12.2</version>
 		</dependency>
 		<dependency>
+			<groupId>org.ros.rosjava_messages</groupId>
+			<artifactId>geometry_msgs</artifactId>
+			<version>1.11.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.ros.rosjava_messages</groupId>
+			<artifactId>nav_msgs</artifactId>
+			<version>1.11.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.ros.rosjava_messages</groupId>
+			<artifactId>rosgraph_msgs</artifactId>
+			<version>1.11.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.ros.rosjava_messages</groupId>
+			<artifactId>actionlib_msgs</artifactId>
+			<version>1.11.7</version>
+		</dependency>
+		<dependency>
+		    <groupId>commons-lang</groupId>
+		    <artifactId>commons-lang</artifactId>
+		    <version>2.6</version>
+		</dependency>
+		<dependency>
 			<groupId>cz.cuni.mff.d3s.ros</groupId>
 			<artifactId>cz.cuni.mff.d3s.ros.beeclickarmROS</artifactId>
 			<version>0.1.0</version>
@@ -106,6 +131,9 @@
 			<id>rosjava_mvn_repo</id>
 			<url>https://github.com/rosjava/rosjava_mvn_repo/raw/master</url>
 		</repository>
-
+		<repository>
+            <id>spring-plugins</id>
+            <url>http://repo.spring.io/plugins-release</url>
+        </repository>
 	</repositories>
 </project>
